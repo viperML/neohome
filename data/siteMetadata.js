@@ -47,7 +47,7 @@ const siteMetadata = {
     giscusConfig: {
       // Visit the link below, and follow the steps in the 'configuration' section
       // https://giscus.app/
-      repo: "viperML/neoinfra",
+      repo: "viperML/neohome",
       repositoryId: "R_kgDOIm7anQ",
       category: "Announcements",
       categoryId: "DIC_kwDOIm7anc4CTFKJ",
