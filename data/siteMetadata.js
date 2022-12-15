@@ -44,10 +44,10 @@ const siteMetadata = {
     giscusConfig: {
       // Visit the link below, and follow the steps in the 'configuration' section
       // https://giscus.app/
-      repo: "viperML/neohome",
-      repositoryId: "R_kgDOIm7anQ",
-      category: "Announcements",
-      categoryId: "DIC_kwDOIm7anc4CTFKJ",
+      repo: 'viperML/neohome',
+      repositoryId: 'R_kgDOIm7anQ',
+      category: 'Announcements',
+      categoryId: 'DIC_kwDOIm7anc4CTFKJ',
       mapping: 'pathname', // supported options: pathname, url, title
       reactions: '1', // Emoji reactions: 1 = enable / 0 = disable
       // Send discussion metadata periodically to the parent window: 1 = enable / 0 = disable
@@ -62,7 +62,7 @@ const siteMetadata = {
       // example: https://giscus.app/themes/custom_example.css
       themeURL: '',
       lang: 'en',
-      inputPosition: 'top'
+      inputPosition: 'top',
     },
   },
   // search: {
