@@ -20,7 +20,7 @@ const inter = Inter({
 })
 
 const LayoutWrapper = ({ children }: Props) => {
-  const { theme } = useTheme();
+  const { theme } = useTheme()
   return (
     <SectionContainer>
       <div className={`${inter.className} flex h-screen flex-col justify-between font-sans`}>
@@ -28,9 +28,7 @@ const LayoutWrapper = ({ children }: Props) => {
           <div>
             <Link href="/" aria-label={siteMetadata.headerTitle}>
               <div className="flex items-center justify-between">
-                <div className="mr-3">
-                  {theme === 'light' ? <LightLogo /> : <DarkLogo />}
-                </div>
+                <div className="mr-3">{theme === 'light' ? <LightLogo /> : <DarkLogo />}</div>
                 {/* {typeof siteMetadata.headerTitle === 'string' ? (
                   <div className="hidden h-6 text-2xl font-semibold sm:block">
                     {siteMetadata.headerTitle}
