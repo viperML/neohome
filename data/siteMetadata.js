@@ -10,7 +10,7 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl: 'https://ayats.org',
   siteRepo: 'https://github.com/viperML/neohome',
-  siteLogo: '/static/images/logo.png',
+  siteLogo: '/static/images/avatar.png',
   image: '/static/images/avatar.png',
   socialBanner: '/static/images/twitter-card.png',
   email: 'ayatsfer@gmail.com',
