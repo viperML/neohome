@@ -28,7 +28,7 @@ export default function Footer() {
           <div>{` • `}</div>
           <div>
             <Link href="https://github.com/viperML/neohome">
-              <u>Visit page source</u>
+              <u>Visit web source</u>
             </Link>
           </div>
         </div>
