@@ -17,17 +17,18 @@ export default function Footer() {
         </div>
         <div className="mb-2 flex space-x-2 text-sm text-gray-500 dark:text-gray-400">
           <div>
-            The content for this page is copyright Fernando Ayats under <u><Link href='https://creativecommons.org/licenses/by-nc-sa/2.0'>CC-BY-NC-SA</Link></u>
+            The content for this page is copyright Fernando Ayats under{' '}
+            <u>
+              <Link href="https://creativecommons.org/licenses/by-nc-sa/2.0">CC-BY-NC-SA</Link>
+            </u>
           </div>
         </div>
         <div className="mb-8 flex space-x-2 text-sm text-gray-500 dark:text-gray-400">
-          <div>Built with ️❤  and open source</div>
+          <div>Built with ️❤ and open source</div>
           <div>{` • `}</div>
           <div>
             <Link href="https://github.com/viperML/neohome">
-              <u>
-                Visit page source
-              </u>
+              <u>Visit page source</u>
             </Link>
           </div>
         </div>
