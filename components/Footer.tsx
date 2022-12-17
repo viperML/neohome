@@ -13,18 +13,23 @@ export default function Footer() {
           <SocialIcon kind="youtube" href={siteMetadata.youtube} size={6} />
           <SocialIcon kind="linkedin" href={siteMetadata.linkedin} size={6} />
           <SocialIcon kind="twitter" href={siteMetadata.twitter} size={6} />
+          <SocialIcon kind="gitlab" href="https://gitlab.com/viperML" size={6} />
         </div>
         <div className="mb-2 flex space-x-2 text-sm text-gray-500 dark:text-gray-400">
-          <div>{siteMetadata.author}</div>
-          <div>{` • `}</div>
-          <div>{`© ${new Date().getFullYear()}`}</div>
-          <div>{` • `}</div>
-          <Link href="/">{siteMetadata.title}</Link>
+          <div>
+            The content for this page is copyright Fernando Ayats under <u><Link href='https://creativecommons.org/licenses/by-nc-sa/2.0'>CC-BY-NC-SA</Link></u>
+          </div>
         </div>
-        <div className="mb-8 text-sm text-gray-500 dark:text-gray-400">
-          <Link href="https://github.com/timlrx/tailwind-nextjs-starter-blog">
-            Tailwind Nextjs Theme
-          </Link>
+        <div className="mb-8 flex space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <div>Built with ️❤  and open source</div>
+          <div>{` • `}</div>
+          <div>
+            <Link href="https://github.com/viperML/neohome">
+              <u>
+                Visit page source
+              </u>
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
