@@ -96,10 +96,10 @@ So, the easiest solution is to set the value **NIX_PATH** to whatever **nixpkgs*
     homeConfigurations.USER = home-manager.lib.homeManagerConfiguration {
       # ...
       modules = [
-        {
+        (args: {
           xdg.configFile."nix/inputs/nixpkgs".source = nixpkgs.outPath;
-          home.sessionVariables.NIX_PATH = "nixpkgs=${config.xdg.configHome}/nix/inputs/nixpkgs$\{NIX_PATH:+:$NIX_PATH}";
-        }
+          home.sessionVariables.NIX_PATH = "nixpkgs=${args.config.xdg.configHome}/nix/inputs/nixpkgs$\{NIX_PATH:+:$NIX_PATH}";
+        })
       ];
     };
   };
