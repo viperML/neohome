@@ -56,7 +56,7 @@ To use nix-filter in out previous flake, we can pull their flake and use `nix-fi
     packages.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.stdenv.mkDerivation {
 
       src = nix-filter.lib {
-        root = ./.;
+        root = self;
         exclude = [
           (nix-filter.lib.matchExt "nix")
           "flake.lock"
