@@ -23,7 +23,7 @@ An example of this file:
 # toolchain.toml
 [toolchain]
 channel = "nightly"
-components = [ "rustfmt", "rust-std" ]
+components = [ "rustfmt", "rust-src" ]
 profile = "minimal"
 ```
 
@@ -40,13 +40,13 @@ let
   pkgs = import <nixpkgs> {
     overlays = [(import rust-overlay)];
   };
+  toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml;
 in
-  with pkgs;
-    mkShell {
-      packages = [
-        (rust-bin.fromRustupToolchainFile ./rust-toolchain)
-      ];
-    }
+  mkShell {
+    packages = [
+      toolchain
+    ];
+  }
 ```
 
 
@@ -70,18 +70,47 @@ To enter the shell, just run `nix develop`
     rust-overlay,
   }: let
     system = "x86_64-linux";
-
     pkgs = import nixpkgs {
       inherit system;
       overlays = [rust-overlay];
     };
+    toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml
   in {
-    devShells.${system}.default = with pkgs;
-      mkShell {
-        packages = [
-          (rust-bin.fromRustupToolchainFile ./toolchain.toml)
-        ];
-      };
+    devShells.${system}.default =  mkShell {
+      packages = [
+        toolchain
+      ];
+    };
   };
 }
+```
+
+
+## rust-analyzer
+
+For rust-analyzer to work properly, you will need to setup the environment variable `RUST_SRC_PATH`, which must point to a subdirectory of our toolchain. To do so, just modify your `mkShell` definition (flakes or not) such as:
+
+```nix
+# ...
+pkgs.mkShell {
+  packages = [
+    toolchain
+
+    # We want the unwrapped version, wrapped comes with nixpkgs' toolchain
+    pkgs.rust-analyzer-unwrapped
+  ];
+
+  RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
+}
+```
+
+Finally, make sure you include the `rust-src` component in your rustup toolchain definition:
+
+```toml
+# toolchain.toml
+[toolchain]
+components = [
+  "rust-src"
+  # ...
+]
 ```
