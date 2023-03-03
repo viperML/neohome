@@ -57,7 +57,6 @@ By using a flake, we are able to lock the version of the rust overlay, so we alw
 To enter the shell, just run `nix develop`
 
 ```nix
-# flake.nix
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -74,15 +73,16 @@ To enter the shell, just run `nix develop`
       inherit system;
       overlays = [rust-overlay.overlays.default];
     };
-    toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml
+    toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml;
   in {
-    devShells.${system}.default =  mkShell {
+    devShells.${system}.default = pkgs.mkShell {
       packages = [
         toolchain
       ];
     };
   };
 }
+
 ```
 
 
