@@ -18,6 +18,14 @@ The [`rust-toolchain` or `toolchain.toml`](https://rust-lang.github.io/rustup/ov
 
 So instead of running rustup, we just point the overlay to rustup's config file. Nice and easy.
 
+An example of this file:
+```toml
+# toolchain.toml
+[toolchain]
+channel = "nightly"
+components = [ "rustfmt", "rust-std" ]
+profile = "minimal"
+```
 
 ## Classic nix
 
@@ -30,14 +38,15 @@ To use the shell, just run `nix-shell`
 let
   rust-overlay = builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
   pkgs = import <nixpkgs> {
-    overlays = [rust-overlay];
+    overlays = [(import rust-overlay)];
   };
 in
-  with pkgs; mkShell {
-    packages = [
-      (rust-bin.fromRustupToolchainFile ./rust-toolchain)
-    ];
-  }
+  with pkgs;
+    mkShell {
+      packages = [
+        (rust-bin.fromRustupToolchainFile ./rust-toolchain)
+      ];
+    }
 ```
 
 
@@ -55,18 +64,24 @@ To enter the shell, just run `nix develop`
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = {self, nixpkgs, rust-overlay}: let
+  outputs = {
+    self,
+    nixpkgs,
+    rust-overlay,
+  }: let
     system = "x86_64-linux";
+
     pkgs = import nixpkgs {
       inherit system;
       overlays = [rust-overlay];
     };
   in {
-    devShells.${system}.default = with pkgs; mkShell {
-      packages = [
-        (rust-bin.fromRustupToolchainFile ./rust-toolchain)
-      ];
-    };
+    devShells.${system}.default = with pkgs;
+      mkShell {
+        packages = [
+          (rust-bin.fromRustupToolchainFile ./toolchain.toml)
+        ];
+      };
   };
 }
 ```
