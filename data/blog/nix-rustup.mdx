@@ -72,7 +72,7 @@ To enter the shell, just run `nix develop`
     system = "x86_64-linux";
     pkgs = import nixpkgs {
       inherit system;
-      overlays = [rust-overlay];
+      overlays = [rust-overlay.overlays.default];
     };
     toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml
   in {
