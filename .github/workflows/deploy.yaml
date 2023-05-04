@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
+name: Deploy to GH pages
+
+on:
+  push:
+    branches:
+      - hugo
+
+jobs:
+  deploy:
+    name: Deploy job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Build site
+        run: nix build -L
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v3
+        # if: github.ref == 'refs/heads/hugo'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./result

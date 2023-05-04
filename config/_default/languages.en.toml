@@ -1,0 +1,27 @@
+languageCode = "en-au"
+languageName = "English (Australia)"
+displayName = ":flag-au:"
+isoCode = "en-AU"
+weight = 1
+rtl = false
+
+title = "ayats.org"
+description = "A powerful, lightweight theme for Hugo built with Tailwind CSS."
+copyright = "&copy; 2023 Fernando Ayats"
+
+dateFormat = "2 January 2006"
+
+# [params]
+#   mainSections = ["samples"]
+
+[author]
+  name = "Fernando Ayats"
+  image = "img/author.jpg"
+  headline = "Not your ordinary theme!"
+  bio = "This is an example author bio, and although there's a stock photo of a dog here, this article was actually created by a human. :dog:"
+  links = [
+    { twitter = "https://twitter.com/" },
+    { facebook = "https://facebook.com/" },
+    { linkedin = "https://linkedin.com/" },
+    { youtube = "https://youtube.com/" },
+  ]

@@ -1,0 +1,22 @@
+{
+    "congo": {
+        "cargoLocks": null,
+        "date": null,
+        "extract": null,
+        "name": "congo",
+        "passthru": null,
+        "pinned": false,
+        "src": {
+            "deepClone": false,
+            "fetchSubmodules": false,
+            "leaveDotGit": false,
+            "name": null,
+            "owner": "jpanther",
+            "repo": "congo",
+            "rev": "v2.5.4",
+            "sha256": "sha256-Vk+F8c+1UpohcSJfqmctWJo8hhAasAK8mX28GAX0zOE=",
+            "type": "github"
+        },
+        "version": "v2.5.4"
+    }
+}
