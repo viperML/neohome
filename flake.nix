@@ -24,6 +24,8 @@
         config,
         ...
       }: {
+        legacyPackages = pkgs;
+
         devShells.base = with pkgs;
           mkShellNoCC {
             inputsFrom = [config.mission-control.devShell];

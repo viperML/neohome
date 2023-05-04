@@ -1,5 +1,5 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
-name: Deploy to GH pages
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Deploy
 
 on:
   push:
@@ -7,19 +7,28 @@ on:
       - hugo
 
 jobs:
-  deploy:
-    name: Deploy job
+  main:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Install Nix
         uses: DeterminateSystems/nix-installer-action@main
-      - name: Build site
-        run: nix build -L
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v3
-        # if: github.ref == 'refs/heads/hugo'
+
+      - name: Set up cachix
+        uses: cachix/cachix-action@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./result
+          name: viperml
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build
+        run: cp -vrL $(nix build -L --print-out-paths --no-link) ./public
+
+      - uses: amondnet/vercel-action@v20
+        name: "Deploy to Vercel"
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID}}
+          vercel-project-id: ${{ secrets.PROJECT_ID}}
+          vercel-args: "--prod "
