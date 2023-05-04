@@ -8,7 +8,7 @@ defaultContentLanguage = "en"
 enableRobotsTXT = true
 paginate = 15
 summaryLength = 0
-baseURL = "https://viperml.github.io/neohome"
+baseURL = "https://ayats.org"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
