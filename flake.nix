@@ -66,6 +66,8 @@
             '';
           }) {};
 
+        packages.nosrc = config.packages.default.overrideAttrs (_: {src = null;});
+
         mission-control.scripts = {
           serve = {
             description = "Serve the blog for development";
