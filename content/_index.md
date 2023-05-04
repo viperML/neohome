@@ -1,1 +1,6 @@
+---
+title: Welcome to my website
+description: My personal place to post about tech and stuff
+---
+
 My name is Fernando Ayats and I am a Master's Degree of *Systems and Computating Engineering Research*. I finished my bachelor's degree in Aerospace Engineering in the Navigation System's specialisation, with my thesis consiting in programming a flight simulator and integrating it with *HIL* systems at Aurea Avionics.
