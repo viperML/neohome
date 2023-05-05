@@ -42,7 +42,6 @@
 
         packages.default = pkgs.callPackage ({
           hugo,
-          asciidoctor,
           stdenvNoCC,
         }:
           stdenvNoCC.mkDerivation {
@@ -50,7 +49,6 @@
             src = inputs.self.outPath;
             nativeBuildInputs = [
               hugo
-              asciidoctor
             ];
             HUGO_THEMESDIR = config.packages.themes;
             buildPhase = ''
@@ -77,9 +75,7 @@
           layout-diff = {
             description = "Inspect changes to the original layouts";
             exec = ''
-              find layouts -type f
               find layouts -type f | while read -r file; do
-                echo "going through $file"
                 theme_file="${config.packages.themes}/congo/$file"
                 if [[ -f "$theme_file" ]]; then
                   echo "===="
