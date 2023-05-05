@@ -35,19 +35,9 @@ To use the shell, just run `nix-shell`
 
 ```nix
 # shell.nix
-let
-  rust-overlay = builtins.fetchTarball "https://github.com/oxalica/rust-overlay/archive/master.tar.gz";
-  pkgs = import <nixpkgs> {
-    overlays = [(import rust-overlay)];
-  };
-  toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml;
-in
-  mkShell {
-    packages = [
-      toolchain
-    ];
-  }
+{{% include "shell.nix" %}}
 ```
+
 
 
 ## Flakes
@@ -57,32 +47,8 @@ By using a flake, we are able to lock the version of the rust overlay, so we alw
 To enter the shell, just run `nix develop`
 
 ```nix
-{
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    rust-overlay.url = "github:oxalica/rust-overlay";
-  };
-
-  outputs = {
-    self,
-    nixpkgs,
-    rust-overlay,
-  }: let
-    system = "x86_64-linux";
-    pkgs = import nixpkgs {
-      inherit system;
-      overlays = [rust-overlay.overlays.default];
-    };
-    toolchain = pkgs.rust-bin.fromRustupToolchainFile ./toolchain.toml;
-  in {
-    devShells.${system}.default = pkgs.mkShell {
-      packages = [
-        toolchain
-      ];
-    };
-  };
-}
-
+# flake.nix
+{{% include "flk.nix" %}}
 ```
 
 
@@ -91,17 +57,7 @@ To enter the shell, just run `nix develop`
 For rust-analyzer to work properly, you will need to setup the environment variable `RUST_SRC_PATH`, which must point to a subdirectory of our toolchain. To do so, just modify your `mkShell` definition (flakes or not) such as:
 
 ```nix
-# ...
-pkgs.mkShell {
-  packages = [
-    toolchain
-
-    # We want the unwrapped version, wrapped comes with nixpkgs' toolchain
-    pkgs.rust-analyzer-unwrapped
-  ];
-
-  RUST_SRC_PATH = "${toolchain}/lib/rustlib/src/rust/library";
-}
+{{% include "shell2.nix" %}}
 ```
 
 Finally, make sure you include the `rust-src` component in your rustup toolchain definition:
