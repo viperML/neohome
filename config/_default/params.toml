@@ -16,8 +16,8 @@ enableCodeCopy = true
 
 [header]
   layout = "basic" # valid options: basic, hamburger, hybrid, custom
-  # logo = "img/logo.jpg"
-  showTitle = true
+  logo = "img/avatar-text.svg"
+  showTitle = false
 
 [footer]
   showCopyright = true

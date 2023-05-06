@@ -1,0 +1,20 @@
+{{- if .Site.Params.header.logo }}
+  {{- $logo := resources.Get .Site.Params.header.logo }}
+  {{- if $logo }}
+    <a href="{{ "" | relLangURL }}" class="mr-2">
+      <img
+        src="{{ $logo.RelPermalink }}"
+        width="250"
+        alt="{{ .Site.Title }}"
+      />
+    </a>
+  {{- end }}
+{{- end }}
+{{- if .Site.Params.header.showTitle | default true }}
+  <a
+    class="decoration-primary-500 hover:underline hover:decoration-2 hover:underline-offset-2"
+    rel="me"
+    href="{{ "" | relLangURL }}"
+    >{{ .Site.Title | markdownify | emojify }}</a
+  >
+{{- end }}
