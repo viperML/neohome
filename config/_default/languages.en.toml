@@ -6,7 +6,7 @@ weight = 1
 rtl = false
 
 title = "ayats.org"
-description = "A powerful, lightweight theme for Hugo built with Tailwind CSS."
+description = "My personal website"
 copyright = "&copy; 2023 Fernando Ayats. Some Rights Reserved. This work is licensed under [CC-BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)"
 
 dateFormat = "2 January 2006"
@@ -16,10 +16,13 @@ dateFormat = "2 January 2006"
 
 [author]
 name = "Fernando Ayats"
-image = "img/logo.png"
+image = "img/author.png"
 # headline = "Not your ordinary theme!"
-bio = "This is an example author bio, and although there's a stock photo of a dog here, this article was actually created by a human. :dog:"
+# bio = "This is an example author bio, and although there's a stock photo of a dog here, this article was actually created by a human. :dog:"
 links = [
+  { linkedin = "https://linkedin.com/in/ayatsfer" },
+  { github = "https://github.com/viperML" },
+  { gitlab = "https://gitlab.com/viperML" },
   { email = "mailto:ayastfer@gmail.com" },
   # { link = "https://ayats.org" },
   #   { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
@@ -32,15 +35,12 @@ links = [
   #   { facebook = "https://facebook.com/username" },
   #   { flickr = "https://www.flickr.com/photos/username/" },
   #   { foursquare = "https://foursquare.com/username" },
-  { github = "https://github.com/viperML" },
-  { gitlab = "https://gitlab.com/viperML" },
   #   { google = "https://www.google.com/" },
   #   { hashnode = "https://username.hashnode.dev" },
   #   { instagram = "https://instagram.com/username" },
   #   { keybase = "https://keybase.io/username" },
   #   { kickstarter = "https://www.kickstarter.com/profile/username" },
   #   { lastfm = "https://lastfm.com/user/username" },
-  { linkedin = "https://linkedin.com/in/ayatsfer" },
   #   { mastodon = "https://mastodon.instance/@username" },
   #   { medium = "https://medium.com/username" },
   #   { microsoft = "https://www.microsoft.com/" },

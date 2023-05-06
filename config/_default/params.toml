@@ -50,7 +50,7 @@ enableCodeCopy = true
   # sharingLinks = ["facebook", "twitter", "mastodon", "pinterest", "reddit", "linkedin", "email"]
 
 [list]
-  showBreadcrumbs = false
+  showBreadcrumbs = true
   showSummary = true
   showTableOfContents = false
   showTaxonomies = false
