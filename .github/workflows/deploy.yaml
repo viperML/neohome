@@ -22,13 +22,13 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@main
 
       - name: Build
         run: cp -vrL $(nix build -L --print-out-paths --no-link) ./public
 
-      - uses: amondnet/vercel-action@v20
-        name: "Deploy to Vercel"
+      - uses: amondnet/vercel-action@v25
+        name: Deploy to Vercel
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID}}
