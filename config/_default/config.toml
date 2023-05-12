@@ -8,7 +8,7 @@ defaultContentLanguage = "en"
 enableRobotsTXT = true
 paginate = 15
 summaryLength = 0
-baseURL = "https://ayats.org"
+baseURL = "/"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
