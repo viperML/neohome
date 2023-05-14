@@ -6,7 +6,6 @@ draft: false
 summary: Experiment to have a Ubuntu installation managed declaratively, instead of imperatively
 ---
 
-# Declarative Ubuntu
 
 _"Add this PPA to be aple to install some package..."_
 

@@ -6,7 +6,6 @@ draft: false
 summary: How to to manage the global flake registry, and use flakes with channels
 ---
 
-## From channels to flakes
 
 This post serves as a quick tutorial for anyone running NixOS or home-manager with a flake. Your flake will have an input for the `nixpkgs` flake, that gets pinned to a specific commit in your `flake.lock`. For example:
 
@@ -58,7 +57,7 @@ We can classify these in:
 
 So, for each problem we will have a different solution. I have included how to do it for both NixOS and home-manager. Just pick whatever you need, or use both at the same time!
 
-### Pinning your channels
+## Pinning your channels
 
 Pre-flake nix tools use the environment variable `NIX_PATH` to query the location of some downloaded nixpkgs in your disk, which in turn is populated by the `nix-channel` tool. So the usual workflow is as follows:
 
@@ -118,7 +117,7 @@ $ readlink -f $HOME/.config/nix/inputs/nixpkgs
 
 Make sure to **remove your channels** afterwards, they are not needed anymore!
 
-### Pinning your registry
+## Pinning your registry
 
 The new `nix <command>` programs now use a new method to get `nixpkgs`, instead of querying the `NIX_PATH` environment variable. Every command needs two compontents, separated with a `#`. For an example command such as `nix shell nixpkgs#hello`, it would take:
 
