@@ -27,10 +27,9 @@ jobs:
       - name: Build
         run: cp -vrL $(nix build -L --print-out-paths --no-link) ./public
 
-      - uses: amondnet/vercel-action@v25
-        name: Deploy to Vercel
+      - name: Publish
+        uses: cloudflare/wrangler-action@2.0.0
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID}}
-          vercel-project-id: ${{ secrets.PROJECT_ID}}
-          vercel-args: "--prod "
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: pages publish --project-name=neohome ./public
+

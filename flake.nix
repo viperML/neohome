@@ -28,6 +28,9 @@
 
         devShells.base = with pkgs;
           mkShellNoCC {
+            packages = [
+              nodePackages.wrangler
+            ];
             inputsFrom = [config.mission-control.devShell];
           };
 
