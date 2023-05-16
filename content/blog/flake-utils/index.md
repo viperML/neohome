@@ -2,9 +2,11 @@
 title: Why you don't need flake-utils
 date: 2023-05-15T16:44:12Z
 tags: ['nix']
-draft: true
+draft: false
 summary: This is a rant about why you don't need flake-utils, and its pitfalls
 ---
+
+Nix flakes are used more and more, and people resort to a library called "flake-parts", which adds some ergonomics around the flake output schema. But oftentimes, this ends up as a footgun, if you don't understand what is going on behind the scenes. In this post I try to explain what it does, how to do it manually, and some alternatives.
 
 ## Flake output schema
 
@@ -123,8 +125,56 @@ In the second case, we are introducing manually another system, which ends up as
 
 ## Do we really need flake-utils?
 
+So going back to our original problem: we want to parametrize over `system`, which will be a list of known strings. We also want to prevent applying this to unrelated outputs, like `nixosConfigurations` or `overlays`. And it would be nice if it doesn't depend on any other flake [^3] , while we are at it. Turns out this is very easy to write!
 
+```nix
+{{% include "forall-flake.nix" %}}
+```
+
+What we are doing with `forAllSystems` (feel free to use any name), is esentially the same that flake-utils does, but applied to a single output. We can still run into the problems of using `<system>.<system>`, but at least we completly bypass the other problems. And it can be written in a single line of code which you can copy-paste!
+
+If you need to use some overlays or nixpkgs configuration, you can tweak it like so:
+
+```nix
+{{% include "forall-flake2.nix" %}}
+```
+
+## Conclusion
+
+If you made it this far, congratulations. Now feel free to keep using flake-parts, but now knowing how things can go wrong. But on a personal note, what I would recommend, depending on the type of flake you are developing, is the following:
+
+
+#### A) A flake just for yourself
+
+Keep in mind the shortcomings of flake-parts and my `forAllSystems` solutions. But if you want to handle flake outputs more cleanly, allow me to introduce you to [`flake-parts`](https://flake.parts). It uses the NixOS module system (which is awesome), to express the flake outputs as configuration. And it actually type-checks if what you want to output makes sense, removing the two problems from flake-parts all-together. If you want to start a new flake now, I'd greatly recommend it. An example with flake parts:
+
+```nix
+{
+  # ...
+  inputs.flake-parts.url = "github:hercules-ci/flake-parts";
+
+  outputs = inputs@{nixpkgs, flake-parts, ...}: flake-parts.lib.mkFlake {inherit inputs;} {
+    systems = [
+      "x86_64-linux"
+      "aarch64-linux"
+    ];
+
+    perSystem = {pkgs, system, ...}: {
+      packages.default = pkgs.callPackage ./package.nix {};
+
+#    ↓ flake-parts will reject these two, hooray!
+      packages.${system}.default = ...;
+      nixosConfigurations.nixos = ...;
+    };
+  };
+}
+```
+
+#### B) A flake for others to use
+
+If you are writing a flake for other people to use, try using the `forAllSystems` approach without any more external dependencies than `nixpkgs`. This way, the `flake.lock` of your consumers won't include a million copies of flake-utils.
 
 
 [^1]: At the time of writing, there is no formal specification
 [^2]: You can inspect your current system with: `nix eval --raw --impure --expr "builtins.currentSystem"`
+[^3]: Apart from `nixpkgs`, we can't escape it
