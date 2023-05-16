@@ -92,7 +92,9 @@ So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solu
 }
 ```
 
-I want you to take a minute, and understand that the **two previous snippets produce the same result!**
+{{< alert >}}
+The same result is produced by the two last snippets!
+{{</ alert >}}
 
 This function is very convenient, because now `system` is handled for us, improving the "signal/noise ratio" of our flake, and preventing us from making mistakes when dealing with multiple systems.
 
