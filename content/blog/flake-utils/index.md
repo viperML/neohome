@@ -7,13 +7,11 @@ summary: This is a rant about why you don't need flake-utils, and its pitfalls
 slug: no-flake-utils
 ---
 
-Nix flakes are used more and more, and people resort to a library called "flake-parts", which adds some ergonomics around the flake output schema. But oftentimes, this ends up as a footgun, if you don't understand what is going on behind the scenes. In this post I try to explain what it does, how to do it manually, and some alternatives.
+The usage of nix flakes is increasing, and individuals are increasingly relying on a library called "flake-utils" to enhance flakes's usability. However, this can often lead to unintended consequences if one lacks understanding of the underlying processes. In this post, I aim to clarify the functionality of "flake-utils," provide a manual approach, and explore alternative options.
 
 ## Flake output schema
 
-To begin with, I want to lightly explain what the flake output schema is.
-
-When we write a flake, we are told that it has 2 sections:
+To begin with, I want to lightly explain what the flake output schema is. When we write a flake, we are told that it has 2 sections:
 
 ```nix
 {
@@ -25,7 +23,7 @@ When we write a flake, we are told that it has 2 sections:
 }
 ```
 
-This function then, must return an attribute set. At first glance, this attrset can be freeform:
+This output function must return an attribute set. At first glance, this attrset can be freeform:
 ```nix
 {
 #                 ↓ deconstructed function args
@@ -47,12 +45,14 @@ These "blessed" outputs make up the "flake schema" [^1] :
 - `devShells.<system>.<name>`
 - *etc*
 
-`system` refers to a string, which corresponds to the **runtime system** of the package. This means, that if we are on a `x86_64-linux` [^2] system, `nix build` will automatically pick the `packages.x86_64-linux.<name>` output if we use just `<name>` (and so on for shell, develop, run...).
+`system` refers to a string, which corresponds to the **runtime system** of the package. This means, that if we are on a `x86_64-linux` [^2] system, `nix build` will automatically pick the `packages.x86_64-linux.<name>` output if we just use `<name>` (and so on for shell, develop, run...).
+
+So in general, we want to conform to this output schema of packages and devshells.
 
 
 ## Outputs for multiple systems
 
-Let's say that you are writing a flake that outputs some `package`. This should be available in multiple systems that you want to support. The easiest solution would be to use `callPackage` into an external file, so we can factor out some code, the same way we organize packages in `nixpkgs`:
+Let's say that you are writing a flake that outputs some package. This should be available in multiple systems that you want to support. For example, you want to be able to build it in your aarch64 and x86_64 machines. To do so, we can factor out the package definition into a `package.nix`, which we can call:
 
 ```nix
 {
@@ -70,9 +70,10 @@ Let's say that you are writing a flake that outputs some `package`. This should 
 }
 ```
 
-There is no need to say that this can get quite verbose very quickly. Another problem is that we are repeating the the arguments to `callPackage`, so if we need to change it, we must do it **for every system**. And if we need to use some overlay, we have to apply it for every system too.
+This can get quite verbose very quickly, as we have to enumerate every system and write the same definition for each one.
+Another problem is that we are repeating the the arguments to `callPackage`, so if we need to change it, we must do it for every system, risking making some mistake in the process. And if we need to use some overlay, we need to `import nixpkgs` for each system.
 
-So the solution to this, that many people take is using [`flake-utils`](https://github.com/numtide/flake-utils). Flake-utils contains a collections of functions that help us overcome this problem. In a nutshell, we can pass a **generic function over system**, at it will take care of generating the outputs for us.
+So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solution to this. Flake-utils contains a collections of functions that help us overcome, by factoring out the common parts of the flake, which depend on a `system` string. To dom o, we can pass a **generic function over system**, and it will take care of generating the outputs for us:
 
 ```nix
 {
@@ -91,12 +92,13 @@ So the solution to this, that many people take is using [`flake-utils`](https://
 }
 ```
 
-I want you to take a minute, and understand that the two previous snippets produce the same result!
+I want you to take a minute, and understand that the **two previous snippets produce the same result!**
+
 This function is very convenient, because now `system` is handled for us, improving the "signal/noise ratio" of our flake, and preventing us from making mistakes when dealing with multiple systems.
 
 ## When things go wrong
 
-The main problem with flake-utils is that it doesn't check if what we want to do makes sense. It just takes your input, and puts the system string in the middle. So to illustrate this, this is a common error with flake-utils:
+The main problem with flake-utils is that it doesn't check if what we want to do makes sense. It just takes your input, and puts the system string in the middle. So to illustrate this, these are some common errors with flake-utils:
 
 ```nix
 {
@@ -142,12 +144,12 @@ If you need to use some overlays or nixpkgs configuration, you can tweak it like
 
 ## Conclusion
 
-If you made it this far, congratulations. Now feel free to keep using flake-parts, but now knowing how things can go wrong. But on a personal note, what I would recommend, depending on the type of flake you are developing, is the following:
+If you made it this far, congratulations. Now feel free to keep using flake-utils, but now knowing how things can go wrong. On a personal note, what I would recommend using flake-parts or not using any framework, depending on the kind of flake you are writing.
 
 
 #### A) A flake just for yourself
 
-Keep in mind the shortcomings of flake-parts and my `forAllSystems` solutions. But if you want to handle flake outputs more cleanly, allow me to introduce you to [`flake-parts`](https://flake.parts). It uses the NixOS module system (which is awesome), to express the flake outputs as configuration. And it actually type-checks if what you want to output makes sense, removing the two problems from flake-parts all-together. If you want to start a new flake now, I'd greatly recommend it. An example with flake parts:
+Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. But if you want to handle flake outputs more cleanly, allow me to introduce you to [flake-parts](https://github.com/hercules-ci/flake-parts). It uses the NixOS module system (which is awesome), to express the flake outputs as configuration. And it actually type-checks if what you want to output makes sense, removing the two problems from flake-parts all-together. If you want to start a new flake now, I'd greatly recommend it. So a quick example could be:
 
 ```nix
 {
@@ -177,5 +179,5 @@ If you are writing a flake for other people to use, try using the `forAllSystems
 
 
 [^1]: At the time of writing, there is no formal specification
-[^2]: You can inspect your current system with: `nix eval --raw --impure --expr "builtins.currentSystem"`
-[^3]: Apart from `nixpkgs`, we can't escape it
+[^2]: To inspect your current system: `nix eval --raw --impure --expr "builtins.currentSystem"`
+[^3]: Aside from `nixpkgs`, from which we cannot escape
