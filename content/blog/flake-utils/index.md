@@ -4,6 +4,7 @@ date: 2023-05-15T16:44:12Z
 tags: ['nix']
 draft: false
 summary: This is a rant about why you don't need flake-utils, and its pitfalls
+slug: no-flake-utils
 ---
 
 Nix flakes are used more and more, and people resort to a library called "flake-parts", which adds some ergonomics around the flake output schema. But oftentimes, this ends up as a footgun, if you don't understand what is going on behind the scenes. In this post I try to explain what it does, how to do it manually, and some alternatives.
