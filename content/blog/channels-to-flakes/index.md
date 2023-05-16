@@ -3,7 +3,7 @@ title: 'Channels to flakes'
 date: 2022-02-12T14:49:55Z
 tags: ['nix']
 draft: false
-summary: How to to manage the global flake registry, and use flakes with channels
+summary: Pin your channels and registry in a flake-based NixOS or home-manager installation
 ---
 
 

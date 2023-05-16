@@ -3,7 +3,7 @@ title: 'Nix shell with rustup'
 date: 2023-03-03T11:54:31Z
 tags: ['nix']
 draft: false
-summary: Quick guide to fetching your rustup toolchains with nix
+summary: Call a toolchain.toml from nix, for better interoperability with non-nix developers
 ---
 
 In this quick blogpost I want to show how you can setup a rustup toolchain with nix. Instead of using the rustup cli app, we will be fetching the toolchains directly with nix.

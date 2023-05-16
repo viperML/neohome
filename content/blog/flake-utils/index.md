@@ -3,7 +3,7 @@ title: Why you don't need flake-utils
 date: 2023-05-15T16:44:12Z
 tags: ['nix']
 draft: false
-summary: This is a rant about why you don't need flake-utils, and its pitfalls
+summary: Learn why flake-utils can fail on you, and some alternative solutions to handling multiple system outputs.
 slug: no-flake-utils
 ---
 
