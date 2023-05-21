@@ -5,3 +5,11 @@
 code {
     font-family: 'Iosevka Web' !important;
 }
+
+.prose code::before {
+    content: ''
+}
+
+.prose code::after {
+    content: ''
+}
