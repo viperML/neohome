@@ -151,7 +151,7 @@ If you made it this far, congratulations. Now feel free to keep using flake-util
 
 #### A) A flake just for yourself
 
-Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. But if you want to handle flake outputs more cleanly, allow me to introduce you to [flake-parts](https://github.com/hercules-ci/flake-parts). It uses the NixOS module system (which is awesome), to express the flake outputs as configuration. And it actually type-checks if what you want to output makes sense, removing the two problems from flake-parts all-together. If you want to start a new flake now, I'd greatly recommend it. So a quick example could be:
+Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. But if you want to handle flake outputs more cleanly, allow me to introduce you to [flake-parts](https://github.com/hercules-ci/flake-parts). It uses the NixOS module system (which is awesome), to express the flake outputs as configuration. And it actually type-checks if what you want to output makes sense, removing the two problems from flake-utils all-together. If you want to start a new flake now, I'd greatly recommend it. A quick example could be:
 
 ```nix
 {
@@ -167,8 +167,7 @@ Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. B
     perSystem = {pkgs, system, ...}: {
       packages.default = pkgs.callPackage ./package.nix {};
 
-#    ↓ flake-parts will reject these two, hooray!
-      packages.${system}.default = ...;
+#    ↓ flake-parts will reject this, hooray!
       nixosConfigurations.nixos = ...;
     };
   };
@@ -177,7 +176,7 @@ Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. B
 
 #### B) A flake for others to use
 
-If you are writing a flake for other people to use, try using the `forAllSystems` approach without any more external dependencies than `nixpkgs`. This way, the `flake.lock` of your consumers won't include a million copies of flake-utils.
+If you are writing a flake for other people to use, try using the `forAllSystems` approach. Doing so, your flake won't pull more dependencies and you will keep the `flake.lock` of your consumers clean of a million-copies of flake-utils.
 
 
 [^1]: At the time of writing, there is no formal specification
