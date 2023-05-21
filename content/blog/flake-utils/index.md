@@ -146,7 +146,7 @@ If you need to use some overlays or nixpkgs configuration, you can tweak it like
 
 ## Conclusion
 
-If you made it this far, congratulations. Now feel free to keep using flake-utils, but now knowing how things can go wrong. On a personal note, what I would recommend using flake-parts or not using any framework, depending on the kind of flake you are writing.
+If you made it this far, congratulations. Now feel free to keep using flake-utils, but now knowing how things can go wrong. On a personal note, I would recommend either using flake-parts, or not using any framework; depending on the kind of flake you are writing.
 
 
 #### A) A flake just for yourself
