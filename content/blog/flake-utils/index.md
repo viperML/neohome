@@ -73,7 +73,7 @@ Let's say that you are writing a flake that outputs some package. This should be
 This can get quite verbose very quickly, as we have to enumerate every system and write the same definition for each one.
 Another problem is that we are repeating the the arguments to `callPackage`, so if we need to change it, we must do it for every system, risking making some mistake in the process. And if we need to use some overlay, we need to `import nixpkgs` for each system.
 
-So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solution to this. Flake-utils contains a collections of functions that help us overcome, by factoring out the common parts of the flake, which depend on a `system` string. To dom o, we can pass a **generic function over system**, and it will take care of generating the outputs for us:
+So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solution to this. It contains a collection of functions that help us collect the common pieces of code into a single block, and apply it to every system. The main one is `eachSystem`, to which we pass a **generic function over system**, and it will take care of generating the outputs for us:
 
 ```nix
 {
