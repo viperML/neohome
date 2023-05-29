@@ -1,9 +1,9 @@
 ---
-title: 'Nix development workflow'
+title: 'Development workflow with Nix'
 date: 2023-05-28T21:18:09Z
 tags: ['nix']
 draft: false
-summary: 'An overview of the main components: devshells and direnv'
+summary: 'A getting-started guide to nix devshells'
 slug: nix-workflow
 ---
 
