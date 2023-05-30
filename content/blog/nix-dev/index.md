@@ -166,7 +166,9 @@ pkgs.mkShell {
 }
 ```
 
-If you need packages that are not available on nixpkgs, and you need to resort to pip/poetry, you can still use python's venv.
+### Poetry 
+
+If you need packages that are not available on nixpkgs, instead of packaging it you can resort to using poetry. In this shell we use nix to provide python and poetry, and configure it to automatically enter the venv with direnv.
 
 ```nix
 pkgs.mkShell {
@@ -193,7 +195,7 @@ pkgs.mkShell {
 And modify your `.envrc` to create the venv created by poetry:
 
 ```bash
-use nix
+use flake
 watch_file .venv
 if [ -d .venv ]; then
   source .venv/bin/activate
