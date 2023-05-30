@@ -180,7 +180,24 @@ pkgs.mkShell {
     pkgs.stdenv.cc.cc
     # Add any missing library needed by a python package
   ];
+  
+  # Put the venv on the repo, so direnv can access it
+  POETRY_VIRTUALENVS_IN_PROJECT = "true";
+  POETRY_VIRTUALENVS_PATH = "{project-dir}/.venv";
+  
+  # Use python from path, so you can use a different version to the one bundled with poetry
+  POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON = "true";
 }
+```
+
+And modify your `.envrc` to create the venv created by poetry:
+
+```bash
+use nix
+watch_file .venv
+if [ -d .venv ]; then
+  source .venv/bin/activate
+fi
 ```
 
 
