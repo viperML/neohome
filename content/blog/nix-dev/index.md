@@ -270,6 +270,7 @@ pkgs.mkShell {
     pkgs.nodePackages.typescript-language-server
   ];
 }
+```
 
 # Keep nixing!
 
