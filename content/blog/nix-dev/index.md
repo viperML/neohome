@@ -239,8 +239,37 @@ pkgs.mkShell.override {
     pkgs.boost.dev
     pkgs.fmt.dev
   ];
+```
+
+## NodeJS
+
+Unlike C/C++, NodeJS is quite straightfoward. While most things will be handled by your editor, you might want to open a quick shell to make certain packages available to yourself. The packages below are generally universal, but certain frameworks (i.e Svelte or NextJS) may require additional packages to be added to the shell.
+```nix
+pkgs.mkShell {
+  packages = [
+    # standard toolkit
+    pkgs.nodejs # nixpkgs provides a "nodejs" package that corresponds to the current LTS version of nodejs, but you can specify a version (i.e node_20) if necessary
+    pkgs.yarn
+    pkgs.pnpm # a faster alternative to npm and yarn, with a less adopted toolchain
+
+    # optionally required by your code editor to lint and format your code
+    pkgs.nodePackages.prettier # formatter
+    pkgs.nodePackages.eslint # linter
+
+    # example package to serve a static nextjs export
+    pkgs.nodePackages.serve
+  ];
 }
 ```
+
+For globally installing packages, remember that the ad-hoc `npm install -g <nodePackage>` method is not supported on NixOS, so you will need to add packages to your shell or environment packages to make them globally available. An example language server installation would look like this.
+```nix
+pkgs.mkShell {
+  packages = [
+    pkgs.nodejs
+    pkgs.nodePackages.typescript-language-server
+  ];
+}
 
 # Keep nixing!
 
