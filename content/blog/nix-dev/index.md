@@ -192,7 +192,7 @@ pkgs.mkShell {
 }
 ```
 
-And modify your `.envrc` to create the venv created by poetry:
+And modify your `.envrc` to use the venv created by poetry:
 
 ```bash
 use flake
