@@ -3,13 +3,13 @@
 {
   congo = {
     pname = "congo";
-    version = "v2.5.4";
-    src = fetchFromGitHub ({
+    version = "v2.6.1";
+    src = fetchFromGitHub {
       owner = "jpanther";
       repo = "congo";
-      rev = "v2.5.4";
+      rev = "v2.6.1";
       fetchSubmodules = false;
-      sha256 = "sha256-Vk+F8c+1UpohcSJfqmctWJo8hhAasAK8mX28GAX0zOE=";
-    });
+      sha256 = "sha256-2A+aTr4Ozog128PADFHdQDnDIPquJCBlnZedZN/mZlA=";
+    };
   };
 }

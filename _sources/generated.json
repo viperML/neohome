@@ -13,10 +13,10 @@
             "name": null,
             "owner": "jpanther",
             "repo": "congo",
-            "rev": "v2.5.4",
-            "sha256": "sha256-Vk+F8c+1UpohcSJfqmctWJo8hhAasAK8mX28GAX0zOE=",
+            "rev": "v2.6.1",
+            "sha256": "sha256-2A+aTr4Ozog128PADFHdQDnDIPquJCBlnZedZN/mZlA=",
             "type": "github"
         },
-        "version": "v2.5.4"
+        "version": "v2.6.1"
     }
 }

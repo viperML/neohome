@@ -4,6 +4,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     mission-control.url = "github:Platonic-Systems/mission-control";
     flake-root.url = "github:srid/flake-root";
+    mkshell-minimal.url = "github:viperML/mkshell-minimal";
   };
 
   outputs = inputs:
@@ -26,13 +27,14 @@
       }: {
         legacyPackages = pkgs;
 
-        devShells.base = with pkgs;
-          mkShellNoCC {
-            packages = [
-              nodePackages.wrangler
-            ];
-            inputsFrom = [config.mission-control.devShell];
-          };
+        devShells.base = inputs.mkshell-minimal pkgs {
+          packages = [
+            pkgs.nodePackages.wrangler
+            pkgs.hugo
+          ];
+          HUGO_THEMESDIR = config.packages.themes;
+          inputsFrom = [config.mission-control.devShell];
+        };
 
         packages.themes = lib.pipe (pkgs.callPackages ./_sources/generated.nix {}) [
           builtins.attrValues
@@ -85,7 +87,7 @@
                   echo "Comparing $file"
                   echo "===="
                   echo "$theme_file"
-                  diff -u --color=always "$theme_file" "$file" || :
+                  ${pkgs.diffutils}/bin/diff -u --color=always "$theme_file" "$file" || :
                   echo
                 fi
               done
