@@ -48,7 +48,7 @@ Some examples of commands that won’t use this nixpkgs rev of your flake, inclu
 - `nix-shell -p <package>`
 - `nix run nixpkgs#<package>`
 - Any nix code that uses `import <nixpkgs> {}`
-- `nix-env -iA <package>` (you don’t want nix-env anyways…​)
+- `nix-env -iA <package>` (you don’t want nix-env anyway…​)
 
 We can classify these in:
 
@@ -57,78 +57,20 @@ We can classify these in:
 
 So, for each problem we will have a different solution. I have included how to do it for both NixOS and home-manager. Just pick whatever you need, or use both at the same time!
 
-## Pinning your channels
-
-Pre-flake nix tools use the environment variable `NIX_PATH` to query the location of some downloaded nixpkgs in your disk, which in turn is populated by the `nix-channel` tool. So the usual workflow is as follows:
-
-- The user adds nixpkgs as a channel with `nix-channel --add`
-- `nixpkgs` is then downloaded into the disk into a special location.
-- This location is by default in the `NIX_PATH` environment variable.
-- Cli tools query the environment variable to know where to find it.
-
-You may also have encountered the usage of `NIX_PATH` in nix code, with the usage of the diamond-path operator:
-
-```nix
-with import <nixpkgs> {};
-```
-
-To query the path to which `<nixpkgs>` resolves to, you can use `$ nix eval --impure --expr "<nixpkgs>"`
-
-So, the easiest solution is to set the value **NIX_PATH** to whatever **nixpkgs** our flake uses. In the process, we will also create “proxy” links (`/etc/nix/inputs/nixpkgs` and `~/.config/nix/inputs/nixpkgs`), so we can safely update it without reloading the environment.
-
-```nix
-{
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-  }: {
-    nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
-      # ...
-      modules = [
-        {
-          environment.etc."nix/inputs/nixpkgs".source = nixpkgs.outPath;
-          nix.nixPath = ["nixpkgs=/etc/nix/inputs/nixpkgs"];
-        }
-      ];
-    };
-    homeConfigurations.USER = home-manager.lib.homeManagerConfiguration {
-      # ...
-      modules = [
-        (args: {
-          xdg.configFile."nix/inputs/nixpkgs".source = nixpkgs.outPath;
-          home.sessionVariables.NIX_PATH = "nixpkgs=${args.config.xdg.configHome}/nix/inputs/nixpkgs$\{NIX_PATH:+:$NIX_PATH}";
-        })
-      ];
-    };
-  };
-}
-```
-
-After rebuilding, check if your nixpkgs was inserted into NIX_PATH:
-
-```
-$ printenv NIX_PATH
-nixpkgs=/home/<user>/.config/nix/inputs/nixpkgs
-
-$ readlink -f $HOME/.config/nix/inputs/nixpkgs
-/nix/store/<hash>-source
-```
-
-Make sure to **remove your channels** afterwards, they are not needed anymore!
-
 ## Pinning your registry
 
-The new `nix <command>` programs now use a new method to get `nixpkgs`, instead of querying the `NIX_PATH` environment variable. Every command needs two compontents, separated with a `#`. For an example command such as `nix shell nixpkgs#hello`, it would take:
+The new `nix <command>` programs now use a new method to get `nixpkgs`, instead of querying the `NIX_PATH` environment variable. Every command needs two components, separated with a `#`. For an example command such as `nix shell nixpkgs#hello`, it would take:
 
 - A flake reference (_flakeref_): `nixpkgs`
-- A flake output: `hello` (expaned to `legacyPackages.<system>.hello`)
+- A flake output: `hello` (expanded to `legacyPackages.<system>.hello`)
 
-There are [several types](https://nixos.org/manual/nix/unstable/command-ref/new-cli/nix3-flake.html#types) for flakerefs. In this case, the flakeref `nixpkgs` is **indirect**, that means that it queries the **flake registry** to resolve to a different type: `github:NixOS/nixpkgs/nixpkgs-unstable`.
+There are [several types](https://nixos.org/manual/nix/unstable/command-ref/new-cli/nix3-flake.html#types) of flakerefs. In this case, the flakeref `nixpkgs` is indirect, that means that it queries the flake registry to resolve to a different type: `github:NixOS/nixpkgs/nixpkgs-unstable`. By default all nix installations query the internet when you use the `nixpkgs` flakeref.
 
-So, if we want the flakeref `nixpkgs` to use the same commit as we use in our flake, the solution is to modifiy the **flake regitry**, so it resolves to our `nixpkgs` rev.
+The solution is to tell nix to use our own nixpkgs rev, instead of downloading the latest from the internet. This is called "pinning" the registry, and can be easily done by adding a new `nixpkgs` entry to the flake registry.
 
 ```nix
+# flake.nix
+# ...
 {
   outputs = {
     self,
@@ -162,3 +104,71 @@ $ nix registry list
 user   flake:nixpkgs path:/nix/store/<hash>-source<...>
 # ...
 ```
+
+{{< alert >}}
+Some guides suggest pinning every input for your flake. This is not really needed if you just want to use the `nixpkgs` flake. For the sake of simplicity, only the `nixpkgs` flake is pinned in this guide.
+{{</ alert >}}
+
+## Pinning your channels
+
+Pre-flake nix tools use the environment variable `NIX_PATH` to query the location of some downloaded nixpkgs in your disk, which in turn is populated by the `nix-channel` tool. So the usual workflow is as follows:
+
+- The user adds nixpkgs as a channel with `nix-channel --add`
+- `nixpkgs` is then downloaded into the disk into a special location.
+- This location is by default in the `NIX_PATH` environment variable.
+- Cli tools query the environment variable to know where to find it.
+
+You may also have encountered the usage of `NIX_PATH` in nix code, with the usage of the diamond-path operator:
+
+```nix
+with import <nixpkgs> {};
+```
+
+To query the path to which `<nixpkgs>` resolves to, you can use `$ nix eval --impure --expr "<nixpkgs>"`
+
+{{< alert >}}
+Updated!
+{{</ alert >}}
+
+To pin `NIX_PATH`, now we can directly reference the `nixpkgs` flake from the registry, by configuring
+`NIX_PATH=nixpkgs=flake:nixpkgs`.
+
+
+```nix
+{
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+  }: {
+    nixosConfigurations.HOSTNAME = nixpkgs.lib.nixosSystem {
+      # ...
+      modules = [
+        {
+          nix.nixPath = ["nixpkgs=flake:nixpkgs"];
+        }
+      ];
+    };
+    homeConfigurations.USER = home-manager.lib.homeManagerConfiguration {
+      # ...
+      modules = [
+        {
+          home.sessionVariables.NIX_PATH = "nixpkgs=nixpkgs=flake:nixpkgs$\{NIX_PATH:+:$NIX_PATH}";
+        }
+      ];
+    };
+  };
+}
+```
+
+After rebuilding, check if your nixpkgs was inserted into NIX_PATH:
+
+```
+$ printenv NIX_PATH
+nixpkgs=flake:nixpkgs
+
+$ nix eval --impure --expr '<nixpkgs>'
+/nix/store/<hash>-source
+```
+
+Afterwards, you can remove your channels for your user and root, as they are not needed anymore.
