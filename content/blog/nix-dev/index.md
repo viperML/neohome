@@ -225,17 +225,15 @@ pkgs.mkShell.override {
 To propery discover libraries, you may need a combination of the following tools. Under the hood, when they are added in `packages`, code is executed to properly configure the environment, such that it "just works".
 
 ```nix
-pkgs.mkShell.override {
-  stdenv = pkgs.clang15Stdenv;
-} {
+pkgs.mkShell {
   packages = [
-    # Choose the ones you need
+    # Choose the build tools that you need
     pkgs.cmake
     pkgs.pkg-config
     pkgs.meson
     pkgs.ninja
 
-    # Use some libraries
+    # Add some libraries
     pkgs.boost.dev
     pkgs.fmt.dev
   ];
