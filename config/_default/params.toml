@@ -28,7 +28,7 @@ enableCodeCopy = true
 [homepage]
   layout = "profile" # valid options: page, profile, custom
   showRecent = true
-  recentLimit = 5
+  recentLimit = 100
 
 [article]
   showDate = true
