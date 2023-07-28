@@ -7,7 +7,7 @@ summary: 'A getting-started guide to nix devshells'
 slug: nix-workflow
 ---
 
-Devshells are a very powerful tool, and one of the big selling points of [Nix](https://nixos.org/). A devshell allows you to enter an environment where you have are your development dependencies available. This means that:
+Devshells are a very powerful tool, and one of the big selling points of [Nix](https://nixos.org/). A devshell allows you to enter an environment where you have all your development dependencies available. This means that:
 
 - Each project is completely isolated from each other, no more dependency hell between them.
 - Packages don't pollute your global environment.
