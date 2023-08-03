@@ -149,7 +149,7 @@ In this example, we leverage the `withPackages` function of nixpkgs' python to a
 ```nix
 pkgs.mkShell {
   packages = [
-    (python3.withPackages (python-pkgs: [
+    (pkgs.python3.withPackages (python-pkgs: [
       python-pkgs.numpy
       python-pkgs.pandas
       python-pkgs.scipy
