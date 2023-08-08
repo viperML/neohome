@@ -48,7 +48,7 @@ Some examples of commands that won’t use this nixpkgs rev of your flake, inclu
 - `nix-shell -p <package>`
 - `nix run nixpkgs#<package>`
 - Any nix code that uses `import <nixpkgs> {}`
-- `nix-env -iA <package>` (you don’t want nix-env anyway…​)
+- `nix-env -iA <package>` (you don’t want nix-env anyway…)
 
 We can classify these in:
 
@@ -153,7 +153,7 @@ To pin `NIX_PATH`, now we can directly reference the `nixpkgs` flake from the re
       # ...
       modules = [
         {
-          home.sessionVariables.NIX_PATH = "nixpkgs=nixpkgs=flake:nixpkgs$\{NIX_PATH:+:$NIX_PATH}";
+          home.sessionVariables.NIX_PATH = "nixpkgs=flake:nixpkgs$\{NIX_PATH:+:$NIX_PATH}";
         }
       ];
     };
