@@ -7,12 +7,12 @@ summary: 'A getting-started guide to nix devshells'
 slug: nix-workflow
 ---
 
-Devshells are a very powerful tool, and one of the big selling points of [Nix](https://nixos.org/). A devshell allows you to enter an environment where you have all your development dependencies available. This means that:
+Devshells are a very powerful tool, and one of the big selling points of [Nix](https://nixos.org/). A devshell allows you to enter an environment where you have all your development dependencies available, without altering the host system. This means that:
 
 - Each project is completely isolated from each other, no more dependency hell between them.
-- Packages don't pollute your global environment.
+- Packages don't pollute the system dependency graph, and the packages are only "visible" within the shell.
 
-And even better, nix allows you to pin your dependencies such that they are completely reproducible. If you share your project with someone else, they will get the exact same environment as you. No more "run these 1000 commands to get started"!
+Sharing a devshells is easy, just checkout the nixfiles into the repo and everybody will be one `nix-shell` away from getting all the requiements to build or use the project.
 
 So in this blog post, I want to give a quick overview of how to get started from the very beginning.
 
@@ -21,30 +21,10 @@ So in this blog post, I want to give a quick overview of how to get started from
 
 To start from the very beginning, you need to install nix. You can install it on any Linux distribution and macOS too.
 
-- [Official installer](https://nixos.org/download.html)
-- Determinate System's [nix-installer](https://github.com/DeterminateSystems/nix-installer)
+- Official installer: https://nixos.org/download.html
+- Determinate System's installer: https://github.com/DeterminateSystems/nix-installer
 
-DS's nix-installer already enables flakes and has a better UX, but both should give you a similar result.
-
-If you chose the official installer, enable flakes by adding the following line to your `~/config/nix/nix.conf`:
-
-```conf
-experimental-features = nix-command flakes
-```
-
-You can then verify that it works properly, and proceed to the next step.
-
-```console
-$ nix run nixpkgs#cowsay -- hi
- ____
-< hi >
- ----
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-```
+The determinate installer provides a nicer user experience, but I am in my responsibility to also mention the official one.
 
 ## Install direnv
 
@@ -53,26 +33,48 @@ $ nix run nixpkgs#cowsay -- hi
 ```
 $ cargo --version
 -> cargo: command not found
+
 $ cd Documents/autonix
 $ cargo --version
 cargo 1.64.0
 ```
 
-We will use it to automatically load a nix shell when we enter a project directory. This avoids having to enter it manually.
+It will load the nix shell automatically upon entering the directory, and keep your current prompt instead of dropping you into stock bash.
 
-It also integrates with your editor, so make sure to both hook it into your shell, and install the editor plugin.
+To install it, you need to install the direnv executable along with the hook extensions:
 
 
 - Install the base direnv package, available in your distro (`apt install direnv`, `brew install direnv`, etc)
-- [Hook it into your shell](https://direnv.net/docs/installation.html)
-- Editor plugin:
+- [Hook into your shell](https://direnv.net/docs/hook.html)
+- Hook into your editor:
     - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=mkhl.direnv)
     - [Emacs](https://github.com/wbolster/emacs-direnv)
 
 
 ## Init the project
 
-We will start by writing the basic flake boilerplate by hand (don't blame me for not having a `nix init` command).
+To instantiate a nix shell, there are two approaches: using a classic `shell.nix` file, or using a flake. While I would recommend a simple `shell.nix`, a simple flake boilerplate is also provided.
+
+{{< alert >}}
+If you are unsure, use a classic `shell.nix` file. The main difference for this example is that the flake will automatically pin the nixpkgs version to the `flake.lock`, which you may not need for a simple demo.
+{{</ alert >}}
+
+
+### Classic nix
+
+```nix
+# shell.nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  pkgs.mkShell {
+    packages = [  ];
+    # ...
+  }
+```
+
+### Flake
+
 
 ```nix
 # flake.nix
@@ -101,11 +103,19 @@ We will start by writing the basic flake boilerplate by hand (don't blame me for
 If you use git, make sure to `git add` every nix file!
 {{</ alert >}}
 
-We will also add a configuration file for direnv, such that it loads the shell upon entering the directory.
+### direnv
+
+You also need a file telling direnv how to load the nix files. Its contents will depend if you used a classic `shell.nix` or a flake.
+
 
 ```bash
 # .envrc
-use flake
+
+# for a shell.nix:
+use nix
+
+# for a flake.nix:
+# use flake
 ```
 
 
@@ -166,7 +176,7 @@ pkgs.mkShell {
 }
 ```
 
-### Poetry 
+### Poetry
 
 If you need packages that are not available on nixpkgs, instead of packaging it you can resort to using poetry. In this shell we use nix to provide python and poetry, and configure it to automatically enter the venv with direnv.
 
@@ -184,11 +194,11 @@ pkgs.mkShell {
     # Add any missing library needed
     # You can use the nix-index package to locate them, e.g. nix-locate -w --top-level --at-root /lib/libudev.so.1
   ];
-  
+
   # Put the venv on the repo, so direnv can access it
   POETRY_VIRTUALENVS_IN_PROJECT = "true";
   POETRY_VIRTUALENVS_PATH = "{project-dir}/.venv";
-  
+
   # Use python from path, so you can use a different version to the one bundled with poetry
   POETRY_VIRTUALENVS_PREFER_ACTIVE_PYTHON = "true";
 }
@@ -197,7 +207,8 @@ pkgs.mkShell {
 And modify your `.envrc` to use the venv created by poetry:
 
 ```bash
-use flake
+use nix # or use flake...
+
 watch_file .venv
 if [ -d .venv ]; then
   source .venv/bin/activate
