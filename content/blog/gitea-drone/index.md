@@ -32,7 +32,8 @@ To deploy secrets to our machine, we could think of these options:
 [sops-nix](https://github.com/Mic92/sops-nix) uses a **hybrid** approach: our secrets will be stored encrypted in our configuration. When the machine boots up, it try to decrypt them using the age key, and put them into a specific path (`config.sops.secrets.<my-secret>.path`).
 
 ```nix
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   sops.age.keyFile = "/secrets/age/keys.txt";
 }
 ```
@@ -46,7 +47,7 @@ NixOS provides a **module** to setup Gitea. We only need to add the postgres con
 The service will listen on the port `3001`, where it will receive the http requests forwarded by nginx.
 
 ```nix
-{ config, pkgs, ... }:
+{ config, ... }:
 {
   services.nginx.virtualHosts."git.my-domain.tld" = {
     enableACME = true;
@@ -57,17 +58,18 @@ The service will listen on the port `3001`, where it will receive the http reque
   };
 
   services.postgresql = {
-    authentication = ''
-      local gitea all ident map=gitea-users
-    '';
-    identMap = # Map the gitea user to postgresql ''
-      gitea-users gitea gitea
-    '';
+    ensureDatabases = [ config.services.gitea.user ];
+    ensureUsers = [
+      {
+        name = config.services.gitea.database.user;
+        ensurePermissions."DATABASE ${config.services.gitea.database.name}" = "ALL PRIVILEGES";
+      }
+    ];
   };
 
   sops.secrets."postgres/gitea_dbpass" = {
     sopsFile = ../.secrets/postgres.yaml; # bring your own password file
-    owner = config.users.users.gitea.name;
+    owner = config.services.gitea.user;
   };
 
   services.gitea = {
@@ -132,6 +134,7 @@ in
     createHome = true;
     group = droneserver;
   };
+
   users.groups.droneserver = { };
 
   services.nginx.virtualHosts."drone.my-server.tld" = {
@@ -142,12 +145,14 @@ in
 
   services.postgresql = {
     ensureDatabases = [ droneserver ];
-    ensureUsers = [{
-      name = droneserver;
-      ensurePermissions = {
-        "DATABASE ${droneserver}" = "ALL PRIVILEGES";
-      };
-    }];
+    ensureUsers = [
+      {
+        name = droneserver;
+        ensurePermissions = {
+          "DATABASE ${droneserver}" = "ALL PRIVILEGES";
+        };
+      }
+    ];
   };
 
   # Secrets configured:
@@ -163,21 +168,24 @@ in
 
   systemd.services.drone-server = {
     wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      EnvironmentFile = [
-        config.sops.secrets.drone.path
-      ];
-      Environment = [
-        "DRONE_DATABASE_DATASOURCE=postgres:///droneserver?host=/run/postgresql"
-        "DRONE_DATABASE_DRIVER=postgres"
-        "DRONE_SERVER_PORT=:3030"
-        "DRONE_USER_CREATE=username:viperML,admin:true" # set your admin username
 
-        "DRONE_GITEA_SERVER=https://git.my-domain.tld"
-        "DRONE_SERVER_HOST=drone.my-domain.tld"
-        "DRONE_SERVER_PROTO=https"
-      ];
-      ExecStart = "${pkgs.drone}/bin/drone-server";
+    script = ''
+      ${pkgs.drone}/bin/drone-server
+    '';
+
+    serviceConfig = {
+      EnvironmentFile = config.sops.secrets.drone.path;
+
+      Environment = {
+        DRONE_DATABASE_DATASOURCE = "postgres:///droneserver?host=/run/postgresql";
+        DRONE_DATABASE_DRIVER = "postgres";
+        DRONE_SERVER_PORT = ":3030";
+        DRONE_USER_CREATE = "username:viperML,admin:true"; # set your admin username
+
+        DRONE_GITEA_SERVER = "https://git.my-domain.tld";
+        DRONE_SERVER_HOST = "drone.my-domain.tld";
+        DRONE_SERVER_PROTO = "https";
+      };
       User = droneserver;
       Group = droneserver;
     };
@@ -196,19 +204,19 @@ in
   systemd.services.drone-runner-docker = {
     enable = true;
     wantedBy = [ "multi-user.target" ];
+    script = ''
+      ${pkgs.drone-runner-docker}/bin/drone-runner-docker
+    '';
     ### MANUALLY RESTART SERVICE IF CHANGED
     restartIfChanged = false;
     serviceConfig = {
-      Environment = [
-        "DRONE_RPC_PROTO=http"
-        "DRONE_RPC_HOST=localhost:3030"
-        "DRONE_RUNNER_CAPACITY=2"
-        "DRONE_RUNNER_NAME=drone-runner-docker"
-      ];
-      EnvironmentFile = [
-        config.sops.secrets.drone.path
-      ];
-      ExecStart = "${pkgs.drone-runner-docker}/bin/drone-runner-docker";
+      Environment = {
+        DRONE_RPC_PROTO = "http";
+        DRONE_RPC_HOST = "localhost:3030";
+        DRONE_RUNNER_CAPACITY = 2;
+        DRONE_RUNNER_NAME = "drone-runner-docker";
+      };
+      EnvironmentFile = config.sops.secrets.drone.path;
       User = "drone-runner-docker";
       Group = "drone-runner-docker";
     };
@@ -227,6 +235,9 @@ in
   systemd.services.drone-runner-exec = {
     enable = true;
     wantedBy = [ "multi-user.target" ];
+    script = ''
+      ${pkgs.drone-runner-exec}/bin/drone-runner-exec
+    '';
     ### MANUALLY RESTART SERVICE IF CHANGED
     restartIfChanged = true;
     confinement.enable = true;
@@ -245,15 +256,15 @@ in
       pkgs.gzip
     ];
     serviceConfig = {
-      Environment = [
-        "DRONE_RPC_PROTO=http"
-        "DRONE_RPC_HOST=127.0.0.1:3030"
-        "DRONE_RUNNER_CAPACITY=2"
-        "DRONE_RUNNER_NAME=drone-runner-exec"
-        "NIX_REMOTE=daemon"
-        "PAGER=cat"
-        "DRONE_DEBUG=true"
-      ];
+      Environment = {
+        DRONE_RPC_PROTO = "http";
+        DRONE_RPC_HOST = "127.0.0.1:3030";
+        DRONE_RUNNER_CAPACITY = "2";
+        DRONE_RUNNER_NAME = "drone-runner-exec";
+        NIX_REMOTE = "daemon";
+        PAGER = "cat";
+        DRONE_DEBUG = "true";
+      };
       BindPaths = [
         "/nix/var/nix/daemon-socket/socket"
         "/run/nscd/socket"
@@ -273,10 +284,7 @@ in
         "/etc/resolv.conf"
         "/nix/"
       ];
-      EnvironmentFile = [
-        config.sops.secrets.drone.path
-      ];
-      ExecStart = "${pkgs.drone-runner-exec}/bin/drone-runner-exec";
+      EnvironmentFile = config.sops.secrets.drone.path;
       User = "drone-runner-exec";
       Group = "drone-runner-exec";
     };
@@ -291,7 +299,7 @@ in
 Finally, to tie everything together, we set up a basic Nginx service, that proxies the requests to the virtual hosts, to the internal services. Remember to punch a hole in your firewall, as by default, the firewall is enabled with the ports closed!
 
 ```nix
-{ config, pkgs, ... }:
+{
   networking.firewall.allowedTCPPorts = [ 80 443 ];
 
   services.nginx = {
