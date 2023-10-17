@@ -240,6 +240,8 @@ To propery discover libraries, you may need a combination of the following tools
 ```nix
 pkgs.mkShell {
   packages = [
+    pkgs.gdb
+    
     # Choose the build tools that you need
     pkgs.cmake
     pkgs.pkg-config
@@ -247,9 +249,22 @@ pkgs.mkShell {
     pkgs.ninja
 
     # Add some libraries
-    pkgs.boost.dev
-    pkgs.fmt.dev
+    pkgs.boost
+    pkgs.fmt
   ];
+}
+```
+
+{{< alert >}}
+Some packages may come with different outputs. When you search in https://search.nixos.org , you will see at least `out`, and `dev` if the packages contains headers. If you add simply `pkgs.my-awesome-library` to `packages = []`, nix should figure out that you want `pkgs.my-awesome-library.dev`, but you can also type it manually.
+{{</ alert >}}
+
+Nixpkgs add some compiler flags by default as part of the hardening profile. You can read more about it in the [manual section](https://nixos.org/manual/nixpkgs/stable/#sec-hardening-in-nixpkgs). Although for a devshell, you may want to turn off all these default flags, so you get a better debugging experience:
+
+```nix
+pkgs.mkShell {
+     hardeningDisable = ["all"];
+}
 ```
 
 ## NodeJS
