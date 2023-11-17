@@ -25,7 +25,7 @@ When we do a "regular" build, the compiled program runs on the same "system" tha
 
 While for the regular case, the systems match, for cross-compilations these 2 systems are different. For example, using my desktop PC to build a program for my Arduino. My CPU doesn't use the same instruction set as the arduino, and the compiled program wouldn't even be able to interact with the hardware, yet the compiler, which is a regular x86_64 binary, can produce that output.
 
-When dealing with cross-compilation, we will always have deal with this tuple. The buzzwords are:
+When dealing with cross-compilation, we will always have to deal with this tuple. The buzzwords are:
 
 - **Build system/platform**, **nativeBuildInputs**, **buildPackages** : refer to the machine that builds the program.
 - **Target system/platform**, **buildInputs**, **targetPackages** : refer to the machine in which the program will run.
@@ -75,7 +75,7 @@ $ /run/current-system/sw/bin/uname -m
 x86_64
 ```
 
-Thanks to nix's store model, this devshell is no different than any other native shell. The GCC that is being ran is a regular GCC that would be installed in a `aarch64` system, but automatically redirected to qemu.
+Thanks to nix's store model, this devshell is no different from any other native shell. The GCC that is being ran is a regular GCC that would be installed in a `aarch64` system, but automatically redirected to qemu.
 
 As a result, the configuration for this environment is as simple as possible: because there is no configuration to do. However, as you may have guessed, running everything through `qemu` does take a performance hit. For example, for a trivial hello world program, it is already noticeable:
 
@@ -156,7 +156,7 @@ Hello world
 Let's say that we want to add some dependencies to the previous C shell. For the sake of argument, let's use these packages as examples of 3 archetypes of packages that you might need:
 
 
-- **libunistring**, C library for handling unicode strings. It needs to run on the target system.
+- **libunistring**, C library for handling Unicode strings. It needs to run on the target system.
 - **hugo**: a static site generator. It only needs to run on the build system.
 - **gdb**: the GNU debugger. It runs on the build system, but may need special handling for the target system.
 
@@ -191,7 +191,7 @@ nix-repl> pkgsCross.aarch64-multiplatform.buildPackages.gdb
 
 For `gdb` specifically, `.buildPackages.gdb` doesn't match the regular native package, as some extra configuration is needed such that it can handle the cross-compilation environment.
 
-With this in mind, both `stdenv.mkDerivation` and `mkShell` also require that we pass the proper pakages to either `nativeBuildInputs` (`.buildPackages`) or `buildInputs` (regular packages from `pkgsCross`). Our devshell example would look like the following snippet:
+With this in mind, both `stdenv.mkDerivation` and `mkShell` also require that we pass the proper packages to either `nativeBuildInputs` (`.buildPackages`) or `buildInputs` (regular packages from `pkgsCross`). Our devshell example would look like the following snippet:
 
 ```nix
 let
@@ -238,7 +238,7 @@ hugo is the main command, used to build your Hugo site.
 
 As a quick note, it is possible to use `callPackage` to automatically pass the correct set of packages to `mkShell`. While we can `callPackage` a function in the same file, let's split the shell into two files:
 
-- The shell entrypoint, called `shell.nix`. This file only instantiates nixpkgs and `callPackage`'s the actuall shell. This could also be replaced by a `flake.nix`:
+- The shell entry point, called `shell.nix`. This file only instantiates nixpkgs and `callPackage`s the actual shell. This could also be replaced by a `flake.nix`:
 
 ```nix
 # shell.nix
@@ -288,7 +288,7 @@ Remember that to use `callPackage`, you need to properly split your dependencies
 
 # Beyond pkgsCross
 
-All the elements under `pkgsCross` are just premade configurations of the nixpkgs cross-building mechanism, which you can inspect in [lib/systems/examples.nix](https://github.com/NixOS/nixpkgs/blob/master/lib/systems/examples.nix). The header comment also mentions a clue about how this is handled internally:
+All the elements under `pkgsCross` are just pre-made configurations of the nixpkgs cross-building mechanism, which you can inspect in [lib/systems/examples.nix](https://github.com/NixOS/nixpkgs/blob/master/lib/systems/examples.nix). The header comment also mentions a clue about how this is handled internally:
 
 ```
 # These can be passed to nixpkgs as either the `localSystem` or `crossSystem`.
@@ -305,7 +305,7 @@ If we follow the import chain from `<nixpkgs>/default.nix`, we end up at [pkgs/t
 ```
 
 In the non-cross nix world, you may have encountered the 2-tuple string that `builtins.currentSystem` returns, for example `x86_64-linux`, `aarch64-darwin`, etc.
-While these are valid arguments to the system imputs in nixpkgs, it is also possible to pass an attribute set containing more information.
+While these are valid arguments to the system inputs in nixpkgs, it is also possible to pass an attribute set containing more information.
 
 As we find in `systems/examples.nix`, `pkgsCross.aarch64-multiplatform` can be instantiated with the following arguments:
 
