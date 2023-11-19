@@ -91,7 +91,7 @@ user    0m0,939s
 sys     0m0,047s
 ```
 
-# First peek at `pkgsCross`
+# First peek at pkgsCross
 
 While the internal implementation of cross-compilation in nixpkgs can be quite complex, the first API that
 is presented to the user is very simple: `pkgsCross`.
@@ -127,7 +127,7 @@ x86_64
 Will cross-compile `hello`, using `x86_64-linux` as the build platform and `pkgsCross.aarch64-multiplatform` as the target platform.
 
 
-# Devshell with `pkgsCross`
+# Devshell with pkgsCross
 
 When we start to write devshells with `pkgsCross`, it is important to be mindful of what each package architecture is.
 For example, let's start with the skeleton:
