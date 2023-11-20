@@ -273,7 +273,7 @@ pkgs.mkShell {
 
 For your editor to pick up the C/C++ libraries which rely on pkg-config or cmake, I've had success with the following stack:
 
-- Tell cmake or meson to generate a `compile_commands.json`. For cmake, you need to add `set(CMAKE_EXPORT_COMPILE_COMMANDS ON)` to your `CMakeLists.txt` or by passing `-DCMAKE_EXPORT_COMPILE_COMMANDS=1`. Meson should generate them automatically.
+- Tell cmake or meson to generate a `compile_commands.json`. For cmake, you need to add `set(CMAKE_EXPORT_COMPILE_COMMANDS ON)` to your `CMakeLists.txt` or pass `-DCMAKE_EXPORT_COMPILE_COMMANDS=1`. Meson should generate it automatically.
 - Install clangd, by adding `clang-tools` to your devshell.
 - Configure your editor to use clangd. For example, for vscode: uninstall the Microsoft C/C++ extension and install the clangd extension.
 - Make sure clangd finds your `compile_commands.json`, by either:
