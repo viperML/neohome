@@ -259,6 +259,8 @@ pkgs.mkShell {
 Some packages may come with different outputs. When you search in https://search.nixos.org , you will see at least `out`, and `dev` if the packages contains headers. If you add simply `pkgs.my-awesome-library` to `packages = []`, nix should figure out that you want `pkgs.my-awesome-library.dev`, but you can also type it manually.
 {{</ alert >}}
 
+### Hardening
+
 Nixpkgs add some compiler flags by default as part of the hardening profile. You can read more about it in the [manual section](https://nixos.org/manual/nixpkgs/stable/#sec-hardening-in-nixpkgs). Although for a devshell, you may want to turn off all these default flags, so you get a better debugging experience:
 
 ```nix
@@ -266,6 +268,18 @@ pkgs.mkShell {
      hardeningDisable = ["all"];
 }
 ```
+
+### Language server
+
+For your editor to pick up the C/C++ libraries which rely on pkg-config or cmake, I've had success with the following stack:
+
+- Tell cmake or meson to generate a `compile_commands.json`. For cmake, you need to add `set(CMAKE_EXPORT_COMPILE_COMMANDS ON)` to your `CMakeLists.txt` or by passing `-DCMAKE_EXPORT_COMPILE_COMMANDS=1`. Meson should generate them automatically.
+- Install clangd, by adding `clang-tools` to your devshell.
+- Configure your editor to use clangd. For example, for vscode: uninstall the Microsoft C/C++ extension and install the clangd extension.
+- Make sure clangd finds your `compile_commands.json`, by either:
+  - Creating a symlink of the file from your build directory into your root directory (easiest).
+  - Configure your editor extension to pass the flag `--compile-commands-dir=<directory>` to clangd. For vscode, add `"clangd.arguments": ["--compile-commands-dir=<directory>"]` to your project's `.vscode/settings.json` .
+- You may need to restart the editor for the changes to propagate.
 
 ## NodeJS
 
