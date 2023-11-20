@@ -277,7 +277,7 @@ For your editor to pick up the C/C++ libraries which rely on pkg-config or cmake
 - Install clangd, by adding `clang-tools` to your devshell.
 - Configure your editor to use clangd. For example, for vscode: uninstall the Microsoft C/C++ extension and install the clangd extension.
 - Make sure clangd finds your `compile_commands.json`, by either:
-  - Creating a symlink of the file from your build directory into your root directory (easiest). E.g. `ln -vs builddir/compile_commands.json ./compile_commands.json`.
+  - Creating a symlink of the file from your build directory into your root directory (easiest). E.g. `ln -vs ./builddir/compile_commands.json ./compile_commands.json`.
   - Configure your editor extension to pass the flag `--compile-commands-dir=<directory>` to clangd. For vscode, add `"clangd.arguments": ["--compile-commands-dir=<directory>"]` to your project's `.vscode/settings.json` .
 - You may need to restart the editor for the changes to propagate.
 
