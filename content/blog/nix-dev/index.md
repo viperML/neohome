@@ -144,6 +144,10 @@ pkgs.mkShell {
 
     pkgs.rust-analyzer
     pkgs.rustfmt
+
+    # If the dependencies need system libs, you usually need pkg-config + the lib
+    pkgs.pkg-config
+    pkgs.openssl
   ];
 
   env = {
