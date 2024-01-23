@@ -2,8 +2,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    mission-control.url = "github:Platonic-Systems/mission-control";
-    flake-root.url = "github:srid/flake-root";
     mkshell-minimal.url = "github:viperML/mkshell-minimal";
   };
 
@@ -12,11 +10,6 @@
       systems = [
         "x86_64-linux"
         "aarch64-linux"
-      ];
-
-      imports = [
-        inputs.mission-control.flakeModule
-        inputs.flake-root.flakeModule
       ];
 
       perSystem = {
@@ -31,9 +24,11 @@
           packages = [
             pkgs.nodePackages.wrangler
             pkgs.hugo
+            pkgs.just
           ];
-          HUGO_THEMESDIR = config.packages.themes;
-          inputsFrom = [config.mission-control.devShell];
+          env = {
+            HUGO_THEMESDIR = config.packages.themes;
+          };
         };
 
         packages.themes = lib.pipe (pkgs.callPackages ./_sources/generated.nix {}) [
@@ -68,32 +63,6 @@
               runHook postInstall
             '';
           }) {};
-
-        packages.nosrc = config.packages.default.overrideAttrs (_: {src = null;});
-
-        mission-control.scripts = {
-          serve = {
-            description = "Serve the blog for development";
-            exec = ''hugo server "$@"'';
-          };
-
-          layout-diff = {
-            description = "Inspect changes to the original layouts";
-            exec = ''
-              find layouts -type f | while read -r file; do
-                theme_file="${config.packages.themes}/congo/$file"
-                if [[ -f "$theme_file" ]]; then
-                  echo "===="
-                  echo "Comparing $file"
-                  echo "===="
-                  echo "$theme_file"
-                  ${pkgs.diffutils}/bin/diff -u --color=always "$theme_file" "$file" || :
-                  echo
-                fi
-              done
-            '';
-          };
-        };
       };
     };
 }
