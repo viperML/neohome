@@ -23,7 +23,8 @@ links = [
   { linkedin = "https://linkedin.com/in/ayatsfer" },
   { github = "https://github.com/viperML" },
   # { gitlab = "https://gitlab.com/viperML" },
-  { email = "mailto:ayats@gmail.com" },
+  # redacted because of spam
+  # { email = "" },
   # { link = "https://ayats.org" },
   #   { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
   #   { apple = "https://www.apple.com" },
