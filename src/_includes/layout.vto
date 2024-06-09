@@ -3,8 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ title }}</title>
+  <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+  <h1 class="text-3xl font-bold italic">
+    Hello world!
+  </h1>
+
   {{ content }}
+
+  {{ comp.button({ text: "Login" }) }}
 </body>
 </html>
