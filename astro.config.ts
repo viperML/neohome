@@ -4,7 +4,9 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
     // your configuration options here...
     // https://docs.astro.build/en/reference/configuration-reference/
-    integrations: [tailwind()],
+    integrations: [
+        tailwind()
+    ],
     devToolbar: {
         enabled: false
     }
