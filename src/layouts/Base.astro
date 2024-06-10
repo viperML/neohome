@@ -1,16 +1,21 @@
 ---
 import NavBar from "../components/NavBar.astro";
+import Ipsum from "../components/Ipsum.astro";
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/favicon.svg" /> -->
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body>
+  <body class="flex flex-col h-screen px-3 m-auto text-lg leading-7 max-w-8xl lg:px-40">
+
     <NavBar />
     <slot />
+
+    <Ipsum />
+
   </body>
 </html>
