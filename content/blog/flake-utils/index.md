@@ -59,10 +59,10 @@ Let's say that you are writing a flake that outputs some package. This should be
   inputs = ...;
   outputs = {nixpkgs, ...}: {
 
-    packages."x86_64-linux".default = nixpkgs.legacyPackages."x86_64-linux".callPackage ./package.nix {
+    packages.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.callPackage ./package.nix {
       some-special-arg = ...;
     };
-    packages."aarch64-linux".default = nixpkgs.legacyPackages."aarch64-linux".callPackage ./package.nix {
+    packages.aarch64-linux.default = nixpkgs.legacyPackages.aarch64-linux.callPackage ./package.nix {
       some-special-arg = ...;
     };
 
@@ -84,7 +84,7 @@ So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solu
 
   outputs = {nixpkgs, flake-utils, ...}: flake-utils.lib.eachSystem ["x86_64-linux" "aarch64-linux"] (system: {
 
-    packages.default = nixpkgs.legacyPackages."${system}".callPackage = ./pacakge.nix {
+    packages.default = nixpkgs.legacyPackages.${system}.callPackage = ./package.nix {
       some-special-arg = ...;
     };
 
@@ -116,7 +116,7 @@ The main problem with flake-utils is that it doesn't check if what we want to do
     overlays.default = final: prev: {};
 
 #   ↓ this is wrong
-    packages.${system}.default = nixpkgs.legacyPackages."${system}".callPackage = ./pacakge.nix {
+    packages.${system}.default = nixpkgs.legacyPackages.${system}.callPackage = ./pacakge.nix {
       some-special-arg = ...;
     };
 
