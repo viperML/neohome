@@ -3,7 +3,7 @@ title: Hover, the CLI tool to protect your home
 date: 2024-06-10T14:08:37Z
 tags: []
 draft: false
-summary: Never again run apps fearing they will polute your files.
+summary: Never again run apps in fear they will pollute your filesystem.
 ---
 
 Hey! 👋
