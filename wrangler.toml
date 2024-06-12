@@ -1,0 +1,2 @@
+[env.astro]
+workers_dev = true

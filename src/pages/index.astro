@@ -1,16 +1,5 @@
 ---
 import Base from "../layouts/Base.astro"
-import { Debug } from "astro:components";
-
-import { getCollection, getEntry } from "astro:content";
-
-
-const allBlogPosts = await getCollection('blog');
-
-const post1 = allBlogPosts[0];
-
-const { Content } = await post1?.render();
-
 ---
 
 <Base>

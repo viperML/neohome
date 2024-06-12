@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Deploy
+
+concurrency: deploy
+
+on:
+  push:
+    branches:
+      - astro
+
+env:
+  BUILDDIR: ./public
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Install Magic Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+
+      - name: Checkout
+        uses: actions/checkout@main
+
+      - name: Build
+        run: |
+          nix build -L
+          cp -vrL ./result/lib/node_modules/neohome/dist ${{ env.BUILDDIR }}
+
+      - name: Publish
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          command: pages deploy --project-name=neohome --env astro --branch astro ${{ env.BUILDDIR }}

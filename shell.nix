@@ -4,5 +4,6 @@ mkShell {
     nodejs
 
     tailwindcss
+    nodePackages.wrangler
   ];
 }
