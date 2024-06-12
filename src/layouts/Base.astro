@@ -10,12 +10,16 @@ import Ipsum from "../components/Ipsum.astro";
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
   </head>
-  <body class="flex flex-col h-screen px-3 m-auto text-lg leading-7 max-w-8xl lg:px-40">
+
+  <body class="flex flex-col h-screen m-auto text-lg">
 
     <NavBar />
-    <slot />
 
-    <Ipsum />
+    <div class="m-auto max-w-7xl sm:px-14 md:px-24 lg:px-32 py-10 mt-20">
+      <slot />
+
+      <Ipsum />
+    </div>
 
   </body>
 </html>
