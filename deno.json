@@ -10,6 +10,8 @@
   "compilerOptions": {
     "types": [
       "lume/types.ts"
-    ]
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "npm:preact"
   }
 }
