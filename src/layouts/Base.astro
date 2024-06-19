@@ -11,12 +11,12 @@ import Footer from '../components/Footer.astro';
     <meta name="generator" content={Astro.generator} />
   </head>
 
-  <body class="flex flex-col h-screen m-auto text-lg">
+  <body class="m-auto text-lg">
 
-    <NavBar />
+    <NavBar class="h-screen"/>
 
-    <div class="m-auto max-w-7xl sm:px-14 md:px-24 lg:px-32 py-10 mt-20">
-      <slot />
+    <div class="flex flex-col m-auto max-w-7xl sm:px-14 md:px-24 lg:px-32 py-10 mt-20">
+      <slot class="grow"/>
 
       <Footer/>
     </div>
