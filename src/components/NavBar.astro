@@ -3,12 +3,44 @@
 ---
 
 <header
-  class="bg-neutral-300 border-gray-200 border-b-2 backdrop-filter backdrop-blur-lg bg-opacity-30 fixed w-screen top-0 z-50"
+  class="bg-neutral-300 dark:bg-zinc-900 border-gray-200 border-b-2 backdrop-filter backdrop-blur-lg bg-opacity-30 fixed w-screen top-0 z-50"
 >
   <nav class="flex justify-between p-4 font-semibold">
     <a href="/">ayats.org</a>
     <ul>
       <a href="/blog/">Blog</a>
+      <a dark-theme-button>Theme</a>
     </ul>
   </nav>
 </header>
+
+<script>
+  function loadTheme() {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }
+  loadTheme();
+
+  const btn = document.querySelectorAll("[dark-theme-button]");
+  console.log(btn);
+
+  btn.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      if (localStorage.theme === "dark") {
+        localStorage.theme = "light";
+      } else {
+        localStorage.theme = "dark";
+      }
+      loadTheme();
+    });
+  });
+
+  console.log("HELLO");
+</script>
