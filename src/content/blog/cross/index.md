@@ -1,6 +1,6 @@
 ---
 title: 'Cross build environment with nix'
-date: 2023-11-16T17:35:49Z
+pubDate: 2023-11-16T17:35:49Z
 tags: ['nix']
 draft: false
 summary: Adapting a devshell workflow for cross-compilation and compiler optimization.

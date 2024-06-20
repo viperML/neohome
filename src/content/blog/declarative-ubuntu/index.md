@@ -1,6 +1,6 @@
 ---
 title: 'Declarative Ubuntu'
-date: 2022-06-19T10:03:20Z
+pubDate: 2022-06-19T10:03:20Z
 tags: ['ubuntu']
 draft: false
 summary: Experiment to have a Ubuntu installation managed declaratively, instead of imperatively

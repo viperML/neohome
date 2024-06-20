@@ -1,6 +1,6 @@
 ---
 title: 'Nix shell with rustup'
-date: 2023-03-03T11:54:31Z
+pubDate: 2023-03-03T11:54:31Z
 tags: ['nix']
 draft: false
 summary: Call a toolchain.toml from nix, for better interoperability with non-nix developers

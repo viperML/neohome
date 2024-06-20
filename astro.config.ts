@@ -11,4 +11,5 @@ export default defineConfig({
         enabled: false
     },
     output: 'static',
+    site: "https://ayats.org",
 })

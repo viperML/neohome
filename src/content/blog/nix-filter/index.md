@@ -1,6 +1,6 @@
 ---
 title: Filtering flake's self
-date: 2022-12-29T20:24:27Z
+pubDate: 2022-12-29T20:24:27Z
 tags: ['nix']
 draft: false
 summary: Quick tutorial about filtering a flake's self attribute, to avoid unnecessary recompilation.

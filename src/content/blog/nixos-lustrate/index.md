@@ -1,6 +1,6 @@
 ---
 title: 'Nixos lustrate'
-# date: 2023-03-03T11:54:31Z
+pubDate: 2023-03-03T11:54:31Z
 tags: ['nix']
 draft: true
 # summary: Call a toolchain.toml from nix, for better interoperability with non-nix developers

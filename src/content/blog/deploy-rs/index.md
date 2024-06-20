@@ -1,6 +1,6 @@
 ---
 title: 'NixOS on Hetzner Cloud with deploy-rs'
-date: 2022-01-12T14:49:55Z
+pubDate: 2022-01-12T14:49:55Z
 tags: ['nix', 'cloud']
 draft: true
 summary: A short tutorial to install NixOS in a VPS, and use the deployment tool called "deploy-rs"

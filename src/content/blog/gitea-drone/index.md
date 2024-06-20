@@ -1,6 +1,6 @@
 ---
 title: 'Private git repository with NixOS, Gitea and Drone'
-date: 2022-01-29T15:11:36Z
+pubDate: 2022-01-29T15:11:36Z
 tags: ['nix', 'cloud']
 draft: false
 summary: Tutorial to get started with a self-hosted Git repo with automatic CI, as a Github/Gitlab alternative

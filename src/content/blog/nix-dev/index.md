@@ -1,6 +1,6 @@
 ---
 title: 'Development workflow with Nix'
-date: 2023-05-28T21:18:09Z
+pubDate: 2023-05-28T21:18:09Z
 tags: ['nix']
 draft: false
 summary: 'A getting-started guide to nix devshells'

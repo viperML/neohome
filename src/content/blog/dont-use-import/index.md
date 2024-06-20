@@ -1,6 +1,6 @@
 ---
 title: "Don't use import"
-date: 2024-02-04T13:48:09Z
+pubDate: 2024-02-04T13:48:09Z
 tags: ['nix']
 draft: false
 summary: "When writing nix, use the module system."

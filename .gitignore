@@ -1,6 +1,5 @@
 /.direnv
 *result*
-/public
 
 # build output
 dist/
