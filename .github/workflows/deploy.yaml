@@ -9,7 +9,7 @@ on:
       - astro
 
 env:
-  DISTDIR: /tmp/dist
+  DISTDIR: ./dist
 
 jobs:
   main:
