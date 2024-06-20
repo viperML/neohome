@@ -27,10 +27,10 @@ jobs:
       - name: Build
         run: |
           out="$(nix build .^out --print-out-paths --no-link)"
-          cp -vrL "$out/lib/node_modules/neohome/dist" "${{ env.DISTDIR }}"
+          echo "dist=$out/lib/node_modules/neohome/dist" >> "$GITHUB_ENV"
 
       - name: Publish
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy --project-name=neohome --branch preview "${{ env.DISTDIR }}"
+          command: pages deploy --project-name=neohome --branch preview "${{ env.dist }}"
