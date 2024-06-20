@@ -9,7 +9,7 @@ on:
       - astro
 
 env:
-  BUILDDIR: ./public
+  DISTDIR: /tmp/dist
 
 jobs:
   main:
@@ -26,11 +26,11 @@ jobs:
 
       - name: Build
         run: |
-          nix build -L
-          cp -vrL ./result/lib/node_modules/neohome/dist ${{ env.BUILDDIR }}
+          out="$(nix build .^out --print-out-paths --no-link)"
+          cp -vrL "$out/lib/node_modules/neohome/dist" "${{ env.DISTDIR }}"
 
       - name: Publish
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy --project-name=neohome --branch preview ${{ env.BUILDDIR }}
+          command: pages deploy --project-name=neohome --branch preview "${{ env.DISTDIR }}"
