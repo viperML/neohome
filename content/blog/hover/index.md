@@ -8,8 +8,8 @@ summary: Never again run apps in fear they will pollute your filesystem.
 
 Hey! 👋
 
-I wrote `hover-rs`, a very cool CLI tool. When you enter a `hover`, the arranges
-some private mount namespaces. Every modification to files (creation, deletion
+I wrote `hover-rs`, a very cool CLI tool. When you enter a `hover`, it arranges
+some private mount namespaces. Everything you do with files (creation, deletion
 or modification) is lost when you exit hover. You can find it at
 [https://github.com/viperML/hover-rs](https://github.com/viperML/hover-rs).
 
