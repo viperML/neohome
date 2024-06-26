@@ -111,6 +111,6 @@ If your answer is 1 or 2, then you may be out of luck, but the amount of files y
 
 Otherwise: use the module system! If you are planning on making some big nix repo, don't hesitate to instantiate the module system to reap from its benefits. Not only you will be able to merge multiple files on a project, but add type-checking through module options, and provide a user interface with good error reporting the user of your project.
 
-To instantiate the module system, all you need is to get a nixpkgs' lib instance, and you are pretty much ready to declare your own modules. More information can be read in https://nix.dev/tutorials/module-system/module-system.html#evaluating-modules .
+To instantiate the module system, all you need is to get a nixpkgs' lib instance, and you are pretty much ready to declare your own modules. More information can be read at [https://nix.dev/tutorials/module-system](https://nix.dev/tutorials/module-system).
 
 
