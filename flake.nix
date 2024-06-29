@@ -19,6 +19,7 @@
         (fs.fromSource (lib.sources.cleanSource r))
         (fs.unions [
           ./src
+          ./public
           (fs.fileFilter (file: file.hasExt "ts") r)
           (fs.fileFilter (file: file.hasExt "json") r)
         ]);
