@@ -1,15 +1,38 @@
 ---
-
+import { Image } from 'astro:assets';
+import logo from '../img/avatar-text.svg';
 ---
 
-<header
-  class="bg-neutral-300 border-gray-200 border-b-2 backdrop-filter backdrop-blur-lg bg-opacity-30 fixed w-screen top-0 z-50"
->
-  <nav class="flex justify-between p-4 font-semibold">
-    <a href="/">ayats.org</a>
-    <ul>
+<header class="flex justify-center">
+  <nav class="p-4 flex justify-between items-center">
+
+    <a href="/" class="logo">
+      <Image src={logo} alt="Site logo."/>
+    </a>
+    <ul class="flex gap-4">
       <a href="/blog/">Blog</a>
       <a id="themeToggle">Theme</a>
     </ul>
+
   </nav>
 </header>
+
+<style>
+  header {
+    width: 100vw;
+    top: 0;
+    z-index: 100;
+    position: sticky;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  nav {
+    background-color: rgb(137, 137, 137);
+    width: 100vw;
+  }
+
+  .logo {
+    width: 170px;
+  }
+</style>
