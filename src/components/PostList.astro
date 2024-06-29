@@ -1,11 +1,38 @@
 ---
 import { getCollection } from "astro:content";
 
+// const blogEntries = (await getCollection("blog")).filter((data) => {
+//     const draft = (() => {
+//         if ("draft" in data) {
+//             if (typeof data.draft === "boolean") {
+//                 return data.draft;
+//             }
+//         }
+//         return undefined;
+//     })();
+
+//     console.log(`${data.id} draft=${draft}`);
+
+//     if (import.meta.env.DEV === true) {
+//         return true;
+//     } else if (draft === true) {
+//         return false;
+//     } else {
+//         return true;
+//     }
+// });
+
 const blogEntries = await getCollection("blog");
 ---
 
 Post List
 
 <ul>
-    {blogEntries.map((item) => <li><a href={`/blog/${item.slug}`}>{item.slug}</a></li>)}
+    {
+        blogEntries.map((item) => (
+            <li>
+                <a href={`/blog/${item.slug}`}>{item.slug}</a>
+            </li>
+        ))
+    }
 </ul>
