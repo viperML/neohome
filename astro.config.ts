@@ -8,7 +8,7 @@ export default defineConfig({
         tailwind()
     ],
     devToolbar: {
-        enabled: false
+        enabled: true
     },
     output: 'static',
     site: "https://ayats.org",

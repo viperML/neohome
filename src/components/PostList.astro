@@ -22,10 +22,24 @@ import { getCollection } from "astro:content";
 //     }
 // });
 
-const blogEntries = await getCollection("blog");
+const blogEntries = (await getCollection("blog"))
+    .sort((a, b) => {
+        if (a.data.pubDate === undefined || b.data.pubDate === undefined) {
+            return 0;
+        }
+
+        return a.data.pubDate.getSeconds() - b.data.pubDate.getSeconds();
+    })
+    .filter((elem) => {
+        if (elem.data.draft === true) {
+            return false;
+        } else {
+            return true;
+        }
+    });
 ---
 
-Post List
+<h1>Post List</h1>
 
 <ul>
     {

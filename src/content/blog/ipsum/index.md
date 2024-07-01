@@ -3,7 +3,7 @@ title: Ipsum
 pubDate: 2023-05-28T21:18:09Z
 tags: ['nix']
 draft: true
-summary:
+summary: ""
 slug: ipsum
 ---
 
