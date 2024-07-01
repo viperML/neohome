@@ -1,5 +1,5 @@
 ---
-title: 'Development workflow with Nix'
+title: 'nix dev'
 pubDate: 2023-05-28T21:18:09Z
 tags: ['nix']
 draft: false
