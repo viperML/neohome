@@ -14,25 +14,23 @@ import Footer from "../components/Footer.astro";
   <body class="text-base flex flex-col items-center">
     <NavBar />
 
-    <main class="max-w-4xl m-4">
+    <main class="max-w-4xl mx-3">
       <slot />
 
       <Footer />
     </main>
-
   </body>
 </html>
 
 <style>
   main {
-
   }
 </style>
 
 <style is:global>
   .astro-code {
-    overflow: scroll !important;
-    /* max-width: 100vw; */
+    overflow-x: scroll !important;
+    white-space: pre-wrap;
   }
 
   h1 {
@@ -45,6 +43,7 @@ import Footer from "../components/Footer.astro";
     font-weight: 700;
     font-size: 1.5em;
   }
+
 </style>
 
 <script is:inline>
