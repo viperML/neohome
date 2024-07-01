@@ -14,18 +14,30 @@ import Footer from "../components/Footer.astro";
   <body class="text-base flex flex-col items-center">
     <NavBar />
 
-    <main class="max-w-4xl mx-3">
-      <slot />
+    <div class="wrapper">
+      <main>
+        <slot />
 
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </div>
   </body>
 </html>
 
 <style>
+  .wrapper {
+    max-width: 100vw;
+    background-color: red;
+  }
+
   main {
-    word-break: break-word;
-    /* overflow-wrap: break-word; */
+    /* word-break: break-word; */
+    overflow-wrap: break-word;
+
+    max-width: 800px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: aquamarine;
   }
 </style>
 
@@ -33,7 +45,7 @@ import Footer from "../components/Footer.astro";
   .astro-code {
     overflow-x: scroll !important;
     white-space: pre;
-    max-width: 100vw;
+    max-width: 100%;
   }
 
   h1 {
@@ -46,7 +58,6 @@ import Footer from "../components/Footer.astro";
     font-weight: 700;
     font-size: 1.5em;
   }
-
 </style>
 
 <script is:inline>
