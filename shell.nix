@@ -4,7 +4,7 @@ mkShell {
     nodejs
 
     tailwindcss
-    nodePackages.wrangler
+    # nodePackages.wrangler
     nodePackages."@astrojs/language-server"
   ];
 }
