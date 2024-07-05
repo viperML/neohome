@@ -1,0 +1,29 @@
+---
+import type { CollectionEntry } from "astro:content";
+interface Props {
+    post: CollectionEntry<"blog">;
+}
+const { post } = Astro.props;
+---
+
+<li id="post-container">
+    <h3>
+        <a href={`/blog/${post.slug}`}>
+            {post.data.title}
+        </a>
+    </h3>
+
+    <h4>
+        {post.data.summary}
+    </h4>
+</li>
+
+<style>
+    #post-container {
+        background-color: white;
+        display: grid;
+        grid-template-rows: auto auto;
+
+        padding: 1rem;
+    }
+</style>

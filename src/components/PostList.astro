@@ -1,5 +1,6 @@
 ---
 import { getCollection } from "astro:content";
+import Post from "./Post.astro";
 
 // const blogEntries = (await getCollection("blog")).filter((data) => {
 //     const draft = (() => {
@@ -39,14 +40,19 @@ const blogEntries = (await getCollection("blog"))
     });
 ---
 
-<h1>Post List</h1>
+<h1>All posts</h1>
 
-<ul>
+<ul class="flex flex-col gap-3">
     {
-        blogEntries.map((item) => (
-            <li>
-                <a href={`/blog/${item.slug}`}>{item.slug}</a>
-            </li>
-        ))
+        blogEntries.map((item) => {
+            // console.log(item);
+            return <Post post={item} />;
+        })
     }
 </ul>
+
+<style>
+    h1 {
+        padding-bottom: 2rem;
+    }
+</style>
