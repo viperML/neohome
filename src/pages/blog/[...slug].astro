@@ -17,12 +17,11 @@ import Footer from "../../components/Footer.astro";
 ---
 
 <Base>
+  <title slot="head">{entry.data.title} - ayats.org</title>
+
   <div id="container">
     <div id="sidebar" class="bg-fuchsia-200">
-      <div id="sidebar-content" class="w-40 h-40 bg-purple-400">
-        sidebar
-      </div>
-
+      <div id="sidebar-content" class="w-40 h-40 bg-purple-400">sidebar</div>
     </div>
     <div id="content" class="bg-indigo-200">
       <div id="content-wrapper" class="max-w-6xl px-3 md:px-20 py-3 md:py-10">
@@ -30,7 +29,7 @@ import Footer from "../../components/Footer.astro";
 
         <Content />
 
-        <Footer/>
+        <Footer />
       </div>
     </div>
   </div>

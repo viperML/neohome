@@ -1,16 +1,18 @@
 ---
-import Base from "../layouts/Base.astro"
-import PostList from '../components/PostList.astro'
-import Footer from "../components/Footer.astro"
+import Base from "../layouts/Base.astro";
+import PostList from "../components/PostList.astro";
+import Footer from "../components/Footer.astro";
 ---
 
 <Base>
+  <title slot="head">ayats.org</title>
+
   <section class="px-3 bg-cyan-200 flex flex-col">
     <h1>Profile</h1>
 
-    <PostList/>
+    <PostList />
 
-    <Footer class="bg-yellow-200"/>
+    <Footer class="bg-yellow-200" />
   </section>
 </Base>
 
