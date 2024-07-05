@@ -13,12 +13,59 @@ const { entry } = Astro.props;
 const { Content } = await entry.render();
 
 import Base from "../../layouts/Base.astro";
+import Footer from "../../components/Footer.astro";
 ---
 
 <Base>
-  <section>
-    <h1>{entry.data.title}</h1>
+  <div id="container">
+    <div id="sidebar" class="bg-fuchsia-200">
+      <div id="sidebar-content" class="w-40 h-40 bg-purple-400">
+        sidebar
+      </div>
 
-    <Content />
-  </section>
+    </div>
+    <div id="content" class="bg-indigo-200">
+      <div id="content-wrapper" class="max-w-3xl px-3">
+        <h1>{entry.data.title}</h1>
+
+        <Content />
+
+        <Footer/>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    #container {
+      display: grid;
+      grid-template-rows: 1fr;
+      grid-template-columns: max-content 1fr;
+
+      width: 100vw;
+    }
+
+    #content {
+      /* max-width: 100%; */
+      grid-column: 1 / span 2;
+    }
+
+    #sidebar {
+      display: none;
+    }
+
+    #sidebar-content {
+      position: sticky;
+      top: 100px;
+    }
+
+    @media screen(lg) {
+      #content {
+        grid-column: 2 / span 1;
+      }
+
+      #sidebar {
+        display: block;
+      }
+    }
+  </style>
 </Base>

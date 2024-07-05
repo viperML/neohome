@@ -10,19 +10,16 @@ import Footer from "../components/Footer.astro";
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
+
+    <slot name="head" />
   </head>
 
-  <body class="text-base flex flex-col items-center">
-    <NavBar />
+  <body class="bg-blue-300 flex flex-col items-center">
+    <NavBar class="bg-green-500 col-span-full row-span-1"/>
 
-    <div class="max-w-full">
-      <!-- Wrapper to limit width -->
-      <main class="max-w-5xl px-3">
-        <slot />
-
-        <Footer />
-      </main>
-    </div>
+    <main class="bg-red-300">
+      <slot/>
+    </main>
   </body>
 </html>
 
@@ -30,6 +27,7 @@ import Footer from "../components/Footer.astro";
   main {
     /* word-break: break-word; */
     overflow-wrap: break-word;
+    max-width: 100%;
   }
 </style>
 
@@ -55,9 +53,8 @@ import Footer from "../components/Footer.astro";
     line-height: 2.5rem;
   }
 
-
   h2 {
-    font-weight: 700;
+    font-weight: 900;
     font-size: 1.5em;
 
     padding-top: 3rem;

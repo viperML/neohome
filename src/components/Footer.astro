@@ -1,9 +1,10 @@
 ---
+const { class: className } = Astro.props;
 ---
-<footer>
+
+<footer class:list={["bg-yellow-200", className]}>
     Copyright Fernando Ayats.
 </footer>
-
 
 <style>
     footer {
