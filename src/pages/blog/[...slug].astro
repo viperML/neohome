@@ -14,6 +14,8 @@ const { Content, headings, remarkPluginFrontmatter } = await entry.render();
 
 import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
+
+const pubDate = entry.data.pubDate;
 ---
 
 <Base>
@@ -39,7 +41,21 @@ import Footer from "../../components/Footer.astro";
       <div id="content-wrapper" class="max-w-6xl px-3 md:px-20 py-3 md:py-10">
         <h1>{entry.data.title}</h1>
 
-        <p>{remarkPluginFrontmatter.minutesRead}</p>
+        <div class="flex space-x-2" id="subtitle">
+          <p id="pub-date">
+            {
+              pubDate.toLocaleDateString("en-uk", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            }
+          </p>
+          <p>·</p>
+          <p>
+            {remarkPluginFrontmatter.minutesRead}
+          </p>
+        </div>
 
         <Content />
 
@@ -72,6 +88,15 @@ import Footer from "../../components/Footer.astro";
       position: sticky;
       top: 100px;
       width: 300px;
+    }
+
+    #post-content {
+      padding-top: 5rem;
+    }
+
+    #subtitle {
+      font-weight: 500;
+      padding-bottom: 3rem;
     }
 
     @media screen(lg) {

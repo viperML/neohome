@@ -6,6 +6,7 @@ const blog = defineCollection({
   schema: rssSchema.extend({
     draft: z.boolean().optional(),
     summary: z.string(),
+    pubDate: z.date(),
   }),
 });
 
