@@ -1,7 +1,7 @@
 ---
 import NavBar from "../components/NavBar.astro";
-import '../styles/base.css';
-import '../styles/main.less';
+import "../styles/base.css";
+import "../styles/main.less";
 ---
 
 <html lang="en">
@@ -18,17 +18,9 @@ import '../styles/main.less';
   <body class="bg-blue-300 flex flex-col items-center">
     <NavBar class="bg-green-500 col-span-full row-span-1" />
 
-    <main class="bg-red-300">
-      <slot />
-    </main>
+    <slot />
   </body>
 </html>
-
-<style>
-  main {
-    max-width: 100%;
-  }
-</style>
 
 <script is:inline>
   // This script automatically loads the theme from either the user's preference
