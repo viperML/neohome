@@ -6,20 +6,20 @@ interface Props {
 const { post } = Astro.props;
 ---
 
-<li id="post-container">
+<li class="post-container">
     <h3>
         <a href={`/blog/${post.slug}`}>
             {post.data.title}
         </a>
     </h3>
 
-    <h4>
+    <p class="post-description">
         {post.data.summary}
-    </h4>
+    </p>
 </li>
 
 <style>
-    #post-container {
+    .post-container {
         background-color: white;
         display: grid;
         grid-template-rows: auto auto;
