@@ -3,13 +3,9 @@
 */
 
 main {
-    h1 {
+    h1:not(h1:first-of-type) {
         margin-top: 3rem;
-        margin-bottom: 0.5rem;
-    }
-
-    h1:first-of-type {
-        margin-top: unset;
+        margin-bottom: 1rem;
     }
 
     h2 {
@@ -45,7 +41,7 @@ main {
         scroll-margin-top: 50px;
     }
 
-    h1 + h2 {
+    h1+h2 {
         margin-top: 1rem;
     }
 }
