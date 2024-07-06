@@ -7,11 +7,13 @@ const { post } = Astro.props;
 ---
 
 <li class="post-container">
-    <h3>
-        <a href={`/blog/${post.slug}`}>
-            {post.data.title}
-        </a>
-    </h3>
+    <div>
+        <h3>
+            <a href={`/blog/${post.slug}`}>
+                {post.data.title}
+            </a>
+        </h3>
+    </div>
 
     <p class="post-description">
         {post.data.summary}
