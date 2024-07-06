@@ -46,6 +46,7 @@ h3 {
 }
 
 h4 {
+    font-weight: 800;
     color: rgb(57, 57, 57);
 }
 
@@ -57,4 +58,33 @@ h3:hover {
 
 a:hover {
     text-decoration: underline;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+ol {
+    list-style: decimal;
+}
+
+ul,
+ol {
+    padding-left: 1.5rem;
+}
+
+
+p>code {
+    background-color: rgba(44, 44, 44, 0.246);
+    box-sizing: border-box;
+    padding: 0.2rem 0.3rem;
+    border-radius: 0.2rem;
+}
+
+hr {
+    /* border: 3px solid rgb(255, 0, 0); */
+    border-radius: 5px;
+    padding: 3px 0;
+    background-color: red;
+    margin: 2rem 3rem;
 }
