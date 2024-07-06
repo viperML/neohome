@@ -64,3 +64,11 @@ hr {
     background-color: red;
     margin: 2rem 3rem;
 }
+
+/* [id]::before {
+  content: '';
+  display: block;
+  height:      75px;
+  margin-top: -75px;
+  visibility: hidden;
+} */
