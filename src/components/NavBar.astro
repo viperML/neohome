@@ -10,6 +10,13 @@ const { class: className } = Astro.props;
       <Image src={logo} alt="Site logo." />
     </a>
     <ul class="flex gap-4">
+      {
+        (() => {
+          if (import.meta.env.DEV === true) {
+            return <a href="/test">Test Page</a>;
+          }
+        })()
+      }
       <a href="/blog/">Blog</a>
       <!-- <a id="themeToggle">Theme</a> -->
     </ul>

@@ -1,0 +1,6 @@
+{
+  "files.associations": {
+    "*.css": "css"
+  },
+  "css.lint.unknownAtRules": "ignore"
+}

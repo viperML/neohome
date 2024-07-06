@@ -1,5 +1,6 @@
 ---
 import NavBar from "../components/NavBar.astro";
+import '../styles/base.css';
 ---
 
 <html lang="en">
@@ -24,61 +25,8 @@ import NavBar from "../components/NavBar.astro";
 
 <style>
   main {
-    /* word-break: break-word; */
-    overflow-wrap: break-word;
     max-width: 100%;
   }
-</style>
-
-<style is:global>
-  .astro-code {
-    overflow-x: scroll !important;
-    white-space: pre;
-    max-width: 100%;
-    min-width: 0px;
-
-    margin: 0.5rem 0;
-    padding: 1rem;
-    border-radius: 0.5rem;
-  }
-
-  h1 {
-    font-weight: 900;
-    font-size: 2rem;
-
-    padding-top: 3rem;
-    padding-bottom: 0.5rem;
-
-    line-height: 2.5rem;
-  }
-
-  h1:first-of-type {
-    padding-top: unset;
-  }
-
-  h2 {
-    font-weight: 900;
-    font-size: 1.5em;
-
-    padding-top: 2.5rem;
-    padding-bottom: 0.5rem;
-  }
-
-  h3 {
-    font-weight: 800;
-    font-size: 1.2em;
-  }
-
-  h1:hover,
-  h2:hover,
-  h3:hover {
-    text-decoration: underline;
-  }
-
-  a:hover {
-    text-decoration: underline;
-  }
-
 </style>
 
 <script is:inline>
