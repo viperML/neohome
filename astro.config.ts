@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config'
 import tailwind from "@astrojs/tailwind";
-import { remarkReadingTime } from './src/reading-time.mjs';
+import remarkLesetid from "remark-lesetid/astro";
 import mdx from '@astrojs/mdx';
 
 export default defineConfig({
@@ -19,7 +19,7 @@ export default defineConfig({
     site: "https://ayats.org",
     markdown: {
         remarkPlugins: [
-            remarkReadingTime
+            remarkLesetid
         ]
     }
 })

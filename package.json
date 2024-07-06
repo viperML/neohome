@@ -19,7 +19,7 @@
     "less": "^4.2.0",
     "mdast-util-to-string": "^4.0.0",
     "mersenne-twister": "^1.1.0",
-    "reading-time": "^1.5.0",
+    "remark-lesetid": "^1.2.0",
     "typescript": "^5.4.5"
   }
 }
