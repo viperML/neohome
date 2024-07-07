@@ -43,7 +43,7 @@ import { formatDate } from "../../date";
       <div id="content-wrapper" class="max-w-6xl px-3 md:px-20 py-3 md:py-10">
         <h1>{entry.data.title}</h1>
 
-        <div class="flex space-x-2" id="subtitle">
+        <div class="flex gap-2" id="subtitle">
           <p id="pub-date">
             {formatDate(pubDate)}
           </p>
@@ -87,12 +87,12 @@ import { formatDate } from "../../date";
     }
 
     #post-content {
-      padding-top: 5rem;
+      margin-top: 5rem;
     }
 
-    #subtitle {
+    #subtitle p {
       font-weight: 500;
-      margin-top: 0.5rem;
+      margin-top: 0;
       margin-bottom: 3rem;
 
       color: var(--text-color-alt);

@@ -34,11 +34,13 @@ const { class: className } = Astro.props;
 
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(5px);
-    border-bottom: 2px solid rgba(0, 0, 0, 0.3);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    background-color: rgba(254, 254, 254, 0.687);
+    border-bottom: 2px solid rgb(233, 233, 233);
 
     :is(.dark &) {
       background-color: rgba(0,0,0, 0.60);
+      border-bottom: 2px solid rgba(0, 0, 0, 0.3);
     }
   }
 
