@@ -1,6 +1,8 @@
 {
   "extends": "astro/tsconfigs/strictest",
   "compilerOptions": {
-    "declaration": true
+    "declaration": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
   }
 }
