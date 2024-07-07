@@ -18,30 +18,31 @@ import Footer from "../../components/Footer.astro";
 const pubDate = entry.data.pubDate;
 
 import { formatDate } from "../../date";
+import Post from "../../components/Post.astro";
 ---
 
 <Base>
   <title slot="head">{entry.data.title} - ayats.org</title>
 
   <div id="container">
-    <div id="sidebar" class="">
-      <div id="sidebar-content" class="bg-purple-400">
-        <ul>
-          {
-            headings.map((heading) => {
-              return (
-                <li>
-                  <a href={`#${heading.slug}`}>{heading.text}</a>
-                </li>
-              );
-            })
-          }
-        </ul>
-      </div>
+    <div id="sidebar" class="bg-purple-400">
+      <ul>
+        <li><a href={`#${entry.slug}`}>{entry.data.title}</a> </li>
+        {
+          headings.map((heading) => {
+            return (
+              <li>
+                <a href={`#${heading.slug}`}>{heading.text}</a>
+              </li>
+            );
+          })
+        }
+      </ul>
     </div>
-    <main id="content" class="">
-      <div id="content-wrapper" class="max-w-6xl px-3 md:px-20 py-3 md:py-10">
-        <h1>{entry.data.title}</h1>
+
+    <main id="content-wrapper" class="flex flex-col items-center">
+      <div id="content" class="px-3 md:px-20 py-3 md:py-10">
+        <h1 id={entry.slug}>{entry.data.title}</h1>
 
         <div class="flex gap-2" id="subtitle">
           <p id="pub-date">
@@ -61,29 +62,70 @@ import { formatDate } from "../../date";
   </div>
 
   <style lang="less">
+    @sidebar-thr: 1024px;
+
     #container {
       display: grid;
       grid-template-rows: 1fr;
-      grid-template-columns: max-content 1fr;
+      grid-template-columns: 300px 1fr;
 
       width: 100vw;
     }
 
     #content {
-      /* max-width: 100%; */
-      grid-column: 1 / span 2;
+      max-width: min(100%, 80rem);
+    }
 
+    #content-wrapper {
+      grid-column: 1 / span 2;
       overflow: auto; /* why??? */
+      @media (min-width: @sidebar-thr) {
+        grid-column: 2 / span 1;
+      }
     }
 
     #sidebar {
-      display: none;
+      display: none; // starting
+      position: fixed;
+      width: 300px;
+      min-height: 100%;
+      overflow-wrap: break-word;
+      overflow-y: auto;
+      padding: 1rem;
+
+      font-size: 0.9rem;
+
+      background-color: rgb(227, 227, 227);
+
+      :is(.dark &) {
+        background-color: rgb(28, 28, 28);
+      }
+
+      @media (min-width: @sidebar-thr) {
+        display: block;
+      }
+
+      li {
+        padding: .2rem 0;
+        border-left: 1px solid var(--elem-neutral);
+        padding-left: 1rem;
+      }
+
+      ul > ul {
+        margin-left: 10px;
+      }
+
+      // :is(ul, ol) {
+      //   margin-left: 1.5rem;
+      // }
     }
 
-    #sidebar-content {
-      position: sticky;
-      top: 100px;
-      width: 300px;
+    #sidebar a {
+      color: var(--text-color-alt);
+
+      &:hover {
+        color: var(--text-color);
+      }
     }
 
     #post-content {
@@ -96,16 +138,6 @@ import { formatDate } from "../../date";
       margin-bottom: 3rem;
 
       color: var(--text-color-alt);
-    }
-
-    @media (min-width: 1024px) {
-      #content {
-        grid-column: 2 / span 1;
-      }
-
-      #sidebar {
-        display: block;
-      }
     }
   </style>
 </Base>
