@@ -2,7 +2,8 @@ import { defineConfig } from 'astro/config'
 import tailwind from "@astrojs/tailwind";
 import remarkLesetid from "remark-lesetid/astro";
 import mdx from '@astrojs/mdx';
-import { remarkCode } from './src/remark';
+import { rehypeTitles } from './src/rehype';
+import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 
 export default defineConfig({
     // your configuration options here...
@@ -21,7 +22,10 @@ export default defineConfig({
     markdown: {
         remarkPlugins: [
             remarkLesetid,
-            remarkCode
+        ],
+        rehypePlugins: [
+            rehypeHeadingIds,
+            rehypeTitles
         ],
         shikiConfig: {
             // theme: 'ayu-dark'
