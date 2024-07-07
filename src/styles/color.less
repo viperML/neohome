@@ -44,3 +44,21 @@ html.dark .astro-code span {
 a:hover {
     color: var(--text-color-alt);
 }
+
+th,
+td {
+    border-color: var(--elem-neutral);
+
+
+    &:hover {
+        background-color: var(--elem-neutral);
+    }
+}
+
+
+a,
+th,
+td {
+    transition: background-color 300ms ease-in-out;
+    transition: color 300ms ease-in-out;
+}
