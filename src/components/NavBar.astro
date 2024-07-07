@@ -7,7 +7,7 @@ const { class: className } = Astro.props;
 <header class:list={["flex justify-center", className]}>
   <nav class="py-2 px-5 flex-auto flex justify-between items-center">
     <a href="/" class="logo">
-      <Image src={logo} alt="Site logo." loading="eager"/>
+      <Image src={logo} alt="Site logo." loading="eager" decoding="sync"/>
     </a>
 
     <ul class="flex gap-4">
