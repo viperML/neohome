@@ -34,11 +34,15 @@ main {
         list-style: decimal;
     }
 
-    ul,
-    ol {
+    :is(ul, ol) {
         margin-left: 1.5rem;
+    }
+
+    :is(ul, ol):not(:is(ul, ol) :is(ul, ol)) {
         margin-top: .75rem;
         margin-bottom: .75rem;
+        // margin-top: 0;
+        // margin-bottom: 0;
     }
 
     h1,
