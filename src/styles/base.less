@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
+:root {
+    scroll-behavior: smooth;
     /* word-break: break-word; */
     overflow-wrap: break-word;
 }
@@ -59,7 +60,8 @@ a:hover {
 }
 
 
-code:not(.astro-code code), mark {
+code:not(.astro-code code),
+mark {
     box-sizing: border-box;
     padding: 0.1rem 0.3rem;
     border-radius: 0.2rem;
