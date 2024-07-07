@@ -22,7 +22,7 @@ const pubDate = entry.data.pubDate;
   <title slot="head">{entry.data.title} - ayats.org</title>
 
   <div id="container">
-    <div id="sidebar" class="bg-fuchsia-200">
+    <div id="sidebar" class="">
       <div id="sidebar-content" class="bg-purple-400">
         <ul>
           {
@@ -37,7 +37,7 @@ const pubDate = entry.data.pubDate;
         </ul>
       </div>
     </div>
-    <main id="content" class="bg-indigo-200">
+    <main id="content" class="">
       <div id="content-wrapper" class="max-w-6xl px-3 md:px-20 py-3 md:py-10">
         <h1>{entry.data.title}</h1>
 
@@ -64,7 +64,7 @@ const pubDate = entry.data.pubDate;
     </main>
   </div>
 
-  <style>
+  <style lang="less">
     #container {
       display: grid;
       grid-template-rows: 1fr;
@@ -98,6 +98,8 @@ const pubDate = entry.data.pubDate;
       font-weight: 500;
       margin-top: 0.5rem;
       margin-bottom: 3rem;
+
+      color: var(--text-color-alt);
     }
 
     @media screen(lg) {

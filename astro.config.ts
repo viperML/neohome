@@ -2,6 +2,7 @@ import { defineConfig } from 'astro/config'
 import tailwind from "@astrojs/tailwind";
 import remarkLesetid from "remark-lesetid/astro";
 import mdx from '@astrojs/mdx';
+import { remarkCode } from './src/remark';
 
 export default defineConfig({
     // your configuration options here...
@@ -19,7 +20,8 @@ export default defineConfig({
     site: "https://ayats.org",
     markdown: {
         remarkPlugins: [
-            remarkLesetid
+            remarkLesetid,
+            remarkCode
         ]
     }
 })

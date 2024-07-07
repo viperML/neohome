@@ -7,7 +7,7 @@ const { class: className } = Astro.props;
 <header class:list={["flex justify-center", className]}>
   <nav class="py-2 px-4 flex-auto flex justify-between items-center">
     <a href="/" class="logo">
-      <Image src={logo} alt="Site logo." />
+      <Image src={logo} alt="Site logo." loading="eager"/>
     </a>
     <ul class="flex gap-4">
       {
@@ -18,20 +18,30 @@ const { class: className } = Astro.props;
         })()
       }
       <a href="/blog/">Blog</a>
-      <!-- <a id="themeToggle">Theme</a> -->
+      <a id="themeToggle">Theme</a>
     </ul>
   </nav>
 </header>
 
-<style>
+<style lang="less">
   header {
     width: 100vw;
     top: 0;
     z-index: 100;
     position: sticky;
     font-weight: 600;
-    /* background-color: red; */
+
+
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(5px);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+    :is(.dark &) {
+      background-color: rgba(0,0,0, 0.60);
+    }
   }
+
 
   nav {
     /* background-color: rgb(137, 137, 137); */

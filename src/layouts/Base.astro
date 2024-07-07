@@ -1,6 +1,7 @@
 ---
 import NavBar from "../components/NavBar.astro";
-import "../styles/base.css";
+import "../styles/color.less"
+import "../styles/base.less";
 import "../styles/main.less";
 ---
 
@@ -15,12 +16,23 @@ import "../styles/main.less";
     <slot name="head" />
   </head>
 
-  <body class="bg-blue-300 flex flex-col items-center">
-    <NavBar class="bg-green-500 col-span-full row-span-1" />
+  <body class="flex flex-col items-center">
+    <NavBar class="col-span-full row-span-1" />
 
     <slot />
   </body>
 </html>
+
+<style lang="less">
+  body {
+    background-color: rgb(239, 239, 239);
+
+    :is(.dark &) {
+      background-color: rgb(21, 21, 21);
+    }
+  }
+
+</style>
 
 <script is:inline>
   // This script automatically loads the theme from either the user's preference

@@ -1,0 +1,28 @@
+
+:root {
+    --text-color: rgb(45, 45, 45);
+    --elem-neutral: rgba(103, 103, 103, 0.265);
+
+    --text-color-alt: rgb(80, 80, 80);
+
+    &.dark {
+        --text-color: rgb(211, 211, 211);
+        --text-color-alt: rgb(109, 109, 109);
+    }
+
+    color: var(--text-color);
+}
+
+
+code:not(.astro-code code) {
+    background-color: var(--elem-neutral);
+}
+
+hr {
+    background-color: var(--elem-neutral);
+}
+
+mark {
+    color: var(--text-color);
+    background-color: var(--elem-neutral);
+}

@@ -1,4 +1,6 @@
 ---
+title: ipsum
+layout: ../layouts/Test.astro
 ---
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec laoreet congue urna, pharetra tincidunt urna vulputate nec. Donec ultrices volutpat justo non iaculis. Nunc ultrices tincidunt accumsan. In condimentum lorem a rutrum blandit. Nulla gravida vitae justo sed aliquam. Aenean posuere quam eget vulputate vestibulum. Donec id massa justo.

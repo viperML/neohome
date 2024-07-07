@@ -17,9 +17,13 @@
     "@types/mersenne-twister": "^1.1.7",
     "astro": "^4.10.1",
     "less": "^4.2.0",
+    "mdast": "^3.0.0",
     "mdast-util-to-string": "^4.0.0",
     "mersenne-twister": "^1.1.0",
     "remark-lesetid": "^1.2.0",
-    "typescript": "^5.4.5"
+    "typescript": "^5.4.5",
+    "unified": "^11.0.5",
+    "unist-builder": "^4.0.0",
+    "unist-util-visit": "^5.0.0"
   }
 }
