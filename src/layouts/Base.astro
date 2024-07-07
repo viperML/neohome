@@ -1,8 +1,10 @@
 ---
 import NavBar from "../components/NavBar.astro";
-import "../styles/color.less"
+import "../styles/color.less";
 import "../styles/base.less";
 import "../styles/main.less";
+
+import "../styles/iosevka-normal.css";
 ---
 
 <html lang="en">
@@ -22,6 +24,14 @@ import "../styles/main.less";
     <slot />
   </body>
 </html>
+
+<style is:global>
+  code,
+  pre {
+    font-family: "iosevka-normal", ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+</style>
 
 <script is:inline>
   // This script automatically loads the theme from either the user's preference

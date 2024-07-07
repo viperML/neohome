@@ -14,7 +14,7 @@ export default defineConfig({
         mdx()
     ],
     devToolbar: {
-        enabled: true
+        enabled: false,
     },
     output: 'static',
     site: "https://ayats.org",
