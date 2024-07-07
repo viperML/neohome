@@ -22,6 +22,13 @@ export default defineConfig({
         remarkPlugins: [
             remarkLesetid,
             remarkCode
-        ]
-    }
+        ],
+        shikiConfig: {
+            // theme: 'ayu-dark'
+            themes: {
+                light: 'github-light',
+                dark: "vesper",
+            }
+        }
+    },
 })

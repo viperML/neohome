@@ -5,7 +5,7 @@ interface Props {
 }
 const { post } = Astro.props;
 
-// const { remarkPluginFrontmatter } = await post.render();
+import { formatDate } from "../date";
 ---
 
 <li class="post-container">
@@ -18,13 +18,7 @@ const { post } = Astro.props;
     </div>
 
     <p class="py-1">
-        {
-            post.data.pubDate.toLocaleDateString("en-uk", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-            })
-        }
+        {formatDate(post.data.pubDate)}
     </p>
 
     <p>
@@ -51,7 +45,7 @@ const { post } = Astro.props;
             background-color: rgb(0, 0, 0);
         }
     }
-    
+
     p {
         color: var(--text-color-alt);
     }

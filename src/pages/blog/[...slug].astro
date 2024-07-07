@@ -16,6 +16,8 @@ import Base from "../../layouts/Base.astro";
 import Footer from "../../components/Footer.astro";
 
 const pubDate = entry.data.pubDate;
+
+import { formatDate } from "../../date";
 ---
 
 <Base>
@@ -43,13 +45,7 @@ const pubDate = entry.data.pubDate;
 
         <div class="flex space-x-2" id="subtitle">
           <p id="pub-date">
-            {
-              pubDate.toLocaleDateString("en-uk", {
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-              })
-            }
+            {formatDate(pubDate)}
           </p>
           <p>·</p>
           <p>
@@ -102,7 +98,7 @@ const pubDate = entry.data.pubDate;
       color: var(--text-color-alt);
     }
 
-    @media screen(lg) {
+    @media (min-width: 1024px) {
       #content {
         grid-column: 2 / span 1;
       }
