@@ -2,27 +2,6 @@
 import { getCollection } from "astro:content";
 import Post from "./Post.astro";
 
-// const blogEntries = (await getCollection("blog")).filter((data) => {
-//     const draft = (() => {
-//         if ("draft" in data) {
-//             if (typeof data.draft === "boolean") {
-//                 return data.draft;
-//             }
-//         }
-//         return undefined;
-//     })();
-
-//     console.log(`${data.id} draft=${draft}`);
-
-//     if (import.meta.env.DEV === true) {
-//         return true;
-//     } else if (draft === true) {
-//         return false;
-//     } else {
-//         return true;
-//     }
-// });
-
 const blogEntries = (await getCollection("blog"))
     .sort((a, b) => {
         return b.data.pubDate.getTime() - a.data.pubDate.getTime();
