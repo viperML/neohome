@@ -27,18 +27,47 @@ const file = `src/content/${entry.collection}/${entry.id}`;
 
   <div id="container">
     <div id="sidebar">
+      <h3>Contents</h3>
       <ul>
-        <li><a href={`#${entry.slug}`}>{entry.data.title}</a></li>
+        <li class="depth-1"><a href={`#${entry.slug}`}>{entry.data.title}</a></li>
         {
           headings.map((heading) => {
             return (
-              <li>
+              <li class=`depth-${heading.depth}`>
                 <a href={`#${heading.slug}`}>{heading.text}</a>
               </li>
             );
           })
         }
       </ul>
+
+      <style>
+        h3 {
+          padding-bottom: 0.5rem;
+        }
+        
+        /* Eyeballing distances */
+
+        li {
+          padding: 0.2rem 0;
+          border-left: 1px solid var(--elem-neutral);
+          padding-left: 2.5rem;
+        }
+
+        li.depth-1 {
+          padding-left: 1rem;
+        }
+
+        li.depth-2 {
+          padding-left: 1.8rem;
+        }
+
+
+        ul > ul {
+          margin-left: 10px;
+        }
+
+      </style>
     </div>
 
     <div id="content-wrapper" class="flex flex-col items-center">
@@ -109,21 +138,9 @@ const file = `src/content/${entry.collection}/${entry.id}`;
         display: block;
       }
 
-      li {
-        padding: 0.2rem 0;
-        border-left: 1px solid var(--elem-neutral);
-        padding-left: 1rem;
-      }
-
-      ul > ul {
-        margin-left: 10px;
-      }
-
       // :is(ul, ol) {
       //   margin-left: 1.5rem;
       // }
-
-
     }
 
     #sidebar a {
