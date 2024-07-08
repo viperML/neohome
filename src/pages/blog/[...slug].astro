@@ -22,7 +22,7 @@ import { formatDate } from "../../date";
 const file = `src/content/${entry.collection}/${entry.id}`;
 ---
 
-<Base>
+<Base title={entry.data.title} description={entry.data.summary}>
   <title slot="head">{entry.data.title} - ayats.org</title>
 
   <div id="container">
@@ -45,7 +45,7 @@ const file = `src/content/${entry.collection}/${entry.id}`;
         h3 {
           padding-bottom: 0.5rem;
         }
-        
+
         /* Eyeballing distances */
 
         li {

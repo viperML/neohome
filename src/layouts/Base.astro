@@ -7,17 +7,56 @@ import "../styles/main.less";
 import "../styles/iosevka-normal.css";
 
 import "../styles/alert.less";
+
+const seoLinks = [
+  "https://github.com/viperML",
+  "https://linkedin.com/in/ayatsfer",
+];
+
+interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+}
+
+const finalTitle =
+  (() => {
+    if (Astro.props.title !== undefined) {
+      return `${Astro.props.title} -`;
+    } else {
+      return "";
+    }
+  })() + "ayats.org";
+
+const finalDesc = (() => {
+  if (Astro.props.description !== undefined) {
+    return Astro.props.description;
+  } else {
+    return "My personal website.";
+  }
+})();
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
 
     <slot name="head" />
+
+    <!-- SEO -->
+    <link rel="canonical" href={import.meta.env.SITE} />
+    <title>{finalTitle}</title>
+    <meta name="title" content={finalTitle} />
+    <meta name="author" content="Fernando Ayats" />
+    <meta name="description" content={finalDesc} />
+    {
+      seoLinks.map((link) => {
+        return <link href={link} rel="me" />;
+      })
+    }
   </head>
 
   <body class="flex flex-col items-center">

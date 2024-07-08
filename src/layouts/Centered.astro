@@ -1,20 +1,15 @@
 ---
 import Base from "./Base.astro";
 
-const { frontmatter } = Astro.props;
+interface Props {
+    title?: string | undefined;
+    description?: string | undefined;
+}
 
-const title = (() => {
-    if (frontmatter?.title !== undefined) {
-        return `${frontmatter.title} - ayats.org`;
-    } else {
-        return "ayats.org";
-    }
-})();
+const { title, description } = Astro.props;
 ---
 
-<Base>
-    <title slot="head">{title}</title>
-
+<Base title={title} description={description}>
     <section class="flex flex-col main-container">
         <slot />
     </section>
