@@ -1,13 +1,48 @@
 ---
 const { class: className } = Astro.props;
+
+const date = new Date();
+
+const commit: string | undefined = import.meta.env.GIT_COMMIT;
+console.log(commit);
+
+const url = (() => {
+    if (commit === undefined) {
+        return "https://github.com/viperML/neohome";
+    } else {
+        return `https://github.com/viperML/neohome/tree/${commit}`;
+    }
+})();
+
+const urlString = (() => {
+    if (commit === undefined) {
+        return "https://github.com/viperML/neohome";
+    } else {
+        return `https://github.com/viperML/neohome@${commit.substring(0, 7)}`;
+    }
+})();
 ---
 
 <footer class:list={[className]}>
-    Copyright Fernando Ayats.
+    <p>
+        Blog posts © {date.getFullYear()} Fernando Ayats under <a
+            href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC-BY-NC-SA 4.0</a
+        >
+    </p>
+    <p>
+        Generated with astro from <a href={url}>{urlString}</a>
+    </p>
 </footer>
 
 <style>
     footer {
-        margin-top: 20px;
+        margin-top: 3rem;
+        display: grid;
+        width: 100%;
+    }
+
+    #astro {
+        font-variant: small-caps;
     }
 </style>

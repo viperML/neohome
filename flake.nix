@@ -38,7 +38,13 @@
           };
           npmConfigHook = importNpmLock.npmConfigHook;
 
-          env.ASTRO_TELEMETRY_DISABLED = true;
+          env =
+            {
+              ASTRO_TELEMETRY_DISABLED = true;
+            }
+            // (lib.optionalAttrs (builtins.hasAttr "rev" self) {
+              GIT_COMMIT = self.rev;
+            });
         };
     };
   };

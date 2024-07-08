@@ -18,15 +18,18 @@ import Footer from "../../components/Footer.astro";
 const pubDate = entry.data.pubDate;
 
 import { formatDate } from "../../date";
+
+const file = `src/content/${entry.collection}/${entry.id}`;
+console.log(file);
 ---
 
 <Base>
   <title slot="head">{entry.data.title} - ayats.org</title>
 
   <div id="container">
-    <div id="sidebar" class="bg-purple-400">
+    <div id="sidebar">
       <ul>
-        <li><a href={`#${entry.slug}`}>{entry.data.title}</a> </li>
+        <li><a href={`#${entry.slug}`}>{entry.data.title}</a></li>
         {
           headings.map((heading) => {
             return (
@@ -39,25 +42,27 @@ import { formatDate } from "../../date";
       </ul>
     </div>
 
-    <main id="content-wrapper" class="flex flex-col items-center">
-      <div id="content" class="px-3 md:px-20 py-3 md:py-10">
-        <h1 id={entry.slug}>{entry.data.title}</h1>
+    <div id="content-wrapper" class="flex flex-col items-center">
+      <div id="content" class="main-container">
+        <main>
+          <h1 id={entry.slug}>{entry.data.title}</h1>
 
-        <div class="flex gap-2" id="subtitle">
-          <p id="pub-date">
-            {formatDate(pubDate)}
-          </p>
-          <p>·</p>
-          <p>
-            {remarkPluginFrontmatter.estimation.text}
-          </p>
-        </div>
+          <div class="flex gap-2" id="subtitle">
+            <p id="pub-date">
+              {formatDate(pubDate)}
+            </p>
+            <p>·</p>
+            <p>
+              {remarkPluginFrontmatter.estimation.text}
+            </p>
+          </div>
 
-        <Content />
+          <Content />
+        </main>
 
         <Footer />
       </div>
-    </main>
+    </div>
   </div>
 
   <style lang="less">
@@ -105,7 +110,7 @@ import { formatDate } from "../../date";
       }
 
       li {
-        padding: .2rem 0;
+        padding: 0.2rem 0;
         border-left: 1px solid var(--elem-neutral);
         padding-left: 1rem;
       }

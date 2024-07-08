@@ -78,8 +78,26 @@ table {
     margin-right: auto;
 }
 
-th, td {
+th,
+td {
     border-style: solid;
     border-width: 1px;
     padding: .3rem .9rem;
+}
+
+.main-container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+
+    max-width: 72rem;
+
+    @media (min-width: 768px) {
+        padding-left: 5rem;
+        padding-right: 5rem;
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+    }
+
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
 }
