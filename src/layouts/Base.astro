@@ -52,8 +52,6 @@ import "../styles/iosevka-normal.css";
     document.documentElement.classList.add("dark");
   }
 
-  document.documentElement.classList.add("theme-loaded");
-
   window.localStorage.setItem("theme", theme);
 
   document.getElementById("themeToggle").addEventListener("click", () => {
@@ -63,4 +61,10 @@ import "../styles/iosevka-normal.css";
     const isDark = element.classList.contains("dark");
     localStorage.setItem("theme", isDark ? "dark" : "light");
   });
+</script>
+
+<script>
+  setTimeout(() => {
+    document.documentElement.classList.add("theme-loaded");
+  }, 10);
 </script>
