@@ -38,7 +38,7 @@ mark {
 html.dark .astro-code,
 html.dark .astro-code span {
     color: var(--shiki-dark) !important;
-    background-color: rgb(0, 0, 0) !important;
+    // background-color: rgb(0, 0, 0) !important;
 }
 
 a:hover {
@@ -61,4 +61,19 @@ th,
 td {
     transition: background-color 300ms ease-in-out;
     transition: color 300ms ease-in-out;
+}
+
+.card,
+.astro-code {
+    background-color: white !important; // for astro-code
+    border: 2px solid var(--elem-neutral);
+    border-radius: 5px;
+
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+
+    padding: 1rem;
+
+    :is(.dark &) {
+        background-color: rgb(0, 0, 0) !important; // for astro-code
+    }
 }
