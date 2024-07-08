@@ -52,20 +52,28 @@ const urlShort =
 
 <footer class:list={[className]}>
     <p>
-        Blog posts © {date.getFullYear()} Fernando Ayats under <a
+        Posts © {date.getFullYear()} Fernando Ayats under <a
             href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
             >CC-BY-NC-SA 4.0</a
         >
     </p>
     <p>
-        Built with Astro from <a href={url}>{urlShort}</a>
+        Built with <a href="https://astro.build">Astro</a> from <a href={url}>{urlShort}</a>
     </p>
 </footer>
 
-<style>
+<style lang="less">
     footer {
         margin-top: 3rem;
         display: grid;
         width: 100%;
+    }
+
+    a {
+        text-decoration: underline;
+
+        &:hover {
+            color: var(--text-color-alt);
+        }
     }
 </style>
