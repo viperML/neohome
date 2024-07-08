@@ -15,34 +15,36 @@ const branch = "astro";
 const baseUrlShort = "viperML/neohome";
 const baseUrl = `https://github.com/${baseUrlShort}`;
 
+const ref = (() => {
+    if (commit !== undefined) {
+        return commit;
+    } else {
+        return "astro";
+    }
+})();
+
 const url =
     baseUrl +
     (() => {
-        if (commit === undefined && file === undefined) {
-            return `/tree/${branch}`;
-        } else if (commit === undefined && file !== undefined) {
-            return `/blob/${branch}/${file}`;
-        } else if (commit !== undefined && file === undefined) {
-            return `/tree/${commit}`;
-        } else if (commit !== undefined && file !== undefined) {
-            return `/blob/${commit}/${file}`;
+        if (file === undefined) {
+            return `/tree/${ref}`;
         } else {
-            throw new Error("unreachable");
+            return `/blob/${ref}/${file}`;
         }
     })();
 
 const urlShort =
     baseUrlShort +
     (() => {
-        if (commit !== undefined) {
-            return ` @ ${commit.substring(0, 7)}`;
+        if (file !== undefined) {
+            return `:${file}`;
         } else {
             return "";
         }
     })() +
     (() => {
-        if (file !== undefined) {
-            return ` : ${file}`;
+        if (commit !== undefined) {
+            return ` @ ${commit.substring(0, 7)}`;
         } else {
             return "";
         }
