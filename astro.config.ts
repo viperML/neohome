@@ -4,6 +4,7 @@ import remarkLesetid from "remark-lesetid/astro";
 import mdx from '@astrojs/mdx';
 import { rehypeTitles } from './src/rehype';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
+import { remarkAlert } from 'remark-github-blockquote-alert'
 
 export default defineConfig({
     // your configuration options here...
@@ -21,6 +22,7 @@ export default defineConfig({
     site: "https://ayats.org",
     markdown: {
         remarkPlugins: [
+            remarkAlert,
             remarkLesetid,
         ],
         rehypePlugins: [

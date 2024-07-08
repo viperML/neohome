@@ -19,6 +19,7 @@
     "less": "^4.2.0",
     "rehype": "^13.0.1",
     "remark": "^15.0.1",
+    "remark-github-blockquote-alert": "^1.2.1",
     "remark-lesetid": "^1.2.0",
     "typescript": "^5.4.5",
     "unified": "^11.0.5",
