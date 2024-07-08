@@ -1,26 +1,52 @@
 ---
-const { class: className } = Astro.props;
+interface Props {
+    class?: string;
+    file?: string;
+}
+
+const { class: className, file } = Astro.props;
 
 const date = new Date();
 
 const commit: string | undefined = import.meta.env.GIT_COMMIT;
 console.log(commit);
 
-const url = (() => {
-    if (commit === undefined) {
-        return "https://github.com/viperML/neohome";
-    } else {
-        return `https://github.com/viperML/neohome/tree/${commit}`;
-    }
-})();
+const branch = "astro";
+const baseUrlShort = "viperML/neohome";
+const baseUrl = `https://github.com/${baseUrlShort}`;
 
-const urlString = (() => {
-    if (commit === undefined) {
-        return "https://github.com/viperML/neohome";
-    } else {
-        return `https://github.com/viperML/neohome@${commit.substring(0, 7)}`;
-    }
-})();
+const url =
+    baseUrl +
+    (() => {
+        if (commit === undefined && file === undefined) {
+            return `/tree/${branch}`;
+        } else if (commit === undefined && file !== undefined) {
+            return `/blob/${branch}/${file}`;
+        } else if (commit !== undefined && file === undefined) {
+            return `/tree/${commit}`;
+        } else if (commit !== undefined && file !== undefined) {
+            return `/blob/${commit}/${file}`;
+        } else {
+            throw new Error("unreachable");
+        }
+    })();
+
+const urlShort =
+    baseUrlShort +
+    (() => {
+        if (commit !== undefined) {
+            return ` @ ${commit.substring(0, 7)}`;
+        } else {
+            return "";
+        }
+    })() +
+    (() => {
+        if (file !== undefined) {
+            return ` : ${file}`;
+        } else {
+            return "";
+        }
+    })();
 ---
 
 <footer class:list={[className]}>
@@ -31,7 +57,7 @@ const urlString = (() => {
         >
     </p>
     <p>
-        Generated with astro from <a href={url}>{urlString}</a>
+        Built with Astro from <a href={url}>{urlShort}</a>
     </p>
 </footer>
 
