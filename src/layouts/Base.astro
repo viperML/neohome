@@ -52,6 +52,8 @@ import "../styles/iosevka-normal.css";
     document.documentElement.classList.add("dark");
   }
 
+  document.documentElement.classList.add("theme-loaded");
+
   window.localStorage.setItem("theme", theme);
 
   document.getElementById("themeToggle").addEventListener("click", () => {

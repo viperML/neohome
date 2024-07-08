@@ -55,9 +55,7 @@ td {
 }
 
 
-a,
-th,
-td {
+.theme-loaded :is(a, th, td) {
     transition: background-color 300ms ease-in;
     transition: color 300ms ease-in;
 }
@@ -78,7 +76,9 @@ td {
 }
 
 .card-hover {
-    transition: ease-in 200ms;
+    :is(.theme-loaded &) {
+        transition: ease-in 200ms;
+    }
 
     &:hover {
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
