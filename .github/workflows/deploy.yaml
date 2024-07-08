@@ -25,7 +25,7 @@ jobs:
 
       - name: Build
         run: |
-          out="$(nix build .^out --print-out-paths --no-link)"
+          out="$(nix build .^out --print-out-paths --no-link --print-build-logs)"
           cp -vrL "$out/lib/node_modules/neohome/dist" "${{ env.DISTDIR }}"
 
       - name: Publish
