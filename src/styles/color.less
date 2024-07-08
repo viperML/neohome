@@ -49,18 +49,17 @@ th,
 td {
     border-color: var(--elem-neutral);
 
-
-    &:hover {
-        background-color: var(--elem-neutral);
-    }
+    // &:hover {
+    //     background-color: var(--elem-neutral);
+    // }
 }
 
 
 a,
 th,
 td {
-    transition: background-color 300ms ease-in-out;
-    transition: color 300ms ease-in-out;
+    transition: background-color 300ms ease-in;
+    transition: color 300ms ease-in;
 }
 
 .card,
@@ -76,4 +75,17 @@ td {
     :is(.dark &) {
         background-color: rgb(0, 0, 0) !important; // for astro-code
     }
+}
+
+.card-hover {
+    transition: ease-in 200ms;
+
+    &:hover {
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+
+        :is(.dark &) {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
+        }
+    }
+
 }

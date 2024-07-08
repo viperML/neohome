@@ -7,42 +7,32 @@ const { post } = Astro.props;
 
 import { formatDate } from "../date";
 ---
-<li class="post-container card">
-    <div class="grid-span-1">
-        <h3>
-            <a href={`/blog/${post.slug}`}>
+
+<li>
+    <a href={`/blog/${post.slug}`} class="post-container card card-hover">
+        <div class="grid-span-1">
+            <h3>
                 {post.data.title}
-            </a>
-        </h3>
-    </div>
+            </h3>
+        </div>
 
-    <p class="py-1">
-        {formatDate(post.data.pubDate)}
-    </p>
+        <p class="py-1">
+            {formatDate(post.data.pubDate)}
+        </p>
 
-    <p>
-        {post.data.summary}
-    </p>
+        <p>
+            {post.data.summary}
+        </p>
+    </a>
 </li>
 
 <style lang="less">
     .post-container {
-        background-color: white;
         display: grid;
         grid-template-rows: auto auto;
         grid-template-columns: auto max-content;
         align-items: top;
         column-gap: 1rem;
-        border: 2px solid var(--elem-neutral);
-        border-radius: 5px;
-
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-
-        padding: 1rem;
-
-        :is(.dark &) {
-            background-color: rgb(0, 0, 0);
-        }
     }
 
     p {
