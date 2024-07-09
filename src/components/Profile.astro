@@ -1,0 +1,49 @@
+---
+---
+
+<div id="profile">
+    <div id="bento-photo" class="card">Photo</div>
+    <div id="bento-info" class="card">Info</div>
+    <div class="card">Info</div>
+    <div class="card">Info</div>
+    <div class="card">Info</div>
+    <div class="card">Info</div>
+    <div class="card">Info</div>
+</div>
+
+<style lang="less">
+    #profile {
+        background-color: navy;
+
+        display: grid;
+
+        @size: 100px;
+
+        grid-template-columns: repeat(
+            auto-fill,
+            minmax(@size, 1fr)
+        );
+        grid-auto-rows: @size;
+
+        grid-auto-flow: row dense;
+
+        gap: 10px;
+
+        margin: 8px;
+        margin-bottom: 50px;
+    }
+
+    div > div {
+        border: 2px solid red;
+    }
+
+    #bento-photo {
+        grid-column: span 3;
+        grid-row: span 3;
+    }
+
+    #bento-info {
+        grid-column: span 3;
+        grid-row: span 2;
+    }
+</style>
