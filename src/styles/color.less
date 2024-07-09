@@ -3,10 +3,12 @@
     --elem-neutral: rgba(103, 103, 103, 0.265);
 
     --text-color-alt: rgb(114, 114, 114);
+    --text-color-active: rgb(152, 152, 152);
 
     &.dark {
         --text-color: rgb(211, 211, 211);
         --text-color-alt: rgb(109, 109, 109);
+        --text-color-active: rgb(86, 86, 86);
     }
 
     color: var(--text-color);
@@ -43,6 +45,10 @@ html.dark .astro-code span {
 
 a:hover {
     color: var(--text-color-alt);
+}
+
+a:active {
+    color: var(--text-color-active);
 }
 
 th,
