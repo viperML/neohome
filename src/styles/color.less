@@ -2,7 +2,7 @@
     --text-color: rgb(45, 45, 45);
     --elem-neutral: rgba(103, 103, 103, 0.265);
 
-    --text-color-alt: rgb(80, 80, 80);
+    --text-color-alt: rgb(114, 114, 114);
 
     &.dark {
         --text-color: rgb(211, 211, 211);
@@ -82,5 +82,18 @@ td {
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.9);
         }
     }
+}
 
+.hover-filter {
+    &:hover {
+        filter: brightness(300%);
+
+        :is(.dark &) {
+            filter: brightness(60%);
+        }
+    }
+
+    :is(.theme-loaded &) {
+        transition: filter 100ms ease-in;
+    }
 }
