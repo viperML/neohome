@@ -5,9 +5,10 @@ import "../styles/base.less";
 import "../styles/main.less";
 
 import "../styles/iosevka-normal.css";
-import "@fontsource/geist-sans"
+import "@fontsource/geist-sans";
 
 import "../styles/alert.less";
+import "../styles/code-copy.less";
 
 const seoLinks = [
   "https://github.com/viperML",
@@ -67,8 +68,7 @@ const finalDesc = (() => {
   </body>
 </html>
 
-<style is:global>
-</style>
+<style is:global></style>
 
 <script is:inline>
   // This script automatically loads the theme from either the user's preference
@@ -113,4 +113,18 @@ const finalDesc = (() => {
   setTimeout(() => {
     document.documentElement.classList.add("theme-loaded");
   }, 10);
+</script>
+
+<script>
+  Array.from(document.getElementsByClassName("code-copy")).forEach((button) => {
+    button.addEventListener("click", async () => {
+      const text = button.parentElement?.textContent;
+      if (typeof text === "string") {
+        const type = "text/plain";
+        const blob = new Blob([text], { type });
+        const data = [new ClipboardItem({ [type]: blob })];
+        await navigator.clipboard.write(data);
+      }
+    });
+  });
 </script>

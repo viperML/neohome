@@ -1,0 +1,26 @@
+
+pre {
+    position: relative;
+}
+
+@sep: 10px;
+
+.code-copy {
+    position: absolute;
+    top: @sep;
+    right: @sep;
+
+    padding: 8px;
+    aspect-ratio: 1 / 1;
+    display: grid;
+
+    border: 2px solid var(--elem-neutral);
+    border-radius: 5px;
+}
+
+.code-copy > svg {
+    width: 15px;
+
+    justify-self: center;
+    align-self: center;
+}

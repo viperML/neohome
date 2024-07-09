@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config'
 import tailwind from "@astrojs/tailwind";
 import remarkLesetid from "remark-lesetid/astro";
 import mdx from '@astrojs/mdx';
-import { rehypeTitles } from './src/rehype';
+import { rehypeTitles, rehypeCodeCopy } from './src/rehype';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import { remarkAlert } from 'remark-github-blockquote-alert'
 
@@ -27,7 +27,8 @@ export default defineConfig({
         ],
         rehypePlugins: [
             rehypeHeadingIds,
-            rehypeTitles
+            rehypeTitles,
+            rehypeCodeCopy,
         ],
         shikiConfig: {
             // theme: 'ayu-dark'
