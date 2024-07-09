@@ -28,8 +28,8 @@ const iconLinkedin = icon(faLinkedin).html;
     </div>
     <div id="bento-info" class="card">
         <span>
-            <h2>Hello! I am Fernando Ayats</h2>
-            <p class="mt-2">
+            <h2>Hello! I am Fernando <span class="bento-extra">Ayats</span></h2>
+            <p class="mt-1">
                 This is my personal website, where I write some blog posts. I
                 mainly write about Linux-related topics, specially NixOS and
                 Rust.
@@ -85,5 +85,13 @@ const iconLinkedin = icon(faLinkedin).html;
         width: 50%;
         align-self: center;
         justify-self: center;
+    }
+
+    .bento-extra {
+        display: none;
+
+        @media (min-width:600px) {
+            display: initial;
+        }
     }
 </style>
