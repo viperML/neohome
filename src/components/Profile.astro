@@ -1,28 +1,64 @@
 ---
+import { icon } from "@fortawesome/fontawesome-svg-core";
+import { Image } from "astro:assets";
+
+import author from "./author.jpeg";
+
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+
+const iconGithub = icon(faGithub).html;
+const iconLinkedin = icon(faLinkedin).html;
 ---
 
 <div id="profile">
-    <div id="bento-photo" class="card">Photo</div>
-    <div id="bento-info" class="card">Info</div>
-    <div class="card">Info</div>
-    <div class="card">Info</div>
-    <div class="card">Info</div>
-    <div class="card">Info</div>
-    <div class="card">Info</div>
+    <div id="bento-photo" class="card">
+        <Image src={author} alt="Author" />
+
+        <style>
+            img {
+                width: 80%;
+                display: inline-block;
+                border-radius: 50%;
+                border: 2px solid var(--elem-neutral);
+                align-self: center;
+                justify-self: center;
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            }
+        </style>
+    </div>
+    <div id="bento-info" class="card">
+        <span>
+            <h2>Hello! I am Fernando</h2>
+            <p>
+                This is my personal website, where I write some blog posts. I
+                mainly write about Linux-related topics, specially NixOS and
+                Rust.
+            </p>
+
+            <p>Feel free to contact me!</p>
+        </span>
+
+        <style>
+            p {
+                margin-top: 0.3rem;
+            }
+        </style>
+    </div>
+    <a class="card" href="https://github.com/viperML">
+        <div class="bento-icon" set:html={iconGithub} />
+    </a>
+    <a class="card" href="https://linkedin.com/in/ayatsfer">
+        <div class="bento-icon" set:html={iconLinkedin} />
+    </a>
 </div>
 
 <style lang="less">
     #profile {
-        background-color: navy;
-
         display: grid;
 
         @size: 100px;
 
-        grid-template-columns: repeat(
-            auto-fill,
-            minmax(@size, 1fr)
-        );
+        grid-template-columns: repeat(auto-fill, minmax(@size, 1fr));
         grid-auto-rows: @size;
 
         grid-auto-flow: row dense;
@@ -33,17 +69,27 @@
         margin-bottom: 50px;
     }
 
-    div > div {
-        border: 2px solid red;
-    }
-
     #bento-photo {
-        grid-column: span 3;
-        grid-row: span 3;
+        grid-column: span 2;
+        grid-row: span 2;
     }
 
     #bento-info {
         grid-column: span 3;
         grid-row: span 2;
+
+        @media (min-width: 600px) {
+            grid-column: span 4;
+        }
+    }
+
+    #profile > * {
+        display: grid;
+    }
+
+    .bento-icon {
+        width: 50%;
+        align-self: center;
+        justify-self: center;
     }
 </style>
