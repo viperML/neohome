@@ -1,13 +1,14 @@
 import type { Config } from 'tailwindcss'
+const defaultTheme = require('tailwindcss/defaultTheme')
 
 export default {
   darkMode: 'selector',
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
   theme: {
     extend: {
-      // spacing: {
-      //   '11': '4.75rem',
-      // }
+      fontFamily: {
+        'sans': ['"Geist Sans"', ...defaultTheme.fontFamily.sans],
+      },
     },
   },
   plugins: [],
