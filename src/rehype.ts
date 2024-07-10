@@ -71,21 +71,30 @@ export function rehypeTitles(): (tree: Root) => void {
 
 export function rehypeCodeCopy(): (tree: Root) => void {
     return function (tree: Root) {
-        visit(tree, 'element', function (node) {
+        visit(tree, 'element', function (node, index, parent) {
             if (node.tagName !== "pre") {
                 return;
             }
 
-            node.children.push(
-                u("element", {
-                    tagName: "button",
-                    properties: {
-                        class: ["code-copy", "astro-button"]
-                    },
-                }, [
-                    tabler_copy
-                ])
-            )
+            if (index !== undefined) {
+                parent?.children.splice(index, 1, ...[
+                    u("element", {
+                        tagName: "div", properties: {
+                            class: ["astro-code-container"]
+                        }
+                    }, [
+                        node,
+                        u("element", {
+                            tagName: "button",
+                            properties: {
+                                class: ["code-copy", "astro-button"]
+                            },
+                        }, [
+                            tabler_copy
+                        ])
+                    ])
+                ]);
+            }
         })
     }
 }
