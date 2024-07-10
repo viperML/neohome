@@ -58,7 +58,7 @@ td {
 
 
 .theme-loaded a {
-    transition: color 100ms ease-in;
+    transition: color 100ms ease-out;
 }
 
 .card,
@@ -78,7 +78,7 @@ td {
 
 .card-hover {
     :is(.theme-loaded &) {
-        transition: box-shadow ease-in 100ms;
+        transition: box-shadow ease-out 100ms;
     }
 
     &:hover {
@@ -100,6 +100,6 @@ td {
     }
 
     :is(.theme-loaded &) {
-        transition: filter 100ms ease-in;
+        transition: filter 100ms ease-out;
     }
 }
