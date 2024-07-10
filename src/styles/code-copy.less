@@ -18,7 +18,7 @@ pre {
     width: 35px;
     height: 35px;
 
-    transition: opacity 100ms ease-in;
+    transition: opacity 200ms ease-in, color 200ms linear;
 
     @media (min-width: 768px) {
         opacity: 0;
@@ -32,6 +32,11 @@ pre {
     align-self: center;
 }
 
-.astro-code:hover .code-copy {
+.astro-code:hover .code-copy,
+.code-copy.active {
     opacity: 1;
+}
+
+.code-copy.active {
+    border-color: chartreuse;
 }
