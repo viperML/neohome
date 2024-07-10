@@ -26,7 +26,7 @@ const file = `src/content/${entry.collection}/${entry.id}`;
   <title slot="head">{entry.data.title} - ayats.org</title>
 
   <div id="container">
-    <div id="sidebar">
+    <div id="sidebar" class="card">
       <h3>Contents</h3>
       <ul>
         <li class="depth-1"><a href={`#${entry.slug}`}>{entry.data.title}</a></li>
@@ -138,9 +138,10 @@ const file = `src/content/${entry.collection}/${entry.id}`;
         display: block;
       }
 
-      // :is(ul, ol) {
-      //   margin-left: 1.5rem;
-      // }
+      border-radius: 0;
+      border-top: 0;
+      border-left: 0;
+      border-bottom: 0;
     }
 
     #sidebar a {
