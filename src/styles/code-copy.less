@@ -9,27 +9,14 @@ pre {
     top: @sep;
     right: @sep;
 
-    padding: 8px;
-    aspect-ratio: 1 / 1;
-    display: grid;
-
-    border: 2px solid var(--elem-neutral);
-    border-radius: 5px;
-    width: 35px;
-    height: 35px;
-
-    transition: opacity 200ms ease-in, color 200ms linear;
-
     @media (min-width: 768px) {
         opacity: 0;
     }
 }
 
-.code-copy>svg {
-    // width: 15px;
-
-    justify-self: center;
-    align-self: center;
+.code-copy > svg {
+    width: 20px;
+    height: 20px;
 }
 
 .astro-code:hover .code-copy,
@@ -38,5 +25,5 @@ pre {
 }
 
 .code-copy.active {
-    border-color: chartreuse;
+    border-color: chartreuse !important;
 }

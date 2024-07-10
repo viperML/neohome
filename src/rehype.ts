@@ -2,33 +2,41 @@ import type { Root } from "hast";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
 
+// https://icones.js.org/collection/tabler?s=copy&icon=tabler:copy
 
-import { icon as mkIcon, type IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
-
-function icon2node(icon: IconDefinition) {
-    const i = mkIcon(icon);
-
-    return u("element", {
-        tagName: "svg",
+const tabler_copy = u("element", {
+    tagName: "svg",
+    properties: {
+        xmlns: 'http://www.w3.org/2000/svg',
+        role: "img",
+        width: "1em", height: "1em",
+        viewBox: "0 0 24 24",
+    }
+}, [
+    u("element", {
+        tagName: "g",
         properties: {
-            xmlns: 'http://www.w3.org/2000/svg',
-            viewBox: `0 0 ${i.icon[0]} ${i.icon[1]}`,
-            "aria-hidden": "true",
-            focusable: "false",
-            "data-prefix": "fab",
-            role: "img",
+            fill: "none",
+            stroke: "currentColor",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "stroke-width": "2",
         }
     }, [
         u("element", {
             tagName: "path",
             properties: {
-                fill: "currentColor",
-                d: i.icon[4]
+                d: "M7 9.667A2.667 2.667 0 0 1 9.667 7h8.666A2.667 2.667 0 0 1 21 9.667v8.666A2.667 2.667 0 0 1 18.333 21H9.667A2.667 2.667 0 0 1 7 18.333z",
+            }
+        }, []),
+        u("element", {
+            tagName: "path",
+            properties: {
+                d: "M4.012 16.737A2 2 0 0 1 3 15V5c0-1.1.9-2 2-2h10c.75 0 1.158.385 1.5 1",
             }
         }, [])
-    ]);
-}
+    ])
+]);
 
 
 
@@ -68,15 +76,14 @@ export function rehypeCodeCopy(): (tree: Root) => void {
                 return;
             }
 
-
             node.children.push(
                 u("element", {
                     tagName: "button",
                     properties: {
-                        class: ["code-copy"]
+                        class: ["code-copy", "astro-button"]
                     },
                 }, [
-                    icon2node(faCopy)
+                    tabler_copy
                 ])
             )
         })

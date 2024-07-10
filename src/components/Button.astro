@@ -1,0 +1,38 @@
+---
+interface Props {}
+
+const props = Astro.props;
+
+import { IconAward } from "@tabler/icons-react";
+---
+
+<button class="astro-button">
+    <slot />
+</button>
+
+<style is:global lang="less">
+    .astro-button {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border: 2px solid var(--elem-neutral);
+
+        &:hover {
+            border-color: var(--text-color-alt);
+        }
+
+
+        :is(.theme-loaded &) {
+            transition: opacity 200ms ease-in, color 200ms linear;
+        }
+    }
+
+    .astro-button > svg {
+        color: var(--text-color-alt);
+    }
+</style>

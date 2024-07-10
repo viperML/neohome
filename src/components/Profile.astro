@@ -1,13 +1,9 @@
 ---
-import { icon } from "@fortawesome/fontawesome-svg-core";
 import { Image } from "astro:assets";
 
 import author from "./author.jpeg";
 
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-
-const iconGithub = icon(faGithub).html;
-const iconLinkedin = icon(faLinkedin).html;
+import { IconBrandLinkedin, IconBrandGithub } from "@tabler/icons-react";
 ---
 
 <div id="profile">
@@ -36,13 +32,19 @@ const iconLinkedin = icon(faLinkedin).html;
             </p>
 
             <p class="mt-5">Feel free to contact me!</p>
+
+            <style>
+                p {
+                    color: var(--text-color-alt);
+                }
+            </style>
         </span>
     </div>
     <a class="card" href="https://github.com/viperML">
-        <div class="bento-icon" set:html={iconGithub} />
+        <IconBrandGithub className="bento-icon"/>
     </a>
     <a class="card" href="https://linkedin.com/in/ayatsfer">
-        <div class="bento-icon" set:html={iconLinkedin} />
+        <IconBrandLinkedin className="bento-icon"/>
     </a>
 </div>
 
@@ -83,6 +85,7 @@ const iconLinkedin = icon(faLinkedin).html;
 
     .bento-icon {
         width: 50%;
+        height: auto;
         align-self: center;
         justify-self: center;
     }
