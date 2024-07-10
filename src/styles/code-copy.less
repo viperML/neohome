@@ -1,4 +1,3 @@
-
 pre {
     position: relative;
 }
@@ -18,11 +17,21 @@ pre {
     border-radius: 5px;
     width: 35px;
     height: 35px;
+
+    transition: opacity 100ms ease-in;
+
+    @media (min-width: 768px) {
+        opacity: 0;
+    }
 }
 
-.code-copy > svg {
+.code-copy>svg {
     // width: 15px;
 
     justify-self: center;
     align-self: center;
+}
+
+.astro-code:hover .code-copy {
+    opacity: 1;
 }
