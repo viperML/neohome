@@ -37,14 +37,14 @@ const { class: className } = Astro.props;
     position: sticky;
     font-weight: 600;
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-    background-color: rgba(177, 170, 170, 0.267);
-    border-bottom: 2px solid rgba(185, 185, 185, 0.082);
+    background-color: rgba(241, 241, 241, 0.9);
+    border-bottom: 1px solid var(--elem-neutral);
 
     :is(.dark &) {
-      background-color: rgba(18, 18, 18, 0.6);
+      background-color: rgba(18, 18, 18, 0.8);
       border-bottom: 2px solid rgba(0, 0, 0, 0.3);
     }
   }
