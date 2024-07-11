@@ -14,12 +14,16 @@
     color: var(--text-color);
 }
 
+:not(.theme-loaded *) {
+    transition: none !important;
+}
+
 
 body {
     background-color: #f9f5f3;
 
     :is(.dark &) {
-        background-color: rgb(10, 10, 10);
+        background-color: rgb(18, 18, 18);
     }
 }
 
@@ -57,7 +61,7 @@ td {
 }
 
 
-.theme-loaded a {
+a {
     transition: color 100ms ease-out;
 }
 
@@ -77,9 +81,7 @@ td {
 }
 
 .card-hover {
-    :is(.theme-loaded &) {
-        transition: box-shadow ease-out 100ms;
-    }
+    transition: box-shadow ease-out 100ms;
 
     &:hover {
         box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
@@ -99,7 +101,5 @@ td {
         }
     }
 
-    :is(.theme-loaded &) {
-        transition: filter 100ms ease-out;
-    }
+    transition: filter 100ms ease-out;
 }
