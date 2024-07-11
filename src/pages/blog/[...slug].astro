@@ -23,83 +23,20 @@ const file = `src/content/${entry.collection}/${entry.id}`;
 
 import { IconArrowBarLeft } from "@tabler/icons-react";
 
-import Button from "../../components/Button.astro";
+import Toc from "../../components/Toc.astro";
+
+headings.unshift({
+  depth: 1,
+  slug: entry.slug,
+  text: entry.data.title,
+});
 ---
 
 <Base title={entry.data.title} description={entry.data.summary}>
   <title slot="head">{entry.data.title} - ayats.org</title>
 
   <div id="container">
-    <aside id="sidebar" class="card">
-      <div class="mb-3 flex justify-between items-center">
-        <h3>Contents</h3>
-
-        <button id="sidebar-button">
-          <IconArrowBarLeft/>
-        </button>
-      </div>
-      <ul>
-        <li class="depth-1"><a href={`#${entry.slug}`}>{entry.data.title}</a></li>
-        {
-          headings.map((heading) => {
-            return (
-              <li class=`depth-${heading.depth}`>
-                <a href={`#${heading.slug}`}>{heading.text}</a>
-              </li>
-            );
-          })
-        }
-      </ul>
-
-      <style>
-        /* Eyeballing distances */
-        aside :global(button) {
-          /* color: var(--elem-neutral); */
-          display: block !important;
-        }
-
-        li {
-          padding: 0.2rem 0;
-          border-left: 1px solid var(--elem-neutral);
-          padding-left: 2.5rem;
-          padding-right: 1rem;
-        }
-
-        li.depth-1 {
-          padding-left: 1rem;
-        }
-
-        li.depth-2 {
-          padding-left: 1.8rem;
-        }
-
-
-        ul > ul {
-          margin-left: 10px;
-        }
-
-        aside.hidden :is(h3, ul) {
-          display: none;
-        }
-
-        aside.hidden {
-          width: auto !important;
-        }
-      </style>
-
-      <script>
-        const sidebar = document.getElementById("sidebar");
-        if (sidebar !== null) {
-          document.getElementById("sidebar-button")?.addEventListener("click", () => {
-            if (sidebar.classList.contains("hidden")) {
-              sidebar.classList.remove("hidden")
-            } else {
-              sidebar.classList.add("hidden");
-            }
-          })
-        }
-      </script>
-    </aside>
+    <Toc headings={headings} />
 
     <div id="content-wrapper" class="flex flex-col items-center">
       <div id="content" class="main-container">
@@ -127,74 +64,59 @@ import Button from "../../components/Button.astro";
   <style lang="less">
     @sidebar-thr: 1024px;
 
+
     #container {
       display: grid;
       grid-template-rows: 1fr;
-      grid-template-columns: max-content 1fr;
+      grid-template-columns: 0 1fr;
 
       width: 100vw;
+
+      @media (min-width: @sidebar-thr) {
+        grid-template-columns: 300px 1fr;
+      }
     }
 
-    // #content {
-    //   max-width: min(100%, 80rem);
-    // }
+    #container > :global(aside) {
+      grid-column: 1 / span 1;
+      // grid-row: 1 / span 1;
+      width: 300px;
+      overflow-y: auto;
+      position: fixed;
+      height: 100%;
+
+      display: none;
+      @media (min-width: @sidebar-thr) {
+        display: revert;
+      }
+    }
 
     #content-wrapper {
-      grid-column: 1 / span 2;
-      overflow: auto; /* why??? */
-      @media (min-width: @sidebar-thr) {
-        grid-column: 2 / span 1;
-      }
+      grid-column: 2 / span 1;
+
+      max-width: 100%;
+      overflow: auto; // ???
     }
 
-    #sidebar {
-      display: none; // starting
-      position: fixed;
-      width: 300px;
-      min-height: 100%;
-      overflow-wrap: break-word;
-      overflow-y: auto;
-      padding: 1rem;
 
-      font-size: 0.9rem;
-      font-weight: 500;
+    // #content-wrapper {
+    //   grid-column: 1 / span 2;
+    //   overflow: auto; /* why??? */
+    //   @media (min-width: @sidebar-thr) {
+    //     grid-column: 2 / span 1;
+    //   }
+    // }
 
-      background-color: rgb(227, 227, 227);
+    // #post-content {
+    //   margin-top: 5rem;
+    // }
 
-      :is(.dark &) {
-        background-color: rgb(28, 28, 28);
-      }
+    // #subtitle p {
+    //   font-weight: 500;
+    //   margin-top: 0;
+    //   margin-bottom: 3rem;
 
-      @media (min-width: @sidebar-thr) {
-        display: block;
-      }
-
-      border-radius: 0;
-      border-top: 0;
-      border-left: 0;
-      border-bottom: 0;
-
-      // position: relative;
-    }
-
-    #sidebar a {
-      color: var(--text-color-alt);
-
-      &:hover {
-        color: var(--text-color);
-      }
-    }
-
-    #post-content {
-      margin-top: 5rem;
-    }
-
-    #subtitle p {
-      font-weight: 500;
-      margin-top: 0;
-      margin-bottom: 3rem;
-
-      color: var(--text-color-alt);
-    }
+    //   color: var(--text-color-alt);
+    // }
   </style>
 </Base>
