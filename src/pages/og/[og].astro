@@ -1,0 +1,10 @@
+---
+export function getStaticPaths() {
+  return [
+    {params: {og: "val"}}
+  ]
+}
+
+const params = Astro.params;
+---
+<h1>{params}</h1>
