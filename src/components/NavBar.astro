@@ -23,7 +23,10 @@ const { class: className } = Astro.props;
         })()
       }
       <li>
-        <a href="/blog/">Blog</a>
+        <a href="/experiments">Experiments</a>
+      </li>
+      <li>
+        <a href="/blog">Blog</a>
       </li>
     </ul>
   </nav>
@@ -44,7 +47,7 @@ const { class: className } = Astro.props;
     border-bottom: 1px solid var(--elem-neutral);
 
     :is(.dark &) {
-      background-color: rgba(18, 18, 18, 0.8);
+      background-color: rgba(0, 0, 0, 0.8);
     }
   }
 
