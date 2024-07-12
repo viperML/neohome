@@ -39,6 +39,8 @@ const finalDesc = (() => {
     return "My personal website.";
   }
 })();
+
+const url = "https://preview.neohome.pages.dev"
 ---
 
 <html lang="en">
@@ -66,8 +68,8 @@ const finalDesc = (() => {
     <!-- OpenGraph -->
     <meta property="og:title" content="ayats.org" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={`${import.meta.url}`} />
-    <meta property="og:image" content={`${import.meta.url}/og/foo.png`} />
+    <meta property="og:url" content={`${url}`} />
+    <meta property="og:image" content={`${url}/og/foo.png`} />
   </head>
 
   <body class="flex flex-col items-center">
