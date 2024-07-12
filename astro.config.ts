@@ -6,6 +6,7 @@ import { rehypeTitles, rehypeCodeCopy } from './src/rehype';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import { remarkAlert } from 'remark-github-blockquote-alert';
 import react from "@astrojs/react";
+import arraybuffer from "vite-plugin-arraybuffer";
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,5 +33,10 @@ export default defineConfig({
   },
   build: {
     format: "file"
+  },
+  vite: {
+    plugins: [
+      arraybuffer()
+    ]
   }
 });
