@@ -7,13 +7,22 @@ import { Resvg } from "@resvg/resvg-js";
 
 import font from "../../../public/TTF/iosevka-normal-regular.ttf?arraybuffer";
 
+interface Params {
+  file: string,
+}
 
-export async function GET(context: APIContext) {
+interface Generate {
+  title: string,
+  description?: string
+}
+
+export async function mkPng(input: Generate): Promise<Buffer> {
   const elem = React.createElement('div', {
     style: "color: black",
   },
-    "Hello World!"
+    `hello from ${input}`
   )
+
 
   const svg = await satori(elem, {
     width: 600,
@@ -30,7 +39,19 @@ export async function GET(context: APIContext) {
   const pngData = resvg.render()
   const pngBuffer = pngData.asPng()
 
-  const r = new Response(pngBuffer);
+  return pngBuffer;
+}
+
+export async function GET(context: APIContext): Promise<Response> {
+  const file = context.params.file;
+  if (file === undefined) {
+    throw new Error("file was undefined");
+  }
+
+  const r = new Response(await mkPng({
+    title: "Hello",
+    description: "bar",
+  }));
 
   r.headers.set("Content-Type", "image/png");
 
@@ -41,6 +62,6 @@ export async function GET(context: APIContext) {
 
 export function getStaticPaths() {
   return [
-    { params: { file: "foo.png" } }
+    { params: { file: "foo" } }
   ]
 }

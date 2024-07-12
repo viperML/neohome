@@ -40,7 +40,7 @@ const finalDesc = (() => {
   }
 })();
 
-const url = "https://preview.neohome.pages.dev"
+const url = import.meta.url;
 ---
 
 <html lang="en">
@@ -70,6 +70,7 @@ const url = "https://preview.neohome.pages.dev"
     <meta property="og:type" content="website" />
     <meta property="og:url" content={`${url}`} />
     <meta property="og:image" content={`${url}/og/foo.png`} />
+    <!-- <meta property="og:image" content={preview} /> -->
   </head>
 
   <body class="flex flex-col items-center">

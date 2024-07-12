@@ -10,6 +10,7 @@ import arraybuffer from "vite-plugin-arraybuffer";
 
 // https://astro.build/config
 export default defineConfig({
+
   // your configuration options here...
   // https://docs.astro.build/en/reference/configuration-reference/
   integrations: [tailwind({
@@ -19,7 +20,8 @@ export default defineConfig({
     enabled: false
   },
   output: 'static',
-  site: "https://ayats.org",
+  // site: "https://ayats.org",
+  site: "https://preview.neohome.pages.dev",
   markdown: {
     remarkPlugins: [remarkAlert, remarkLesetid],
     rehypePlugins: [rehypeHeadingIds, rehypeTitles, rehypeCodeCopy],
@@ -38,5 +40,6 @@ export default defineConfig({
     plugins: [
       arraybuffer()
     ]
-  }
+  },
+
 });
