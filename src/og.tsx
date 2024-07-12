@@ -1,3 +1,6 @@
+import type { ReactElement } from "react";
 
 
-export const ret = () => <div style={{ color: 'black' }}>hello, world</div>;
+export function ret(): ReactElement {
+    return <div style={{ color: 'black' }}>hello, world</div>;
+}
