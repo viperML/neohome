@@ -16,6 +16,8 @@ interface Generate {
   description?: string
 }
 
+import { ret } from '../../og.tsx';
+
 export async function mkPng(input: Generate): Promise<Buffer> {
   const elem = React.createElement('div', {
     style: "color: black",
@@ -24,7 +26,7 @@ export async function mkPng(input: Generate): Promise<Buffer> {
   )
 
 
-  const svg = await satori(elem, {
+  const svg = await satori(ret(), {
     width: 600,
     height: 400,
     fonts: [
@@ -41,6 +43,7 @@ export async function mkPng(input: Generate): Promise<Buffer> {
 
   return pngBuffer;
 }
+
 
 export async function GET(context: APIContext): Promise<Response> {
   const file = context.params.file;
