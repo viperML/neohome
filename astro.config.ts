@@ -8,14 +8,15 @@ import { remarkAlert } from 'remark-github-blockquote-alert';
 import react from "@astrojs/react";
 import arraybuffer from "vite-plugin-arraybuffer";
 
+import sitemap from "@astrojs/sitemap";
+
 // https://astro.build/config
 export default defineConfig({
-
   // your configuration options here...
   // https://docs.astro.build/en/reference/configuration-reference/
   integrations: [tailwind({
     applyBaseStyles: false
-  }), mdx(), react()],
+  }), mdx(), react(), sitemap()],
   devToolbar: {
     enabled: false
   },
@@ -37,9 +38,6 @@ export default defineConfig({
     format: "file"
   },
   vite: {
-    plugins: [
-      arraybuffer()
-    ]
-  },
-
+    plugins: [arraybuffer()]
+  }
 });
