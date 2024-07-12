@@ -1,6 +1,4 @@
-import type { APIContext } from "astro";
-
-export async function GET(context: APIContext) {
+export async function GET(): Promise<Response> {
 
     const resp = new Response((`User-agent: *
 Allow: /
