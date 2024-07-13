@@ -1,9 +1,10 @@
 import type { ReactElement } from "react";
 import satori from "satori";
 
-import font_500 from "../public/TTF/iosevka-normal-medium.ttf?arraybuffer";
-import font_700 from "../public/TTF/iosevka-normal-bold.ttf?arraybuffer";
 import { Resvg } from "@resvg/resvg-js";
+
+import font_500 from "@fontsource/geist-sans/files/geist-sans-latin-500-normal.woff?arraybuffer";
+import font_700 from "@fontsource/geist-sans/files/geist-sans-latin-700-normal.woff?arraybuffer";
 
 interface Generate {
   title?: string | undefined,
@@ -38,6 +39,7 @@ export async function mkPng(input: Generate): Promise<Buffer> {
       "flexDirection": "column" as const,
       "alignItems": "center",
       "justifyContent": "center",
+      "border": "1px solid rgb(62, 62, 62)",
     },
     "sub": {
       "fontSize": "80px",
@@ -60,12 +62,12 @@ export async function mkPng(input: Generate): Promise<Buffer> {
     height: HEIGHT,
     fonts: [
       {
-        name: 'iosevka-normal',
+        name: 'Geist Sans',
         data: font_500,
         weight: 500,
       },
       {
-        name: 'iosevka-normal',
+        name: 'Geist Sans',
         data: font_700,
         weight: 700,
       }
