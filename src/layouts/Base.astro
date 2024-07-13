@@ -127,8 +127,9 @@ import { ViewTransitions } from 'astro:transitions';
   import { sleep } from "../utils";
 
   document.addEventListener("astro:page-load", () => {
-    Array.from(document.getElementsByClassName("code-copy")).forEach((button) => {
+    document.querySelectorAll(".code-copy")?.forEach(button => {
       button.addEventListener("click", async () => {
+        console.log("xd");
         const text = button.parentElement?.textContent;
         if (typeof text === "string") {
           const type = "text/plain";
@@ -143,6 +144,6 @@ import { ViewTransitions } from 'astro:transitions';
           button.classList.remove("active");
         }
       });
-    });
+    })
   });
 </script>
