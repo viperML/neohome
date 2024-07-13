@@ -26,8 +26,7 @@ export default defineConfig({
     enabled: false
   },
   output: 'static',
-  // site: "https://ayats.org",
-  site: "https://preview.neohome.pages.dev",
+  site: "https://ayats.org",
   markdown: {
     syntaxHighlight: false,
     remarkPlugins: [
