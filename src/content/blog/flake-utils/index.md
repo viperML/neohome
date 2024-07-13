@@ -92,9 +92,8 @@ So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solu
 }
 ```
 
-{{< alert >}}
-The same result is produced by the two last snippets!
-{{</ alert >}}
+> [!IMPORTANT]
+> The same result is produced by the two last snippets!
 
 This function is very convenient, because now `system` is handled for us, improving the "signal/noise ratio" of our flake, and preventing us from making mistakes when dealing with multiple systems.
 
@@ -132,16 +131,14 @@ In the second case, we are introducing manually another system, which ends up as
 
 So going back to our original problem: we want to parametrize over `system`, which will be a list of known strings. We also want to prevent applying this to unrelated outputs, like `nixosConfigurations` or `overlays`. And it would be nice if it doesn't depend on any other flake [^3], while we are at it. Turns out this is very easy to write!
 
-```nix
-{{% include "forall-flake.nix" %}}
+```nix file: "forall-flake.nix"
 ```
 
 What we are doing with `forAllSystems` (feel free to use any name), is essentially the same that flake-utils does, but applied to a single output. We can still run into the problems of using `<system>.<system>`, but at least we completely bypass the other problems. And it can be written in a single line of code which you can copy-paste!
 
 If you need to use some overlays or nixpkgs configuration, you can tweak it like so:
 
-```nix
-{{% include "forall-flake2.nix" %}}
+```nix file: "forall-flake2.nix"
 ```
 
 ## Conclusion

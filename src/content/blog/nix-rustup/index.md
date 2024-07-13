@@ -38,9 +38,8 @@ This approach uses nix channels and fetchTarball, to get whatever overlay versio
 
 To use the shell, just run `nix-shell`
 
-```nix
+```nix file: "shell.nix"
 # shell.nix
-{{% include "shell.nix" %}}
 ```
 
 
@@ -51,9 +50,8 @@ By using a flake, we are able to lock the version of the rust overlay, so we alw
 
 To enter the shell, just run `nix develop`
 
-```nix
+```nix file: "flk.nix"
 # flake.nix
-{{% include "flk.nix" %}}
 ```
 
 
@@ -61,8 +59,8 @@ To enter the shell, just run `nix develop`
 
 For rust-analyzer to work properly, you will need to set up the environment variable `RUST_SRC_PATH`, which must point to a subdirectory of our toolchain. To do so, just modify your `mkShell` definition (flakes or not) such as:
 
-```nix
-{{% include "shell2.nix" %}}
+```nix file: "shell2.nix"
+# shell.nix
 ```
 
 Finally, make sure you include the `rust-src` component in your rustup toolchain definition:

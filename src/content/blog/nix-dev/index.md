@@ -1,7 +1,7 @@
 ---
-title: Development workflow with Nix
+title: The Nix development workflow
 pubDate: 2023-05-28T21:18:09Z
-summary: 'A getting-started guide to nix dev-shells.'
+summary: 'A getting-started guide to mkShell.'
 slug: nix-workflow
 ---
 
@@ -56,9 +56,8 @@ To install it, you need to install the direnv executable along with the hook ext
 
 To instantiate a nix shell, there are two approaches: using a classic `shell.nix` file, or using a flake. While I would recommend a simple `shell.nix`, a simple flake boilerplate is also provided.
 
-{{< alert >}}
-If you are unsure, use a classic `shell.nix` file. The main difference for this example is that the flake will automatically pin the nixpkgs version to the `flake.lock`, which you may not need for a simple demo.
-{{</ alert >}}
+> [!IMPORTANT]
+> If you are unsure, use a classic `shell.nix` file. The main difference for this example is that the flake will automatically pin the nixpkgs version to the `flake.lock`, which you may not need for a simple demo.
 
 
 ### Classic nix
@@ -76,6 +75,8 @@ in
 
 ### Flake
 
+> [!CAUTION]
+> If you use git, make sure to `git add` every nix file!
 
 ```nix
 # flake.nix
@@ -100,11 +101,8 @@ in
 }
 ```
 
-{{< alert >}}
-If you use git, make sure to `git add` every nix file!
-{{</ alert >}}
 
-### direnv
+### Using `direnv`
 
 You also need a file telling direnv how to load the nix files. Its contents will depend on if you used a classic `shell.nix` or a flake.
 
@@ -157,7 +155,7 @@ pkgs.mkShell {
 }
 ```
 
-I have a blog post about using a rustup `toolchain.toml` with nix, such that you can perfectly pin your rust version with nix, while still pulling custom toolchains or targets: [Nix shell with rustup]({{< ref "/blog/nix-rustup" >}}).
+I have a blog post about using a rustup `toolchain.toml` with nix, such that you can perfectly pin your rust version with nix, while still pulling custom toolchains or targets: [Nix shells with rustup](/blog/nix-rustup).
 
 ## Python
 
@@ -224,12 +222,11 @@ if [ -d .venv ]; then
 fi
 ```
 
-{{< alert >}}
-Using `LD_LIBRARY_PATH` may lead to weird errors if the libc version of the
+> [!CAUTION]
+> Using `LD_LIBRARY_PATH` may lead to weird errors if the libc version of the
 shell doesn't match the one of the system. For a dev shell that uses `<nixpkgs>`
 it shouldn't be an issue, but otherwise I'd recommend using
 [nix-ld](https://blog.thalheim.io/2022/12/31/nix-ld-a-clean-solution-for-issues-with-pre-compiled-executables-on-nixos/).
-{{</ alert >}}
 
 ## C/C++
 
@@ -270,9 +267,8 @@ pkgs.mkShell {
 }
 ```
 
-{{< alert >}}
-Some packages may come with different outputs. When you search in https://search.nixos.org, you will see at least `out`, and `dev` if the packages contains headers. If you add simply `pkgs.my-awesome-library` to `packages = []`, nix should figure out that you want `pkgs.my-awesome-library.dev`, but you can also type it manually.
-{{</ alert >}}
+> [!NOTE]
+> Some packages may come with different outputs. When you search in https://search.nixos.org, you will see at least `out`, and `dev` if the packages contains headers. If you add simply `pkgs.my-awesome-library` to `packages = []`, nix should figure out that you want `pkgs.my-awesome-library.dev`, but you can also type it manually.
 
 ### Hardening
 

@@ -18,10 +18,16 @@ The answer may be simple at first: `import`.
 
 Reading the nix manual, what import does is to load, parse, and return the Nix expression in the path. Its usage is very simple:
 
-```nix
+```nix file: "foo.nix"
 # foo.nix
-{{% include "foo.nix" %}}# bar.nix
-{{% include "bar.nix" %}}$ nix eval -f ./foo.nix
+```
+
+```nix file: "bar.nix"
+# bar.nix
+```
+
+```
+$ nix eval -f ./foo.nix
 42
 ```
 

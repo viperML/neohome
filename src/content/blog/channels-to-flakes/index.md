@@ -104,9 +104,8 @@ user   flake:nixpkgs path:/nix/store/<hash>-source<...>
 # ...
 ```
 
-{{< alert >}}
-Some guides suggest pinning every input for your flake. This is not really needed if you just want to use the `nixpkgs` flake. For the sake of simplicity, only the `nixpkgs` flake is pinned in this guide.
-{{</ alert >}}
+> [!NOTE]
+> Some guides suggest pinning every input for your flake. This is not really needed if you just want to use the `nixpkgs` flake. For the sake of simplicity, only the `nixpkgs` flake is pinned in this guide.
 
 ## Pinning your channels
 
@@ -125,9 +124,8 @@ with import <nixpkgs> {};
 
 To query the path to which `<nixpkgs>` resolves to, you can use `$ nix eval --impure --expr "<nixpkgs>"`
 
-{{< alert >}}
-Updated!
-{{</ alert >}}
+> [!NOTE]
+> Updated!
 
 To pin `NIX_PATH`, now we can directly reference the `nixpkgs` flake from the registry, by configuring
 `NIX_PATH=nixpkgs=flake:nixpkgs`.
