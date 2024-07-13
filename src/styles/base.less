@@ -54,7 +54,7 @@ h6 {
 }
 
 
-code:not(.astro-code code),
+code:not(pre > code),
 mark {
     box-sizing: border-box;
     padding: 0.1rem 0.3rem;
@@ -105,4 +105,8 @@ code,
 pre {
     font-family: "iosevka-normal", ui-monospace, SFMono-Regular, Menlo, Monaco,
         Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+pre {
+    overflow-x: auto,
 }
