@@ -1,19 +1,19 @@
 ---
-title: 'Cross build environment with nix'
+title: Cross-compilation with Nix
 pubDate: 2023-11-16T17:35:49Z
 tags: ['nix']
 draft: false
-summary: Adapting a devshell workflow for cross-compilation and compiler optimization.
+summary: Adapting a dev shell workflow for cross-compilation and compiler optimization.
 slug: nix-cross
 ---
 
 
-In a previous blog post: [nix-worflow](/blog/nix-workflow), I discussed
-about using `mkShell` to configure a development environment which can be accessed with `nix develop` or `nix shell`. As I didn't want to overextend the post, I decided to write a follow-up post about how to adapt this workflow for cross-compilation.
+In a previous blog post: [nix-worflow](/blog/nix-workflow), I mentioned
+using `mkShell` to configure a development environment which can be accessed with `nix develop` or `nix shell`. As I didn't want to overextend the post, I decided to write a follow-up post about how to adapt this workflow for cross-compilation.
 
 As C is the language used to bootstrap everything, most tools in nixpkgs have the best integration for working with C. While it is possible to use nix to cross-compile other programming languages, your mileage may vary.
 
-# Cross-build basics
+## Cross-build basics
 
 When we do a "regular" build, the compiled program runs on the same "system" than the machine that compiled it.
 
@@ -23,7 +23,7 @@ When we do a "regular" build, the compiled program runs on the same "system" tha
 | compiler         | x86_64-linux     |
 | compiled program | x86_64-linux     |
 
-While for the regular case, the systems match, for cross-compilations these 2 systems are different. For example, using my desktop PC to build a program for my Arduino. My CPU doesn't use the same instruction set as the arduino, and the compiled program wouldn't even be able to interact with the hardware, yet the compiler, which is a regular x86_64 binary, can produce that output.
+While for the regular case, the systems match, for cross-compilations these 2 systems are different. For example, using my desktop PC to build a program for my Arduino. My CPU doesn't use the same instruction set as the Arduino, and the compiled program wouldn't even be able to interact with the hardware, yet the compiler, which is a regular x86_64 binary, can produce that output.
 
 When dealing with cross-compilation, we will always have to deal with this tuple. The buzzwords are:
 
@@ -32,9 +32,9 @@ When dealing with cross-compilation, we will always have to deal with this tuple
 
 Note that the compiler must be able to produce compiled programs of the target system. There are other tools too, like `gdb` or `qemu`, that are also configured for some target system.
 
-# Native build through emulation
+## Native build through emulation
 
-To begin with, I want to talk about using NixOS's [`binfmt`](https://docs.kernel.org/admin-guide/binfmt-misc.html) module, that allows you to run binaries of other systems through qemu. In this model, the systems table doesn't have a difference between the build and target system, but the build tools are emulated:
+To begin with, I want to talk about using NixOS's [`binfmt`](https://docs.kernel.org/admin-guide/binfmt-misc.html) module, that allows you to run binaries of other systems through QEMU. In this model, the systems table doesn't have a difference between the build and target system, but the build tools are emulated:
 
 |                  | system (runs on) |
 | ---------------- | ---------------- |
@@ -75,7 +75,7 @@ $ /run/current-system/sw/bin/uname -m
 x86_64
 ```
 
-Thanks to nix's store model, this devshell is no different from any other native shell. The GCC that is being ran is a regular GCC that would be installed in a `aarch64` system, but automatically redirected to qemu.
+Thanks to nix's store model, this dev shell is no different from any other native shell. The GCC that is being run is a regular GCC that would be installed in a `aarch64` system, but automatically redirected to QEMU.
 
 As a result, the configuration for this environment is as simple as possible: because there is no configuration to do. However, as you may have guessed, running everything through `qemu` does take a performance hit. For example, for a trivial hello world program, it is already noticeable:
 
@@ -91,12 +91,12 @@ user    0m0,939s
 sys     0m0,047s
 ```
 
-# First peek at pkgsCross
+## First peek at pkgsCross
 
 While the internal implementation of cross-compilation in nixpkgs can be quite complex, the first API that
 is presented to the user is very simple: `pkgsCross`.
 
-To begin with, you can open a repl and inspect that `pkgsCross` is an attribute set of different pre-made cross-compilation targets:
+To begin with, you can open a REPL and inspect that `pkgsCross` is an attribute set of different pre-made cross-compilation targets:
 
 ```
 $ nix repl -f "<nixpkgs>"
@@ -127,9 +127,9 @@ x86_64
 Will cross-compile `hello`, using `x86_64-linux` as the build platform and `pkgsCross.aarch64-multiplatform` as the target platform.
 
 
-# Devshell with pkgsCross
+### Dev shell with pkgsCross
 
-When we start to write devshells with `pkgsCross`, it is important to be mindful of what each package architecture is.
+When we start to write dev shells with `pkgsCross`, it is important to be mindful of what each package architecture is.
 For example, let's start with the skeleton:
 
 ```nix
@@ -141,7 +141,7 @@ in
   }
 ```
 
-This devShell already gives a C compiler capable of cross-compilation:
+This dev shell already gives a C compiler capable of cross-compilation:
 
 ```
 $ $CC main.c
@@ -151,7 +151,7 @@ $ /nix/store/pwwdk9p5a8ivh2034575lg0qz457j5zl-qemu-8.1.2/bin/qemu-aarch64 ./a.ou
 Hello world
 ```
 
-# Dependencies
+### Dependencies
 
 Let's say that we want to add some dependencies to the previous C shell. For the sake of argument, let's use these packages as examples of 3 archetypes of packages that you might need:
 
@@ -191,7 +191,10 @@ nix-repl> pkgsCross.aarch64-multiplatform.buildPackages.gdb
 
 For `gdb` specifically, `.buildPackages.gdb` doesn't match the regular native package, as some extra configuration is needed such that it can handle the cross-compilation environment.
 
-With this in mind, both `stdenv.mkDerivation` and `mkShell` also require that we pass the proper packages to either `nativeBuildInputs` (`.buildPackages`) or `buildInputs` (regular packages from `pkgsCross`). Our devshell example would look like the following snippet:
+With this in mind, both `stdenv.mkDerivation` and `mkShell` also require that we
+pass the proper packages to either `nativeBuildInputs` (`.buildPackages`) or
+`buildInputs` (regular packages from `pkgsCross`). Our dev shell example would
+look like the following snippet:
 
 ```nix
 let
@@ -234,7 +237,7 @@ hugo is the main command, used to build your Hugo site.
 ```
 
 
-# Automatic selection with callPackage
+### Automatic selection with callPackage
 
 As a quick note, it is possible to use `callPackage` to automatically pass the correct set of packages to `mkShell`. While we can `callPackage` a function in the same file, let's split the shell into two files:
 
@@ -286,7 +289,7 @@ in
 
 Remember that to use `callPackage`, you need to properly split your dependencies between `nativeBuildInputs` and `buildInputs`.
 
-# Beyond pkgsCross
+## Beyond pkgsCross
 
 All the elements under `pkgsCross` are just pre-made configurations of the nixpkgs cross-building mechanism, which you can inspect in [lib/systems/examples.nix](https://github.com/NixOS/nixpkgs/blob/master/lib/systems/examples.nix). The header comment also mentions a clue about how this is handled internally:
 

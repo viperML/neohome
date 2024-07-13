@@ -1,18 +1,19 @@
 ---
-title: 'nix dev'
+title: Development workflow with Nix
 pubDate: 2023-05-28T21:18:09Z
-tags: ['nix']
-draft: false
-summary: 'A getting-started guide to nix devshells'
+summary: 'A getting-started guide to nix dev-shells.'
 slug: nix-workflow
 ---
 
-Devshells are a very powerful tool, and one of the big selling points of [Nix](https://nixos.org/). A devshell allows you to enter an environment where you have all your development dependencies available, without altering the host system. This means that:
+Dev shells are a very powerful tool, and one of the big selling points of
+[Nix](https://nixos.org/). A dev shell allows you to enter an environment where
+you have all your development dependencies available, without altering the host
+system. This means that:
 
 - Each project is completely isolated from each other, no more dependency hell between them.
 - Packages don't pollute the system dependency graph, and the packages are only "visible" within the shell.
 
-Sharing a devshells is easy, just checkout the nixfiles into the repo and everybody will be one `nix-shell` away from getting all the requiements to build or use the project.
+Sharing a dev shells is easy, just check out the nixfiles into the repo and everybody will be one `nix-shell` away from getting all the requirements to build or use the project.
 
 So in this blog post, I want to give a quick overview of how to get started from the very beginning.
 
@@ -44,14 +45,14 @@ It will load the nix shell automatically upon entering the directory, and keep y
 To install it, you need to install the direnv executable along with the hook extensions:
 
 
-- Install the base direnv package, available in your distro (`apt install direnv`, `brew install direnv`, etc)
+- Install the base direnv package, available in your distro (`apt install direnv`, `brew install direnv`, etc.)
 - [Hook into your shell](https://direnv.net/docs/hook.html)
 - Hook into your editor:
     - [Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=mkhl.direnv)
     - [Emacs](https://github.com/wbolster/emacs-direnv)
 
 
-## Init the project
+## Initialize the project
 
 To instantiate a nix shell, there are two approaches: using a classic `shell.nix` file, or using a flake. While I would recommend a simple `shell.nix`, a simple flake boilerplate is also provided.
 
@@ -105,7 +106,7 @@ If you use git, make sure to `git add` every nix file!
 
 ### direnv
 
-You also need a file telling direnv how to load the nix files. Its contents will depend if you used a classic `shell.nix` or a flake.
+You also need a file telling direnv how to load the nix files. Its contents will depend on if you used a classic `shell.nix` or a flake.
 
 
 ```bash
@@ -122,7 +123,7 @@ use nix
 
 # Ready, set, go!
 
-All that is left to do is filling the arguments of `mkShell` with the programs that you want. All you need to know about it is:
+All that is left to do is configuring the arguments of `mkShell` with the programs that you want. All you need to know about it is:
 
 - Add your packages in the argument of `packages`. Browse https://search.nixos.org/packages for everything that is available.
 - Be mindful if a package provides a `.out` output (the default) or a `.dev` output, which includes headers, libraries, etc.
@@ -224,12 +225,15 @@ fi
 ```
 
 {{< alert >}}
-Using `LD_LIBRARY_PATH` may lead to weird errors if the glibc version of the shell doesn't match the one of the system. For a devshell that uses `<nixpkgs>` it shouldn't be an issue, but otherwise I'd recommend using [nix-ld](https://blog.thalheim.io/2022/12/31/nix-ld-a-clean-solution-for-issues-with-pre-compiled-executables-on-nixos/).
+Using `LD_LIBRARY_PATH` may lead to weird errors if the libc version of the
+shell doesn't match the one of the system. For a dev shell that uses `<nixpkgs>`
+it shouldn't be an issue, but otherwise I'd recommend using
+[nix-ld](https://blog.thalheim.io/2022/12/31/nix-ld-a-clean-solution-for-issues-with-pre-compiled-executables-on-nixos/).
 {{</ alert >}}
 
 ## C/C++
 
-For C/C++, things can get more complicated, because of the nature of the language toolchain. To begin with, an empty nix shell already provides a C compiler, `make` and some other utils:
+For C/C++, things can get more complicated, because of the nature of the language toolchain. To begin with, an empty nix shell already provides a C compiler, `make` and some other utilities:
 
 ```nix
 pkgs.mkShell {
@@ -246,7 +250,7 @@ pkgs.mkShell.override {
 }
 ```
 
-To propery discover libraries, you may need a combination of the following tools. Under the hood, when they are added in `packages`, code is executed to properly configure the environment, such that it "just works".
+To properly discover libraries, you may need a combination of the following tools. Under the hood, when they are added in `packages`, code is executed to properly configure the environment, such that it "just works".
 
 ```nix
 pkgs.mkShell {
@@ -267,12 +271,16 @@ pkgs.mkShell {
 ```
 
 {{< alert >}}
-Some packages may come with different outputs. When you search in https://search.nixos.org , you will see at least `out`, and `dev` if the packages contains headers. If you add simply `pkgs.my-awesome-library` to `packages = []`, nix should figure out that you want `pkgs.my-awesome-library.dev`, but you can also type it manually.
+Some packages may come with different outputs. When you search in https://search.nixos.org, you will see at least `out`, and `dev` if the packages contains headers. If you add simply `pkgs.my-awesome-library` to `packages = []`, nix should figure out that you want `pkgs.my-awesome-library.dev`, but you can also type it manually.
 {{</ alert >}}
 
 ### Hardening
 
-Nixpkgs add some compiler flags by default as part of the hardening profile. You can read more about it in the [manual section](https://nixos.org/manual/nixpkgs/stable/#sec-hardening-in-nixpkgs). Although for a devshell, you may want to turn off all these default flags, so you get a better debugging experience:
+Nixpkgs add some compiler flags by default as part of the hardening profile. You
+can read more about it in the [manual
+section](https://nixos.org/manual/nixpkgs/stable/#sec-hardening-in-nixpkgs).
+Although for a dev shell, you may want to turn off all these default flags, so
+you get a better debugging experience:
 
 ```nix
 pkgs.mkShell {
@@ -285,16 +293,16 @@ pkgs.mkShell {
 For your editor to pick up the C/C++ libraries which rely on pkg-config or cmake, I've had success with the following stack:
 
 - Tell cmake or meson to generate a `compile_commands.json`. For cmake, you need to add `set(CMAKE_EXPORT_COMPILE_COMMANDS ON)` to your `CMakeLists.txt` or pass `-DCMAKE_EXPORT_COMPILE_COMMANDS=1`. Meson should generate it automatically.
-- Install clangd, by adding `clang-tools` to your devshell.
-- Configure your editor to use clangd. For example, for vscode: uninstall the Microsoft C/C++ extension and install the clangd extension.
+- Install clangd, by adding `clang-tools` to your dev shell.
+- Configure your editor to use clangd. For example, for VS Code: uninstall the Microsoft C/C++ extension and install the clangd extension.
 - Make sure clangd finds your `compile_commands.json`, by either:
   - Creating a symlink of the file from your build directory into your root directory (easiest). E.g. `ln -vs ./builddir/compile_commands.json ./compile_commands.json`.
-  - Configure your editor extension to pass the flag `--compile-commands-dir=<directory>` to clangd. For vscode, add `"clangd.arguments": ["--compile-commands-dir=<directory>"]` to your project's `.vscode/settings.json` .
+  - Configure your editor extension to pass the flag `--compile-commands-dir=<directory>` to clangd. For VS Code, add `"clangd.arguments": ["--compile-commands-dir=<directory>"]` to your project's `.vscode/settings.json` .
 - You may need to restart the editor for the changes to propagate.
 
 ## NodeJS
 
-Unlike C/C++, NodeJS is quite straightfoward. While most things will be handled by your editor, you might want to open a quick shell to make certain packages available to yourself. The packages below are generally universal, but certain frameworks (i.e Svelte or NextJS) may require additional packages to be added to the shell.
+Unlike C/C++, NodeJS is quite straightforward. While most things will be handled by your editor, you might want to open a quick shell to make certain packages available to yourself. The packages below are generally universal, but certain frameworks (i.e. Svelte or NextJS) may require additional packages to be added to the shell.
 ```nix
 pkgs.mkShell {
   packages = [

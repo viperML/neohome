@@ -3,7 +3,7 @@ title: 'NixOS on Hetzner Cloud with deploy-rs'
 pubDate: 2022-01-12T14:49:55Z
 tags: ['nix', 'cloud']
 draft: true
-summary: A short tutorial to install NixOS in a VPS, and use the deployment tool called "deploy-rs"
+summary: Hands-on tutorial on deploying a fully-functional system.
 ---
 
 [deploy-rs](https://github.com/serokell/deploy-rs) is a tool developed by Serokell to deploy NixOS machines into a remote server. It allows for "stateless" deployments, such that the machine that applies the configuration doesn't know the state of the recipient machine. I found that the [upstream example](https://raw.githubusercontent.com/serokell/deploy-rs/master/examples/system/README.md) was a bit lacking, so I decided to write a guide on how I did use it to deploy a server to Hetzner Cloud.

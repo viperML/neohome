@@ -2,7 +2,7 @@
 title: 'Into the Nix'
 pubDate: 2022-01-05T12:01:13Z
 tags: ['nix']
-draft: false
+draft: true
 summary: A short introduction to what is Nix, how it works, and what it can do for you
 ---
 

@@ -1,9 +1,9 @@
 ---
-title: "Don't use import"
+title: "Don't use import in Nix"
 pubDate: 2024-02-04T13:48:09Z
 tags: ['nix']
 draft: false
-summary: "When writing nix, use the module system."
+summary: "When writing nix, use the module system as an abstraction tool."
 slug: dont-use-import
 ---
 
@@ -12,16 +12,11 @@ getting bigger and bigger, with more complex expressions inside them.
 
 Then, you question yourself: how do I break this file in multiple small files?
 
-The answer may be simple at first: `import` .
+The answer may be simple at first: `import`.
 
 ## How import is used
 
-Reading the nix manual, what import does is to load, parse, and return the Nix
-expression in the path. Its usage is very simple:
-
-```nix file: "foo.nix"
-# foo.nix
-```
+Reading the nix manual, what import does is to load, parse, and return the Nix expression in the path. Its usage is very simple:
 
 ```nix
 # foo.nix
@@ -116,6 +111,6 @@ If your answer is 1 or 2, then you may be out of luck, but the amount of files y
 
 Otherwise: use the module system! If you are planning on making some big nix repo, don't hesitate to instantiate the module system to reap from its benefits. Not only you will be able to merge multiple files on a project, but add type-checking through module options, and provide a user interface with good error reporting the user of your project.
 
-To instantiate the module system, all you need is to get a nixpkgs' lib instance, and you are pretty much ready to declare your own modules. More information can be read in https://nix.dev/tutorials/module-system/module-system.html#evaluating-modules .
+To instantiate the module system, all you need is to get a nixpkgs' lib instance, and you are pretty much ready to declare your own modules. More information can be read at [https://nix.dev/tutorials/module-system](https://nix.dev/tutorials/module-system).
 
 

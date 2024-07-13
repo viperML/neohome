@@ -1,9 +1,8 @@
 ---
-title: 'Channels to flakes'
+title: Channels to flakes
+slug: channels-to-flakes
 pubDate: 2022-02-12T14:49:55Z
-tags: ['nix']
-draft: false
-summary: Pin your channels and registry in a flake-based NixOS or home-manager installation
+summary: Use the flake registry as a legacy channel replacement.
 ---
 
 
@@ -64,7 +63,7 @@ The new `nix <command>` programs now use a new method to get `nixpkgs`, instead 
 - A flake reference (_flakeref_): `nixpkgs`
 - A flake output: `hello` (expanded to `legacyPackages.<system>.hello`)
 
-There are [several types](https://nixos.org/manual/nix/unstable/command-ref/new-cli/nix3-flake.html#types) of flakerefs. In this case, the flakeref `nixpkgs` is indirect, that means that it queries the flake registry to resolve to a different type: `github:NixOS/nixpkgs/nixpkgs-unstable`. By default all nix installations query the internet when you use the `nixpkgs` flakeref.
+There are [several types](https://nixos.org/manual/nix/unstable/command-ref/new-cli/nix3-flake.html#types) of flakeref's. In this case, the flakeref `nixpkgs` is indirect, that means that it queries the flake registry to resolve to a different type: `github:NixOS/nixpkgs/nixpkgs-unstable`. By default, all nix installations query the internet when you use the `nixpkgs` flakeref.
 
 The solution is to tell nix to use our own nixpkgs rev, instead of downloading the latest from the internet. This is called "pinning" the registry, and can be easily done by adding a new `nixpkgs` entry to the flake registry.
 
@@ -116,7 +115,7 @@ Pre-flake nix tools use the environment variable `NIX_PATH` to query the locatio
 - The user adds nixpkgs as a channel with `nix-channel --add`
 - `nixpkgs` is then downloaded into the disk into a special location.
 - This location is by default in the `NIX_PATH` environment variable.
-- Cli tools query the environment variable to know where to find it.
+- CLI tools query the environment variable to know where to find it.
 
 You may also have encountered the usage of `NIX_PATH` in nix code, with the usage of the diamond-path operator:
 

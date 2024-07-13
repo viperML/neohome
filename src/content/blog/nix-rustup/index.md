@@ -6,15 +6,20 @@ draft: false
 summary: Call a toolchain.toml from nix, for better interoperability with non-nix developers
 ---
 
-In this quick blogpost I want to show how you can setup a rustup toolchain with nix. Instead of using the rustup cli app, we will be fetching the toolchains directly with nix.
+In this quick blog post I want to show how you can set up a rustup toolchain with nix. Instead of using the rustup CLI app, we will be fetching the toolchains directly with nix.
 
 Why do we want to do this, instead of just adding `rustup` to our `environment.systemPackages` or to a shell? `rustup` is a program that will fetch the toolchain from the internet, and as you may already know, fetching binaries from the internet is bound to fail at some point in NixOS.
 
 Another nicety that we get, is that we can use nix flake's locking system, so that everybody that develops the projects (and CI too!) will get the same toolchain version.
 
-## rust-toolchain
+## `rust-toolchain`
 
-The [`rust-toolchain` or `toolchain.toml`](https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file)  is a file used by rustup that declares what channel to use, which components, targets, etc. This file lives in the root of the repo. Oxalica's rust-overlay then would read this file, and produce the required nix derivation according to the requirements.
+The [`rust-toolchain` or
+`toolchain.toml`](https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file)
+is a file used by rustup that declares what channel to use, which components,
+targets, etc. This file lives in the root of the repo. Oxalica's rust-overlay
+then would read this file, and produce the required nix derivation according to
+the requirements.
 
 So instead of running rustup, we just point the overlay to rustup's config file. Nice and easy.
 
@@ -54,7 +59,7 @@ To enter the shell, just run `nix develop`
 
 ## rust-analyzer
 
-For rust-analyzer to work properly, you will need to setup the environment variable `RUST_SRC_PATH`, which must point to a subdirectory of our toolchain. To do so, just modify your `mkShell` definition (flakes or not) such as:
+For rust-analyzer to work properly, you will need to set up the environment variable `RUST_SRC_PATH`, which must point to a subdirectory of our toolchain. To do so, just modify your `mkShell` definition (flakes or not) such as:
 
 ```nix
 {{% include "shell2.nix" %}}

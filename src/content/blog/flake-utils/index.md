@@ -3,11 +3,11 @@ title: Why you don't need flake-utils
 pubDate: 2023-05-15T16:44:12Z
 tags: ['nix']
 draft: false
-summary: Learn why flake-utils can fail on you, and some alternative solutions to handling multiple system outputs.
+summary: Writing by hand the abstraction may be less error-prone than using this popular abstaction library.
 slug: no-flake-utils
 ---
 
-The usage of nix flakes is increasing, and individuals are increasingly relying on a library called "flake-utils" to enhance flakes's usability. However, this can often lead to unintended consequences if one lacks understanding of the underlying processes. In this post, I aim to clarify the functionality of "flake-utils," provide a manual approach, and explore alternative options.
+The usage of nix flakes is increasing, and individuals are increasingly relying on a library called "flake-utils" to enhance flakes' usability. However, this can often lead to unintended consequences if one lacks understanding of the underlying processes. In this post, I aim to clarify the functionality of "flake-utils," provide a manual approach, and explore alternative options.
 
 ## Flake output schema
 
@@ -23,7 +23,7 @@ To begin with, I want to lightly explain what the flake output schema is. When w
 }
 ```
 
-This output function must return an attribute set. At first glance, this attrset can be freeform:
+This output function must return an attribute set. At first glance, this attrset can be free-form:
 ```nix
 {
 #                 ↓ deconstructed function args
@@ -47,7 +47,7 @@ These "blessed" outputs make up the "flake schema" [^1] :
 
 `system` refers to a string, which corresponds to the **runtime system** of the package. This means, that if we are on a `x86_64-linux` [^2] system, `nix build` will automatically pick the `packages.x86_64-linux.<name>` output if we just use `<name>` (and so on for shell, develop, run...).
 
-So in general, we want to conform to this output schema of packages and devshells.
+So in general, we want to conform to this output schema of packages and dev shells.
 
 
 ## Outputs for multiple systems
@@ -59,10 +59,10 @@ Let's say that you are writing a flake that outputs some package. This should be
   inputs = ...;
   outputs = {nixpkgs, ...}: {
 
-    packages."x86_64-linux".default = nixpkgs.legacyPackages."x86_64-linux".callPackage ./package.nix {
+    packages.x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.callPackage ./package.nix {
       some-special-arg = ...;
     };
-    packages."aarch64-linux".default = nixpkgs.legacyPackages."aarch64-linux".callPackage ./package.nix {
+    packages.aarch64-linux.default = nixpkgs.legacyPackages.aarch64-linux.callPackage ./package.nix {
       some-special-arg = ...;
     };
 
@@ -71,7 +71,7 @@ Let's say that you are writing a flake that outputs some package. This should be
 ```
 
 This can get quite verbose very quickly, as we have to enumerate every system and write the same definition for each one.
-Another problem is that we are repeating the the arguments to `callPackage`, so if we need to change it, we must do it for every system, risking making some mistake in the process. And if we need to use some overlay, we need to `import nixpkgs` for each system.
+Another problem is that we are repeating the arguments to `callPackage`, so if we need to change it, we must do it for every system, risking making some mistake in the process. And if we need to use some overlay, we need to `import nixpkgs` for each system.
 
 So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solution to this. It contains a collection of functions that help us collect the common pieces of code into a single block, and apply it to every system. The main one is `eachSystem`, to which we pass a **generic function over system**, and it will take care of generating the outputs for us:
 
@@ -84,7 +84,7 @@ So [`flake-utils`](https://github.com/numtide/flake-utils) was written as a solu
 
   outputs = {nixpkgs, flake-utils, ...}: flake-utils.lib.eachSystem ["x86_64-linux" "aarch64-linux"] (system: {
 
-    packages.default = nixpkgs.legacyPackages."${system}".callPackage = ./pacakge.nix {
+    packages.default = nixpkgs.legacyPackages.${system}.callPackage = ./package.nix {
       some-special-arg = ...;
     };
 
@@ -116,7 +116,7 @@ The main problem with flake-utils is that it doesn't check if what we want to do
     overlays.default = final: prev: {};
 
 #   ↓ this is wrong
-    packages.${system}.default = nixpkgs.legacyPackages."${system}".callPackage = ./pacakge.nix {
+    packages.${system}.default = nixpkgs.legacyPackages.${system}.callPackage = ./pacakge.nix {
       some-special-arg = ...;
     };
 
@@ -130,13 +130,13 @@ In the second case, we are introducing manually another system, which ends up as
 
 ## Do we really need flake-utils?
 
-So going back to our original problem: we want to parametrize over `system`, which will be a list of known strings. We also want to prevent applying this to unrelated outputs, like `nixosConfigurations` or `overlays`. And it would be nice if it doesn't depend on any other flake [^3] , while we are at it. Turns out this is very easy to write!
+So going back to our original problem: we want to parametrize over `system`, which will be a list of known strings. We also want to prevent applying this to unrelated outputs, like `nixosConfigurations` or `overlays`. And it would be nice if it doesn't depend on any other flake [^3], while we are at it. Turns out this is very easy to write!
 
 ```nix
 {{% include "forall-flake.nix" %}}
 ```
 
-What we are doing with `forAllSystems` (feel free to use any name), is esentially the same that flake-utils does, but applied to a single output. We can still run into the problems of using `<system>.<system>`, but at least we completly bypass the other problems. And it can be written in a single line of code which you can copy-paste!
+What we are doing with `forAllSystems` (feel free to use any name), is essentially the same that flake-utils does, but applied to a single output. We can still run into the problems of using `<system>.<system>`, but at least we completely bypass the other problems. And it can be written in a single line of code which you can copy-paste!
 
 If you need to use some overlays or nixpkgs configuration, you can tweak it like so:
 
@@ -149,7 +149,7 @@ If you need to use some overlays or nixpkgs configuration, you can tweak it like
 If you made it this far, congratulations. Now feel free to keep using flake-utils, but now knowing how things can go wrong. On a personal note, I would recommend either using flake-parts, or not using any framework; depending on the kind of flake you are writing.
 
 
-#### A) A flake just for yourself
+### Option A: Flake just for yourself
 
 Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. But if you want to handle flake outputs more cleanly, allow me to introduce you to [flake-parts](https://github.com/hercules-ci/flake-parts). It uses the NixOS module system (which is awesome), to express the flake outputs as configuration. And it actually type-checks if what you want to output makes sense, removing the two problems from flake-utils all-together. If you want to start a new flake now, I'd greatly recommend it. A quick example could be:
 
@@ -174,9 +174,9 @@ Keep in mind the shortcomings of flake-utils and my `forAllSystems` solutions. B
 }
 ```
 
-#### B) A flake for others to use
+### Option B: Flake for others to use
 
-If you are writing a flake for other people to use, try using the `forAllSystems` approach. Doing so, your flake won't pull more dependencies and you will keep the `flake.lock` of your consumers clean of a million-copies of flake-utils.
+If you are writing a flake for other people to use, try using the `forAllSystems` approach. Doing so, your flake won't pull more dependencies, and you will keep the `flake.lock` of your consumers clean of a million-copies of flake-utils.
 
 
 [^1]: At the time of writing, there is no formal specification

@@ -3,17 +3,17 @@ title: 'Declarative Ubuntu'
 pubDate: 2022-06-19T10:03:20Z
 tags: ['ubuntu']
 draft: false
-summary: Experiment to have a Ubuntu installation managed declaratively, instead of imperatively
+summary: What if we applied the declarative methodology from NixOS to Ubuntu?
 ---
 
 
-_"Add this PPA to be aple to install some package..."_
+_"Add this PPA to be able to install some package..."_
 
 _"Enable foo.service, and write this to /etc/some/path/to/be/forgotten ..."_
 
-Every undocumented action we do into our systems, nears them into an more unknown state. Even if these modifications are very clear in the present, will you remember about them in a few weeks? What about other people that work on the same system?
+Every undocumented action we do into our systems, nears them into a more unknown state. Even if these modifications are very clear in the present, will you remember about them in a few weeks? What about other people that work on the same system?
 
-Like a vacuum cleaner, the OS collects "state", that we could define as modifications from the original system, that are the result of commands ran by humans, or by its autonomous operations. Of course, there is some state that we are are interested in: the database of our application, its logs, etc. But should every single file on the disk, be able to aquire state? I wouldn't say so.
+Like a vacuum cleaner, the OS collects "state", that we could define as modifications from the original system, that are the result of commands ran by humans, or by its autonomous operations. Of course, there is some state that we are interested in: the database of our application, its logs, etc. But should every single file on the disk, be able to acquire state? I wouldn't say so.
 
 For Linux, the elephant in the room is `/etc`. Citing the FHS:
 
@@ -27,11 +27,11 @@ This is far from the reality, as with a quick look into any Linux distribution w
 
 The solution that I propose is having a system, where the user's configuration files are not mixed with the default configuration files. With a system like this, the problem of "collecting state" vanishes: every file from my distro can be safely wiped and recreated, as it is "stateless", and combined with my "configuration" it results in the system.
 
-Because of how `/etc` is layed out in current distros won't change any time soon, the key concept that glues this together is: indiscriminate removal of state. Wiping everything in the filesystem, and rebuilding the system for scratch on a weekly or monthly basis can help us prevent the problem of accumulating "state", undocumented changes to the system.
+Because of how `/etc` is laid out in current distros won't change any time soon, the key concept that glues this together is: indiscriminate removal of state. Wiping everything in the filesystem, and rebuilding the system for scratch on a weekly or monthly basis can help us prevent the problem of accumulating "state", undocumented changes to the system.
 
-## Apt metapackage
+## Apt meta-package
 
-The most straightforward solution could be to set up a metapackage, such that everything in the system, is ultimately a dependency of this metapackage.
+The most straightforward solution could be to set up a meta-package, such that everything in the system, is ultimately a dependency of this meta-package.
 
 For example:
 
@@ -41,12 +41,12 @@ For example:
 
 Therefore, the entire system is the result of installing it, into a "blanket" system. The administration workflow is converted:
 
-- Installing packages into adding as a dependency to out metapackage
-- Modifying files in `/etc` or with commands into modifying the source of the metapackage.
+- Installing packages into adding as a dependency to out meta-package
+- Modifying files in `/etc` or with commands into modifying the source of the meta-package.
 
-As everything can be reproduced* by this package, we can discard the entire filesystem every week or month, to make sure it doesn't collect state (modifications to this configuration, not tracked by the metapackage). In any case, you may want to keep *some\* state, like some subfolder of `/var` or `/home`. For my experiment, I used ZFS subvolumes that get mounted into these locations.
+As everything can be reproduced* by this package, we can discard the entire filesystem every week or month, to make sure it doesn't collect state (modifications to this configuration, not tracked by the meta-package). In any case, you may want to keep *some\* state, like some subfolder of `/var` or `/home`. For my experiment, I used ZFS subvolumes that get mounted into these locations.
 
-## stage0, stage1, stage2
+## `stage0 stage1 stage2`
 
 For Ubuntu specifically, I came up with 3 steps. Ideally we would have just 1 step, such that the system can be installed from an empty tree.
 
@@ -100,7 +100,7 @@ Depends: linux-generic, linux-image-generic, linux-headers-generic, linux-firmwa
   code
 ```
 
-This metapackages can be trivially built with
+This meta-packages can be trivially built with
 
 ```
 dpkg-deb --build --root-owner-group stage1 stage1.deb
@@ -108,7 +108,7 @@ dpkg-deb --build --root-owner-group stage1 stage1.deb
 
 ### Setting up the users
 
-Instead adding your user imperatively, or as some post-install hook, you can use `systemd-sysusers` to automatically add your user:
+Instead, adding your user imperatively, or as some post-install hook, you can use `systemd-sysusers` to automatically add your user:
 
 ```ini
 # stage2/etc/sysusers.d/ayats.conf
@@ -146,4 +146,4 @@ Just by having all the configuration in a monorepo, instead of running imperativ
 
 With the advent of Fedora Silverblue, being claimed as an "immutable" distro, isn't it also prone to having a dirty `/etc`, with mixed host-specific and non-host-specific files? What is immutable about that? Moreover, is our experiment "more immutable"? Given that it can't be modified, as any modification is easily reverted by reconstructing it from scratch.
 
-If you like this concept, give NixOS a try, as this way of managing the system is the default. By using symlinks, it can recreate the root filesystem from scratch, without any prior knowledge of what is in `/etc` .
+If you like this concept, give NixOS a try, as this way of managing the system is the default. By using symlinks, it can recreate the root filesystem from scratch, without any prior knowledge of what is in `/etc`.
