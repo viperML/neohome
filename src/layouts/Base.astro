@@ -23,31 +23,24 @@ interface Props {
   description?: string | undefined;
 }
 
-const finalTitle =
-  (() => {
-    if (Astro.props.title !== undefined) {
-      return `${Astro.props.title} -`;
-    } else {
-      return "";
-    }
-  })() + "ayats.org";
+const finalTitle = "";
+const finalDesc = "";
+const url = "";
 
-const finalDesc = (() => {
-  if (Astro.props.description !== undefined) {
-    return Astro.props.description;
-  } else {
-    return "My personal website.";
-  }
-})();
+// const url = import.meta.url;
+// const url = import.meta.url;
+// console.log(import.meta);
 
-const url = import.meta.url;
+import { ViewTransitions } from 'astro:transitions';
 ---
 
-<html lang="en">
+<html lang="en" transition:persist>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
+
+    <ViewTransitions />
 
     <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
 
