@@ -57,7 +57,8 @@ const finalDescription = props.description ?? defaultDescription;
 <!-- OpenGraph -->
 <meta property="og:title" content={finalTitle} />
 <meta property="og:type" content={props?.og?.type ?? "website"} />
-<meta property="og:url" content={import.meta.url} />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:description" content={finalDescription} />
 
 <!-- <meta property="og:image" content="/og/foo.png" /> -->
 <!-- <meta property="og:image" content={preview} />  -->
