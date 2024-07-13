@@ -8,7 +8,7 @@ import { IconBrandLinkedin, IconBrandGithub } from "@tabler/icons-react";
 
 <div id="profile">
     <div id="bento-photo" class="card">
-        <Image src={author} alt="Author" />
+        <Image src={author} alt="Author" loading="eager" decoding="sync" />
 
         <style>
             img {
@@ -41,10 +41,10 @@ import { IconBrandLinkedin, IconBrandGithub } from "@tabler/icons-react";
         </span>
     </div>
     <a class="card" href="https://github.com/viperML">
-        <IconBrandGithub className="bento-icon"/>
+        <IconBrandGithub className="bento-icon" />
     </a>
     <a class="card" href="https://linkedin.com/in/ayatsfer">
-        <IconBrandLinkedin className="bento-icon"/>
+        <IconBrandLinkedin className="bento-icon" />
     </a>
 </div>
 
@@ -93,7 +93,7 @@ import { IconBrandLinkedin, IconBrandGithub } from "@tabler/icons-react";
     .bento-extra {
         display: none;
 
-        @media (min-width:600px) {
+        @media (min-width: 600px) {
             display: initial;
         }
     }
