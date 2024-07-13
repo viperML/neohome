@@ -63,7 +63,7 @@ const urlShort =
         >
     </p>
     <p id="footer-provenance">
-        Built with <a href="https://astro.build">Astro</a> from <a href={url}>{urlShort}</a
+        Built with <a href="https://astro.build">Astro</a> from <a class="footer-break" href={url}>{urlShort}</a
         >
     </p>
     <button class="hover-filter" id="themeToggle">
@@ -83,6 +83,10 @@ const urlShort =
         @media (min-width: 768px) {
             padding: 0;
         }
+    }
+
+    .footer-break {
+        word-break: break-all;
     }
 
     a {
