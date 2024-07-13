@@ -36,6 +36,9 @@ headings.unshift({
   seo={{
     title: entry.data.title,
     description: entry.data.summary,
+    og: {
+      image: `/img/og/${entry.slug}.png`,
+    },
   }}
 >
   <div id="container">
