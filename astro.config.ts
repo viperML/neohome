@@ -16,7 +16,7 @@ export default defineConfig({
   // https://docs.astro.build/en/reference/configuration-reference/
   integrations: [tailwind({
     applyBaseStyles: false
-  }), mdx(), react(), sitemap()],
+  }), react(), sitemap()],
   devToolbar: {
     enabled: false
   },
@@ -24,15 +24,9 @@ export default defineConfig({
   // site: "https://ayats.org",
   site: "https://preview.neohome.pages.dev",
   markdown: {
+    syntaxHighlight: false,
     remarkPlugins: [remarkAlert, remarkLesetid],
     rehypePlugins: [rehypeHeadingIds, rehypeTitles, rehypeCodeCopy],
-    shikiConfig: {
-      // theme: 'ayu-dark'
-      themes: {
-        light: 'github-light',
-        dark: "vesper"
-      }
-    }
   },
   build: {
     format: "file"

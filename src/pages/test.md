@@ -135,15 +135,7 @@ ligatures
 (* *) /* */ [| |] {| |} ++ +++ \/ /\ |- -| <!-- <!---
 ```
 
-<Footer/>
 
-import Button from '../components/Button.astro';
-import { IconAward } from "@tabler/icons-react";
-
-
-<Button>
-    <IconAward/>
-</Button>
 
 This is new
 
