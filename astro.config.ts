@@ -6,6 +6,7 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import { remarkAlert } from 'remark-github-blockquote-alert';
 import react from "@astrojs/react";
 import arraybuffer from "vite-plugin-arraybuffer";
+import rehypeShiki from '@shikijs/rehype'
 
 import sitemap from "@astrojs/sitemap";
 import { remarkCodeMeta } from './src/remark';
@@ -14,9 +15,13 @@ import { remarkCodeMeta } from './src/remark';
 export default defineConfig({
   // your configuration options here...
   // https://docs.astro.build/en/reference/configuration-reference/
-  integrations: [tailwind({
-    applyBaseStyles: false
-  }), react(), sitemap()],
+  integrations: [
+    tailwind({
+      applyBaseStyles: false
+    }),
+    react(),
+    sitemap()
+  ],
   devToolbar: {
     enabled: false
   },
@@ -25,13 +30,30 @@ export default defineConfig({
   site: "https://preview.neohome.pages.dev",
   markdown: {
     syntaxHighlight: false,
-    remarkPlugins: [remarkAlert, remarkLesetid, remarkCodeMeta],
-    rehypePlugins: [rehypeHeadingIds, rehypeTitles, rehypeCodeCopy, rehypePreClass],
+    remarkPlugins: [
+      remarkAlert,
+      remarkLesetid,
+      remarkCodeMeta
+    ],
+    rehypePlugins: [
+      rehypeHeadingIds,
+      rehypeTitles,
+      rehypeCodeCopy,
+      [rehypeShiki, {
+        themes: {
+          dark: "vesper",
+          light: 'github-light',
+        }
+      }],
+      rehypePreClass,
+    ],
   },
   build: {
     format: "file"
   },
   vite: {
-    plugins: [arraybuffer()]
+    plugins: [
+      arraybuffer()
+    ]
   }
 });

@@ -39,10 +39,15 @@ const tabler_copy = u("element", {
 ]);
 
 export function rehypePreClass(): (tree: Root) => void {
-    return function(tree: Root) {
+    return function (tree: Root) {
         visit(tree, "element", node => {
             if (node.tagName === "pre") {
-                node.properties.class = ["card"];
+                if (node.properties.class === undefined) {
+                    node.properties.class = "";
+                }
+                // (node.properties.class as string[]).push("card");
+                // console.log(node.properties);
+                (node.properties.class as string) += " card";
             }
         });
     }
@@ -88,7 +93,7 @@ export function rehypeCodeCopy(): (tree: Root) => void {
                 parent?.children.splice(index, 1, ...[
                     u("element", {
                         tagName: "div", properties: {
-                            class: ["astro-code-container"]
+                            class: ["code-container"]
                         }
                     }, [
                         node,
