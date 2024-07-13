@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import remarkLesetid from "remark-lesetid/astro";
-import mdx from '@astrojs/mdx';
 import { rehypeTitles, rehypeCodeCopy } from './src/rehype';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import { remarkAlert } from 'remark-github-blockquote-alert';
