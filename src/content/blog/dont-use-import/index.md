@@ -16,7 +16,12 @@ The answer may be simple at first: `import` .
 
 ## How import is used
 
-Reading the nix manual, what import does is to load, parse, and return the Nix expression in the path. Its usage is very simple:
+Reading the nix manual, what import does is to load, parse, and return the Nix
+expression in the path. Its usage is very simple:
+
+```nix file: "foo.nix"
+# foo.nix
+```
 
 ```nix
 # foo.nix

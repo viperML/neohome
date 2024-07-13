@@ -98,7 +98,7 @@ Or with html: <mark>highlighted text</mark>.
 
 Automatic urls? https://example.com
 
-```nim foo="bar"
+```nim file: "bar"
 code with meta?
 ```
 

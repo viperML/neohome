@@ -8,6 +8,7 @@ import react from "@astrojs/react";
 import arraybuffer from "vite-plugin-arraybuffer";
 
 import sitemap from "@astrojs/sitemap";
+import { remarkCodeMeta } from './src/remark';
 
 // https://astro.build/config
 export default defineConfig({
@@ -24,7 +25,7 @@ export default defineConfig({
   site: "https://preview.neohome.pages.dev",
   markdown: {
     syntaxHighlight: false,
-    remarkPlugins: [remarkAlert, remarkLesetid],
+    remarkPlugins: [remarkAlert, remarkLesetid, remarkCodeMeta],
     rehypePlugins: [rehypeHeadingIds, rehypeTitles, rehypeCodeCopy, rehypePreClass],
   },
   build: {
