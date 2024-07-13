@@ -32,4 +32,4 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy --project-name=neohome --branch preview "${{ env.DISTDIR }}"
+          command: pages deploy --project-name=neohome "${{ env.DISTDIR }}"
