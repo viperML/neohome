@@ -1,15 +1,10 @@
 ---
 import Base from "./Base.astro";
-
-interface Props {
-    title?: string | undefined;
-    description?: string | undefined;
-}
-
-const { title, description } = Astro.props;
+import type { Props as BaseProps } from "./Base.astro";
+export type Props = BaseProps;
 ---
 
-<Base title={title} description={description}>
+<Base {...Astro.props}>
     <section class="flex flex-col main-container">
         <slot />
     </section>

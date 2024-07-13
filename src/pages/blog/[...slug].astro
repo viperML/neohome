@@ -32,9 +32,12 @@ headings.unshift({
 });
 ---
 
-<Base title={entry.data.title} description={entry.data.summary}>
-  <title slot="head">{entry.data.title} - ayats.org</title>
-
+<Base
+  seo={{
+    title: entry.data.title,
+    description: entry.data.summary,
+  }}
+>
   <div id="container">
     <Toc headings={headings} />
 
@@ -63,7 +66,6 @@ headings.unshift({
 
   <style lang="less">
     @sidebar-thr: 1024px;
-
 
     #container {
       display: grid;
@@ -97,7 +99,6 @@ headings.unshift({
       max-width: 100%;
       overflow: auto; // ???
     }
-
 
     // #content-wrapper {
     //   grid-column: 1 / span 2;

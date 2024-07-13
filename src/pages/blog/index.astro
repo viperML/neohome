@@ -4,9 +4,11 @@ import PostList from "../../components/PostList.astro";
 import Centered from "../../layouts/Centered.astro";
 ---
 
-<Centered>
-    <title slot="head">Blog - ayats.org</title>
-
+<Centered
+    seo={{
+        title: "All posts",
+    }}
+>
     <PostList />
 
     <Footer />

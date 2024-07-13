@@ -1,0 +1,63 @@
+---
+// See:
+// https://github.com/codiume/orbit/tree/main/packages/astro-seo-meta
+// https://r44j.dev/blog/astro-seo-injecting-seo-across-all-pages-with-a-single-astro-layout
+
+interface OgProps {
+    type?: string | undefined;
+}
+
+export interface Props {
+    title?: string | undefined;
+    description?: string | undefined;
+    og?: OgProps | undefined;
+}
+const props = Astro.props;
+
+const titleDefault = "ayats.org";
+
+const finalTitle =
+    props.title === undefined
+        ? titleDefault
+        : `${props.title} - ${titleDefault}`;
+
+const seoLinks = [
+    "https://github.com/viperML",
+    "https://linkedin.com/in/ayatsfer",
+];
+
+const defaultDescription = "This is my personal blog.";
+const finalDescription = props.description ?? defaultDescription;
+---
+
+<!-- Title -->
+<title>{finalTitle}</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
+
+<!-- Canonical -->
+<link rel="canonical" href={import.meta.env.SITE} />
+
+<!-- Generic Meta -->
+<meta name="title" content={finalTitle} />
+<meta name="author" content="Fernando Ayats" />
+<meta name="description" content={finalDescription} />
+
+<!-- SEO Links -->
+{
+    seoLinks.map((link) => {
+        return <link href={link} rel="me" />;
+    })
+}
+
+<!-- Sitemap -->
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+<!-- OpenGraph -->
+<meta property="og:title" content={finalTitle} />
+<meta property="og:type" content={props?.og?.type ?? "website"} />
+<meta property="og:url" content={import.meta.url} />
+
+<!-- <meta property="og:image" content="/og/foo.png" /> -->
+<!-- <meta property="og:image" content={preview} />  -->

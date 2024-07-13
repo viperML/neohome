@@ -13,25 +13,16 @@ import "../styles/code-copy.less";
 
 import "../components/Button.astro"; // needed for global styles
 
-const seoLinks = [
-  "https://github.com/viperML",
-  "https://linkedin.com/in/ayatsfer",
-];
 
-interface Props {
-  title?: string | undefined;
-  description?: string | undefined;
+import SEO from "../components/SEO.astro";
+import type { Props as SeoProps } from "../components/SEO.astro";
+
+export interface Props {
+  seo?: SeoProps | undefined;
 }
 
-const finalTitle = "";
-const finalDesc = "";
-const url = "";
 
-// const url = import.meta.url;
-// const url = import.meta.url;
-// console.log(import.meta);
-
-import { ViewTransitions } from 'astro:transitions';
+import { ViewTransitions } from "astro:transitions";
 ---
 
 <html lang="en">
@@ -42,108 +33,84 @@ import { ViewTransitions } from 'astro:transitions';
 
     <ViewTransitions />
 
-    <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
-
     <slot name="head" />
 
-    <!-- SEO -->
-    <link rel="canonical" href={import.meta.env.SITE} />
-    <title>{finalTitle}</title>
-    <meta name="title" content={finalTitle} />
-    <meta name="author" content="Fernando Ayats" />
-    <meta name="description" content={finalDesc} />
-    {
-      seoLinks.map((link) => {
-        return <link href={link} rel="me" />;
-      })
-    }
-    <link rel="sitemap" href="/sitemap-index.xml" />
-
-    <!-- OpenGraph -->
-    <meta property="og:title" content="ayats.org" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={url} />
-    <meta property="og:image" content="/og/foo.png" />
-    <!-- <meta property="og:image" content={preview} /> -->
+    <SEO {...Astro.props.seo} />
   </head>
 
   <body class="flex flex-col items-center">
     <NavBar class="col-span-full row-span-1" />
 
     <slot />
-  </body>
-</html>
-
-
-<script is:inline>
-  window.loadTheme = function(document) {
-    const theme = (() => {
-      const saved = localStorage.getItem("theme");
-      if (saved !== null) {
-        return saved;
-      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        return "dark";
-      } else {
-        return "light";
-      }
-    })();
-
-    if (theme === "light") {
-      document.documentElement.classList.remove("dark");
-    } else {
-      document.documentElement.classList.add("dark");
-    }
-    document.documentElement.classList.add("theme-loaded");
-
-    localStorage.setItem("theme", theme);
-  }
-
-  document.addEventListener('astro:after-swap', () => {
-    window.loadTheme(document);
-  });
-
-  window.loadTheme(document);
-</script>
-
-<script>
-  document.addEventListener('astro:page-load', () => {
-    const toggle = document.getElementById("themeToggle");
-    if (toggle !== null) {
-      toggle.onclick = () => {
-        document.documentElement.classList.toggle("dark");
-
-        const isDark = document.documentElement.classList.contains("dark");
-        localStorage.setItem("theme", isDark ? "dark" : "light");
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).loadTheme(document);
-      };
-    }
-  })
-</script>
-
-
-<script>
-  import { sleep } from "../utils";
-
-  document.addEventListener("astro:page-load", () => {
-    document.querySelectorAll(".code-copy")?.forEach(button => {
-      button.addEventListener("click", async () => {
-        console.log("xd");
-        const text = button.parentElement?.textContent;
-        if (typeof text === "string") {
-          const type = "text/plain";
-          const blob = new Blob([text], { type });
-          const data = [new ClipboardItem({ [type]: blob })];
-          await navigator.clipboard.write(data);
-
-          button.classList.add("active");
-
-          await sleep(2000);
-
-          button.classList.remove("active");
+  </body><script is:inline>
+    window.loadTheme = function (document) {
+      const theme = (() => {
+        const saved = localStorage.getItem("theme");
+        if (saved !== null) {
+          return saved;
+        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        } else {
+          return "light";
         }
+      })();
+
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+      }
+      document.documentElement.classList.add("theme-loaded");
+
+      localStorage.setItem("theme", theme);
+    };
+
+    document.addEventListener("astro:after-swap", () => {
+      window.loadTheme(document);
+    });
+
+    window.loadTheme(document);
+  </script>
+
+  <script>
+    document.addEventListener("astro:page-load", () => {
+      const toggle = document.getElementById("themeToggle");
+      if (toggle !== null) {
+        toggle.onclick = () => {
+          document.documentElement.classList.toggle("dark");
+
+          const isDark = document.documentElement.classList.contains("dark");
+          localStorage.setItem("theme", isDark ? "dark" : "light");
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).loadTheme(document);
+        };
+      }
+    });
+  </script>
+
+  <script>
+    import { sleep } from "../utils";
+
+    document.addEventListener("astro:page-load", () => {
+      document.querySelectorAll(".code-copy")?.forEach((button) => {
+        button.addEventListener("click", async () => {
+          console.log("xd");
+          const text = button.parentElement?.textContent;
+          if (typeof text === "string") {
+            const type = "text/plain";
+            const blob = new Blob([text], { type });
+            const data = [new ClipboardItem({ [type]: blob })];
+            await navigator.clipboard.write(data);
+
+            button.classList.add("active");
+
+            await sleep(2000);
+
+            button.classList.remove("active");
+          }
+        });
       });
-    })
-  });
-</script>
+    });
+  </script>
+</html>

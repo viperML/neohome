@@ -1,6 +1,6 @@
 ---
 title: test page
-layout: ../layouts/Test.astro
+layout: ../layouts/Centered.astro
 ---
 
 import Footer from '../components/Footer.astro';
