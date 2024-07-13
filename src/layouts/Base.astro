@@ -34,7 +34,7 @@ const url = "";
 import { ViewTransitions } from 'astro:transitions';
 ---
 
-<html lang="en" transition:persist>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -76,26 +76,34 @@ import { ViewTransitions } from 'astro:transitions';
 
 <style is:global></style>
 
-<script is:inline>
+<script is:inline data-astro-rerun>
   // This script automatically loads the theme from either the user's preference
   // or from localStorage
-  const theme = (() => {
-    if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
-      return localStorage.getItem("theme");
-    }
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
-    return "light";
-  })();
+  const setTheme = ((document) => {
+    const theme = (() => {
+      if (typeof localStorage !== "undefined" && localStorage.getItem("theme")) {
+        return localStorage.getItem("theme");
+      }
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        return "dark";
+      }
+      return "light";
+    })();
 
-  if (theme === "light") {
-    document.documentElement.classList.remove("dark");
-  } else {
-    document.documentElement.classList.add("dark");
-  }
+    if (theme === "light") {
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+    }
 
-  window.localStorage.setItem("theme", theme);
+    window.localStorage.setItem("theme", theme);
+  });
+
+  setTheme(document);
+
+  document.addEventListener('astro:before-swap', ev => {
+    setTheme(ev.newDocument);
+  });
 
   const x = Array.from(document.getElementsByClassName("theme-toggle")).forEach(
     (elem) => {
