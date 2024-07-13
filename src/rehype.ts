@@ -38,7 +38,15 @@ const tabler_copy = u("element", {
     ])
 ]);
 
-
+export function rehypePreClass(): (tree: Root) => void {
+    return function(tree: Root) {
+        visit(tree, "element", node => {
+            if (node.tagName === "pre") {
+                node.properties.class = ["card"];
+            }
+        });
+    }
+}
 
 export function rehypeTitles(): (tree: Root) => void {
     return function (tree: Root) {
