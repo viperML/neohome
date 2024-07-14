@@ -31,6 +31,21 @@ const defaultDescription = "This is my personal blog.";
 const finalDescription = props.description ?? defaultDescription;
 
 import { WIDTH, HEIGHT } from "../card";
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+function normURL(url: URL): string {
+    const u = new URL(url);
+
+    u.pathname = u.pathname.replace(/index\.html$/, "");
+    u.pathname = u.pathname.replace(/\.html$/, "");
+
+    let s = `${u}`;
+
+    s = s.replace(/\/$/, "");
+
+    return s;
+}
 ---
 
 <!-- Title -->
@@ -40,7 +55,7 @@ import { WIDTH, HEIGHT } from "../card";
 <link rel="icon" type="image/svg+xml" href="/img/logo.svg" />
 
 <!-- Canonical -->
-<link rel="canonical" href={import.meta.env.SITE} />
+<link rel="canonical" href={normURL(canonicalURL)} />
 
 <!-- Generic Meta -->
 <meta name="title" content={finalTitle} />

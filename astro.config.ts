@@ -54,5 +54,6 @@ export default defineConfig({
     plugins: [
       arraybuffer()
     ]
-  }
+  },
+  trailingSlash: "never",
 });

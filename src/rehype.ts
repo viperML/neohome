@@ -98,7 +98,8 @@ export function rehypeCodeCopy(): (tree: Root) => void {
                         u("element", {
                             tagName: "button",
                             properties: {
-                                class: ["code-copy", "astro-button"]
+                                class: ["code-copy", "astro-button"],
+                                "aria-label": "Copy code"
                             },
                         }, [
                             tabler_copy
