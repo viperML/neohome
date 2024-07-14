@@ -1,8 +1,14 @@
 ---
-import Centered from "../../layouts/Centered.astro"
+import Base from "../../layouts/Base.astro";
+import Centered from "../../components/Centered.astro";
 ---
-<Centered seo={{
-    title: "Experiments",
-}}>
-    <h2>Coming soon...</h2>
-</Centered>
+
+<Base
+    seo={{
+        title: "Experiments",
+    }}
+>
+    <Centered>
+        <h2>Coming soon...</h2>
+    </Centered>
+</Base>

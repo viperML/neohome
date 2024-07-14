@@ -1,15 +1,18 @@
 ---
 import Footer from "../../components/Footer.astro";
 import PostList from "../../components/PostList.astro";
-import Centered from "../../layouts/Centered.astro";
+import Centered from "../../components/Centered.astro";
+import Base from "../../layouts/Base.astro";
 ---
 
-<Centered
+<Base
     seo={{
         title: "All posts",
     }}
 >
-    <PostList />
+    <Centered>
+        <PostList />
 
-    <Footer />
-</Centered>
+        <Footer />
+    </Centered>
+</Base>
