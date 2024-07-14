@@ -5,7 +5,7 @@
 
 interface OgProps {
     type?: string | undefined;
-    image?: string | undefined,
+    image?: string | undefined;
 }
 
 export interface Props {
@@ -83,3 +83,11 @@ function normURL(url: URL): string {
 <meta property="og:image:height" content={`${HEIGHT}`} />
 <meta property="og:image:type" content="image/png" />
 <meta property="og:logo" content="/img/logo.svg" />
+
+<!-- RSS Autodetection -->
+<link
+    rel="alternate"
+    type="application/rss+xml"
+    title={titleDefault}
+    href={new URL("feed.xml", Astro.site)}
+/>

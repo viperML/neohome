@@ -2,7 +2,7 @@ import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
 
-export async function GET(context: APIContext) {
+export async function GET(context: APIContext): Promise<Response> {
   const blog = await getCollection('blog');
   return rss({
     title: 'ayats.org',
