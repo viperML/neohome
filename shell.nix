@@ -6,5 +6,6 @@ mkShell {
     tailwindcss
     # nodePackages.wrangler
     nodePackages."@astrojs/language-server"
+    nodePackages.typescript-language-server
   ];
 }
