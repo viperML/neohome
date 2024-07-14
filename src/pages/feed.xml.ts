@@ -1,33 +1,43 @@
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { getCollection } from 'astro:content';
+import sanitizeHtml from 'sanitize-html';
+
+import { experimental_AstroContainer as AstroContainer } from "astro/container";
+
+async function amap<A, B>(arr: A[], fun: (arg0: A) => B) {
+  return await Promise.all(arr.map(async v => await fun(v)))
+}
 
 export async function GET(context: APIContext): Promise<Response> {
-  const blog = await getCollection('blog');
+  const blog = (await getCollection('blog')).filter(post => {
+    return !(post.data.draft ?? false);
+  });
+
+  // https://github.com/withastro/roadmap/discussions/419
+
   return rss({
     title: 'ayats.org',
     description: 'Welcome to my personal blog.',
     site: (() => {
-      if (context.site == null) {
-        throw "Site not defined in astro config";
+      const s = context.site?.origin;
+      if (s !== undefined) {
+        return s;
       } else {
-        return context.site;
+        throw new Error("Bad RSS site");
       }
     })(),
     stylesheet: '/rss/pretty-feed-v3.xsl',
     trailingSlash: false,
-    // Array of `<item>`s in output xml
-    // See "Generating items" section for examples using content collections and glob imports
-    items: blog.map((post) => ({
-      title: post.data.title,
-      pubDate: post.data.pubDate,
-      description: post.data.description,
-      customData: post.data.customData,
-      // Compute RSS link from post `slug`
-      // This example assumes all posts are rendered as `/blog/[slug]` routes
-      link: `/blog/${post.slug}/`,
+    items: (await amap(blog, async (post) => {
+      const container = await AstroContainer.create();
+      const render = await post.render();
+      container.renderToString(render.Content);
+      return {
+        link: `/blog/${post.slug}`,
+        content: sanitizeHtml(await container.renderToString(render.Content)),
+        ...post.data,
+      };
     })),
-    // (optional) inject custom xml
-    customData: `<language>en-us</language>`,
   });
 }

@@ -23,7 +23,7 @@ const file = `src/content/${entry.collection}/${entry.id}`;
 
 import { IconArrowBarLeft } from "@tabler/icons-react";
 
-import Toc from "../../components/TOC.astro";
+import TOC from "../../components/TOC.astro";
 
 headings.unshift({
   depth: 1,
@@ -42,7 +42,7 @@ headings.unshift({
   }}
 >
   <div id="container">
-    <Toc headings={headings} />
+    <TOC headings={headings} />
 
     <div id="content-wrapper" class="flex flex-col items-center">
       <div id="content" class="main-container">
