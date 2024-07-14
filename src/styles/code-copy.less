@@ -2,7 +2,7 @@
     position: relative;
 }
 
-@sep: 10px;
+@sep: 8px;
 
 .code-copy {
     position: absolute;
@@ -38,5 +38,8 @@
 }
 
 .code-copy>svg:last-child {
-    color: rgb(109, 192, 109);
+    color: rgb(37, 93, 37);
+    :is(.dark &) {
+        color: rgb(109, 192, 109);
+    }
 }

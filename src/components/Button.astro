@@ -22,6 +22,11 @@ import { IconAward } from "@tabler/icons-react";
 
         border: 2px solid var(--elem-neutral);
 
+        background-color: rgb(238, 238, 238);
+        :is(.dark &) {
+            background-color: rgb(12, 12, 12);
+        }
+
         &:hover {
             border-color: var(--text-color-alt);
         }
