@@ -45,8 +45,6 @@ export function rehypePreClass(): (tree: Root) => void {
                 if (node.properties.class === undefined) {
                     node.properties.class = "";
                 }
-                // (node.properties.class as string[]).push("card");
-                // console.log(node.properties);
                 (node.properties.class as string) += " card";
             }
         });

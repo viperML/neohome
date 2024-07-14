@@ -36,8 +36,6 @@ export const remarkCodeMeta: Plugin<[], Root> = () => {
             if (meta.file !== undefined) {
                 const dir = path.dirname(vfile.history[0] as string);
                 const final = path.resolve(dir, meta.file);
-                console.log(final)
-                console.log("Using file from meta ", meta.file, final);
 
                 if (!fs.existsSync(final)) {
                     throw new Error(`Couldn't find file ${final} from markdown meta ${node.meta}`)

@@ -5,7 +5,7 @@ import "../styles/color.less";
 import "../styles/base.less";
 import "../styles/main.less";
 
-import "../styles/iosevka-normal.css";
+import "../fonts/iosevka-normal.css";
 import "@fontsource/geist-sans";
 
 import "../styles/alert.less";
@@ -95,7 +95,6 @@ import { ViewTransitions } from "astro:transitions";
     document.addEventListener("astro:page-load", () => {
       document.querySelectorAll(".code-copy")?.forEach((button) => {
         button.addEventListener("click", async () => {
-          console.log("xd");
           const text = button.parentElement?.textContent;
           if (typeof text === "string") {
             const type = "text/plain";

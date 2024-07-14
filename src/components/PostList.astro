@@ -21,7 +21,6 @@ const blogEntries = (await getCollection("blog"))
 <ul class="flex flex-col gap-3">
     {
         blogEntries.map((item) => {
-            // console.log(item);
             return <Post post={item} />;
         })
     }
