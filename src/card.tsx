@@ -33,7 +33,7 @@ export async function mkPng(input: Generate): Promise<Buffer> {
       "backgroundColor": "rgb(239, 239, 239)",
       "width": "1000px",
       "height": "500px",
-      "borderRadius": "1rem",
+      "borderRadius": "2rem",
       "boxShadow": "0px 10px 15px -3px rgba(0,0,0,0.3)",
       "display": "flex",
       "flexDirection": "column" as const,
