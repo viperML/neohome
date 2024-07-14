@@ -19,11 +19,24 @@
     height: 20px;
 }
 
+.code-copy>svg:last-child {
+    display: none;
+}
+
+.code-copy.active>svg:last-child {
+    display: block;
+}
+
+.code-copy.active>svg:first-child {
+    display: none;
+}
+
+
 .code-container:hover .code-copy,
 .code-copy.active {
     opacity: 1;
 }
 
-.code-copy.active {
-    border-color: chartreuse !important;
+.code-copy>svg:last-child {
+    color: rgb(109, 192, 109);
 }
