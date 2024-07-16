@@ -61,3 +61,56 @@ After digging throw many catalogs of templates, I landed on
 some tweaking of the template, I got it to suit my taste.
 
 ![Old blog screenshot](./old.png)
+
+### Hugo
+
+Hugo is a static site generator written in Go. As a high level overview, it
+takes your source files, runs a templating engine on top of them, and returns
+your static site.
+
+The key to Hugo is its templating engine. I didn't look too far in the specific
+implementation, but I believe they use the
+[`text/template`](https://pkg.go.dev/text/template) package, which seems to be
+very popular among Go users. The templating engine is applied over regular HTML,
+which is constructed by joining multiple templates or "partials".
+
+As an example, this partial built my site logo (from the navigation bar):
+
+```html file: "partial-logo.html"
+```
+
+This example shows my main reason to move away from Hugo: <mark>I didn't want to
+deal with this templating language</mark>. Don't get me wrong, I don't think it
+is bad. I am sure there is people that praise this templating language, even for
+other context -- I have personally used with
+[consul-template](https://github.com/hashicorp/consul-template). But I don't
+want to deal with a "pseudo-language", with if-blocks, variables etc. I would
+rather use a more "orthodox" language, to program my template shenanigans.
+
+The blog was already working, and I didn't want to change much. But as you can
+guess from my past, I like to "poke" into systems to get to the root of how
+things work. Even using a template -- Hugo or not -- goes against discovering
+how HTML+CSS works by myself.
+
+
+## My requirements for a new framework
+
+The process of investigating the landscape of options took a bit of time, but I
+could discard many options quickly. My "minimums" for the framework I wanted
+were:
+
+- No backend -- I only want to host static files on [Cloudflare Pages](https://pages.cloudflare.com).
+- No templating DSL -- This also discards Rust's solution, [Zola](https://www.getzola.org).
+- Used a familiar enough language for me -- discards Haskell's solution, [Hakyll](https://jaspervdj.be/hakyll).
+- Built on popular-enough technologies -- discards Hakyll a second time
+
+Looking into the JavaScript-based solutions may be daunting at first. The
+solution that picked my interest from the start -- and the decision -- was Astro,
+as a friend of mine was already using it. They had a good experience, so I
+decided to give it a try.
+
+### Some words about Astro
+
+The [Astro webpage](https://astro.build) describes it as a "web framework for
+content-driven websites".
+

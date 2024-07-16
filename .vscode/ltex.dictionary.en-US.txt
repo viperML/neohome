@@ -34,3 +34,6 @@ venv
 toolchain
 fetchTarball
 systemd
+templating
+Hakyll
+Astro
