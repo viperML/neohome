@@ -20,6 +20,7 @@
         (fs.unions [
           ./src
           ./public
+          ./neohome-rs
           (fs.fileFilter (file: file.hasExt "ts") r)
           (fs.fileFilter (file: file.hasExt "json") r)
         ]);
@@ -38,6 +39,28 @@
           };
           npmConfigHook = importNpmLock.npmConfigHook;
 
+          preBuild = ''
+            pushd neohome-rs
+            npm run build
+            popd
+          '';
+
+          cargoDeps = rustPlatform.importCargoLock {
+            lockFile = ./neohome-rs/Cargo.lock;
+          };
+
+          cargoRoot = "neohome-rs";
+
+          nativeBuildInputs = [
+            rustPlatform.cargoSetupHook
+            rustc
+            cargo
+          ];
+
+          preInstall = ''
+            rm -rf $cargoRoot/target
+          '';
+
           env =
             {
               ASTRO_TELEMETRY_DISABLED = true;
@@ -47,5 +70,26 @@
             });
         };
     };
+
+    devShells.${system}.default = with pkgs;
+      mkShell {
+        packages = [
+          cargo
+          rustc
+          rust-analyzer-unwrapped
+          rustfmt
+
+          nodejs
+          yarn
+
+          tailwindcss
+          # nodePackages.wrangler
+          nodePackages."@astrojs/language-server"
+          nodePackages.typescript-language-server
+
+          ltex-ls
+        ];
+          env.RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
+      };
   };
 }

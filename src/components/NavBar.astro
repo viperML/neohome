@@ -2,6 +2,8 @@
 import { Image } from "astro:assets";
 import logo from "../img/avatar-text.svg";
 const { class: className } = Astro.props;
+
+import { sum } from "neohome-rs";
 ---
 
 <header class:list={["flex justify-center", className]}>
@@ -27,6 +29,9 @@ const { class: className } = Astro.props;
       </li> -->
       <li>
         <a href="/blog">Blog</a>
+      </li>
+      <li>
+        {sum(2,3)}
       </li>
     </ul>
   </nav>

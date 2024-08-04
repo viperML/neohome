@@ -6,3 +6,6 @@
 /node_modules
 npm-debug.log*
 *.tgz
+neohome-rs/index.*
+neohome-rs/*.node
+target

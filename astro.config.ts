@@ -51,9 +51,15 @@ export default defineConfig({
     format: "file"
   },
   vite: {
+    assetsInclude: [
+      "**/*.node"
+    ],
     plugins: [
       arraybuffer()
-    ]
+    ],
+    ssr: {
+      external: ["neohome-rs"]
+    }
   },
   trailingSlash: "never",
 });
