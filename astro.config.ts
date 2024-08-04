@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import tailwind from "@astrojs/tailwind";
 import remarkLesetid from "remark-lesetid/astro";
-import { rehypeTitles, rehypeCodeCopy, rehypePreClass } from './src/rehype';
+import { rehypeTitles, rehypeCodeCopy, rehypePreClass, rehypeHighlight } from './src/rehype';
 import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import { remarkAlert } from 'remark-github-blockquote-alert';
 import react from "@astrojs/react";
@@ -38,13 +38,14 @@ export default defineConfig({
       rehypeHeadingIds,
       rehypeTitles,
       rehypeCodeCopy,
-      [rehypeShiki, {
-        themes: {
-          dark: "vesper",
-          light: 'github-light',
-        }
-      }],
+      // [rehypeShiki, {
+        //   themes: {
+      //     dark: "vesper",
+      //     light: 'github-light',
+      //   }
+      // }],
       rehypePreClass,
+      rehypeHighlight,
     ],
   },
   build: {

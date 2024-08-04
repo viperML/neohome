@@ -1,11 +1,16 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    tree-sitter = {
+      url = "github:viperML/tree-sitter";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
     self,
     nixpkgs,
+    tree-sitter,
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
@@ -64,6 +69,7 @@
           env =
             {
               ASTRO_TELEMETRY_DISABLED = true;
+              TS_GRAMMAR_PATH = tree-sitter.packages.${system}.bundle;
             }
             // (lib.optionalAttrs (builtins.hasAttr "rev" self) {
               GIT_COMMIT = self.rev;
@@ -89,7 +95,8 @@
 
           ltex-ls
         ];
-          env.RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
+        env.RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
+        env.TS_GRAMMAR_PATH = tree-sitter.packages.${system}.bundle;
       };
   };
 }

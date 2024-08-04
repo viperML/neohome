@@ -1,6 +1,8 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Centered from "../../components/Centered.astro";
+
+import { highlight } from "neohome-rs";
 ---
 
 <Base
@@ -11,4 +13,6 @@ import Centered from "../../components/Centered.astro";
     <Centered>
         <h2>Coming soon...</h2>
     </Centered>
+
+    {highlight("let x = 1", "javascript")}
 </Base>

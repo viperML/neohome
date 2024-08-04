@@ -8,6 +8,8 @@ import { fromHtml } from 'hast-util-from-html'
 import IconCopy from "@tabler/icons/outline/copy.svg?raw";
 import IconCopyCheckFilled from "@tabler/icons/filled/copy-check.svg?raw";
 
+import { highlight } from "neohome-rs";
+
 function icon2node(raw: string): Element {
     return fromHtml(raw, {
         fragment: true,
@@ -27,6 +29,18 @@ export function rehypePreClass(): (tree: Root) => void {
         });
     }
 }
+
+export function rehypeHighlight(): (tree: Root) => void {
+    return function (tree: Root) {
+        visit(tree, "element", node => {
+            if (node.tagName === "pre") {
+                console.log(node);
+
+            }
+        });
+    }
+}
+
 
 export function rehypeTitles(): (tree: Root) => void {
     return function (tree: Root) {
