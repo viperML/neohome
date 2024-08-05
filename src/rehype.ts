@@ -8,7 +8,9 @@ import { fromHtml } from 'hast-util-from-html'
 import IconCopy from "@tabler/icons/outline/copy.svg?raw";
 import IconCopyCheckFilled from "@tabler/icons/filled/copy-check.svg?raw";
 
-import { highlight } from "neohome-rs";
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+const { highlight } = require("neohome-rs");
 
 function icon2node(raw: string): Element {
     return fromHtml(raw, {
