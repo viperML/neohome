@@ -48,7 +48,7 @@ function getLanguage(classes: unknown | (string | number)[]): string | undefined
     return;
 }
 
-export function rehypeHighlight(): (tree: Root) => void {
+export function rehypeTreeSitter(): (tree: Root) => void {
     return function (tree: Root) {
         visit(tree, "element", node => {
             if (node.tagName === "pre") {
