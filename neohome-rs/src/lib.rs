@@ -11,11 +11,14 @@ pub fn sum(a: i32, b: i32) -> i32 {
     a + b
 }
 
+
 #[napi]
 pub fn highlight(text: String, lang: String) -> Option<String> {
     let mut lang = DynTS::new(lang, STANDARD_CAPTURE_NAMES).ok()?;
 
     let mut res: Vec<u8> = Vec::new();
+
+    res.extend(r#"<code class="tree-sitter-code">"#.as_bytes());
 
     let bytes = text.as_bytes();
 
@@ -24,7 +27,11 @@ pub fn highlight(text: String, lang: String) -> Option<String> {
             HighlightEvent::Source { start, end } => res.extend(&bytes[start..end]),
             HighlightEvent::HighlightStart(Highlight(n)) => {
                 let capture = STANDARD_CAPTURE_NAMES[n];
-                let classes = capture.replace(".", " ");
+                let classes = capture
+                    .split(".")
+                    .map(|elem| format!("ts-{elem}"))
+                    .collect::<Vec<_>>()
+                    .join(" ");
                 let text = format!(r#"<span class="{}">"#, classes);
                 res.extend(text.as_bytes());
             }
@@ -35,7 +42,10 @@ pub fn highlight(text: String, lang: String) -> Option<String> {
         };
     }
 
-    let res_text = String::from_utf8(res).ok()?;
+    res.extend("</code>".as_bytes());
 
-    Some(res_text)
+    let res = String::from_utf8(res).ok()?;
+    // let encoded = html_escape::encode_text(&res_text).to_string();
+
+    Some(res)
 }

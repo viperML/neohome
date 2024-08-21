@@ -1,0 +1,111 @@
+@black: #000000;
+@red: #CC6666;
+@green: #B5BD68;
+@yellow: #F0C674;
+@blue: #81A2BE;
+@magenta: #B293BB;
+@cyan: #8ABEB7;
+@white: #FFFEFE;
+
+
+@bright_black: #808080;
+@bright_red: #CC6666;
+@bright_green: #B5BD68;
+@bright_yellow: #F0C574;
+@bright_blue: #80A1BD;
+@bright_magenta: #B294BA;
+@bright_cyan: #8ABDB6;
+@bright_white: #FFFEFE;
+
+
+.tree-sitter-code {
+    & .ts-comment {
+        color: @bright_black;
+        font-style: italic;
+    }
+
+    & .ts-type {
+        color: @yellow;
+    }
+
+    & .ts-type.ts-builtin {
+        font-style: italic;
+    }
+
+    & .ts-attribute {
+        color: @bright_yellow;
+    }
+
+    & .ts-constant {
+        color: @bright_red;
+    }
+
+    & .ts-constructor {
+        color: @bright_blue;
+    }
+
+    & .ts-function {
+        color: @blue;
+    }
+
+    & .ts-function.ts-macro {
+        color: @bright_blue;
+    }
+
+    & .ts-function.ts-builtin {
+        color: @bright_blue;
+    }
+
+    & .ts-keyword {
+        color: @bright_magenta;
+    }
+
+    & .ts-module {
+        color: @red;
+    }
+
+    & .ts-number {
+        color: @bright_red;
+    }
+
+    // Black: 30.
+    // Red: 31.
+    // Green: 32.
+    // Yellow: 33.
+    // Blue: 34.
+    // Magenta: 35.
+    // Cyan: 36.
+    // White: 37.
+
+    & .ts-operator {
+        color: @bright_magenta;
+    }
+
+    & .ts-punctuation {
+        color: @bright_black;
+    }
+
+    & .ts-string.ts-special {
+        color: @bright_green;
+    }
+
+    & .ts-string {
+        color: @green;
+    }
+
+    & .ts-tag {
+        color: @yellow;
+    }
+
+    & .ts-variable {
+        color: @bright_red;
+    }
+
+    & .ts-variable.ts-builtin {
+        color: @bright_red;
+    }
+
+    & .ts-variable.ts-member {
+        color: inherit; // ok?
+    }
+}

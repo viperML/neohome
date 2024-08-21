@@ -2,13 +2,12 @@
   "name": "neohome",
   "type": "module",
   "version": "0.0.1",
-  "workspaces": ["neohome-rs"],
+  "workspaces": [
+    "neohome-rs"
+  ],
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro"
+    "dev": "make -C neohome-rs && astro dev",
+    "build": "make -C neohome-rs && astro check && astro build"
   },
   "devDependencies": {
     "@astrojs/check": "^0.7.0",

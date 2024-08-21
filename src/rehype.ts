@@ -32,11 +32,53 @@ export function rehypePreClass(): (tree: Root) => void {
     }
 }
 
+function getLanguage(classes: unknown | (string | number)[]): string | undefined {
+    if (!Array.isArray(classes)) {
+        return;
+    }
+
+    for (const c of classes) {
+        if (typeof c === "string") {
+            if (c.startsWith("language-")) {
+                return c.replace("language-", "");
+            }
+        }
+    }
+
+    return;
+}
+
 export function rehypeHighlight(): (tree: Root) => void {
     return function (tree: Root) {
         visit(tree, "element", node => {
             if (node.tagName === "pre") {
-                console.log(node);
+                visit(node, "element", subNode => {
+                    if (subNode.tagName == "code") {
+                        const language = getLanguage(subNode.properties.className);
+                        if (language === undefined) {
+                            return;
+                        }
+
+                        // @ts-ignore
+                        const oldText = subNode.children[0].value;
+
+                        const res = highlight(oldText, language);
+
+                        if (res === null) {
+                            console.log("Failed to highlight some", language);
+                            return;
+                        } else {
+                            console.log("Highlighted some", language);
+                        }
+
+                        const parsed = fromHtml(res, {
+                            fragment: true,
+                        }).children[0];
+
+                        // @ts-ignore
+                        node.children = [parsed];
+                    }
+                });
 
             }
         });

@@ -12,8 +12,9 @@ export default tseslint.config(
     ...eslintPluginAstro.configs["jsx-a11y-strict"],
     {
         rules: {
-            "@typescript-eslint/explicit-function-return-type": "warn",
+            "@typescript-eslint/explicit-function-return-type": "off",
             "@typescript-eslint/no-unused-vars": "warn",
+            "@typescript-eslint/ban-ts-comment": "warn"
         }
     }
 )
