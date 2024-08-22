@@ -107,6 +107,10 @@
           nodePackages.typescript-language-server
 
           ltex-ls
+
+          (python3.withPackages (pp: [
+            pp.pyyaml
+          ]))
         ];
         env.RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
         env.TS_GRAMMAR_PATH = grammarPath;

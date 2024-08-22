@@ -9,3 +9,4 @@ npm-debug.log*
 neohome-rs/index.*
 neohome-rs/*.node
 target
+/.venv

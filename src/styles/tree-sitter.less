@@ -1,24 +1,71 @@
-@black: #000000;
-@red: #CC6666;
-@green: #B5BD68;
-@yellow: #F0C674;
-@blue: #81A2BE;
-@magenta: #B293BB;
-@cyan: #8ABEB7;
-@white: #FFFEFE;
+// https://github.com/Gogh-Co/Gogh
 
+:root {
 
-@bright_black: #808080;
-@bright_red: #CC6666;
-@bright_green: #B5BD68;
-@bright_yellow: #F0C574;
-@bright_blue: #80A1BD;
-@bright_magenta: #B294BA;
-@bright_cyan: #8ABDB6;
-@bright_white: #FFFEFE;
+    /* Gogh colorscheme: Tomorrow */
+    --ts-black: #000000;
+    --ts-red: #C82828;
+    --ts-green: #718C00;
+    --ts-yellow: #EAB700;
+    --ts-blue: #4171AE;
+    --ts-magenta: #8959A8;
+    --ts-cyan: #3E999F;
+    --ts-white: #FFFEFE;
+    --ts-bright-black: #000000;
+    --ts-bright-red: #C82828;
+    --ts-bright-green: #708B00;
+    --ts-bright-yellow: #E9B600;
+    --ts-bright-blue: #4170AE;
+    --ts-bright-magenta: #8958A7;
+    --ts-bright-cyan: #3D999F;
+    --ts-bright-white: #FFFEFE;
+    --ts-background: #FFFFFF;
+    --ts-foreground: #4D4D4C;
+
+    &.dark {
+        /* Gogh colorscheme: Tomorrow Night */
+        --ts-black: #000000;
+        --ts-red: #CC6666;
+        --ts-green: #B5BD68;
+        --ts-yellow: #F0C674;
+        --ts-blue: #81A2BE;
+        --ts-magenta: #B293BB;
+        --ts-cyan: #8ABEB7;
+        --ts-white: #FFFEFE;
+        --ts-bright-black: #808080;
+        --ts-bright-red: #CC6666;
+        --ts-bright-green: #B5BD68;
+        --ts-bright-yellow: #F0C574;
+        --ts-bright-blue: #80A1BD;
+        --ts-bright-magenta: #B294BA;
+        --ts-bright-cyan: #8ABDB6;
+        --ts-bright-white: #FFFEFE;
+        --ts-background: #1D1F21;
+        --ts-foreground: #C5C8C6;
+    }
+}
+
+@black: var(--ts-black);
+@red: var(--ts-red);
+@green: var(--ts-green);
+@yellow: var(--ts-yellow);
+@blue: var(--ts-blue);
+@magenta: var(--ts-magenta);
+@cyan: var(--ts-cyan);
+@white: var(--ts-white);
+@bright_black: var(--ts-bright-black);
+@bright_red: var(--ts-bright-red);
+@bright_green: var(--ts-bright-green);
+@bright_yellow: var(--ts-bright-yellow);
+@bright_blue: var(--ts-bright-blue);
+@bright_magenta: var(--ts-bright-magenta);
+@bright_cyan: var(--ts-bright-cyan);
+@bright_white: var(--ts-bright-white);
 
 
 .tree-sitter-code {
+    color: var(--ts-foreground);
+
     & .ts-comment {
         color: @bright_black;
         font-style: italic;
