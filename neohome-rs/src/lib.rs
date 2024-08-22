@@ -7,12 +7,6 @@ use tree_sitter_dynamic::{DynTS, STANDARD_CAPTURE_NAMES};
 use tree_sitter_highlight::{Highlight, HighlightEvent};
 
 #[napi]
-pub fn sum(a: i32, b: i32) -> i32 {
-    a + b
-}
-
-
-#[napi]
 pub fn highlight(text: String, lang: String) -> Option<String> {
     let mut lang = DynTS::new(lang, STANDARD_CAPTURE_NAMES).ok()?;
 
@@ -45,7 +39,6 @@ pub fn highlight(text: String, lang: String) -> Option<String> {
     res.extend("</code>".as_bytes());
 
     let res = String::from_utf8(res).ok()?;
-    // let encoded = html_escape::encode_text(&res_text).to_string();
 
     Some(res)
 }
