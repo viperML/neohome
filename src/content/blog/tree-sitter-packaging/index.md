@@ -1,6 +1,6 @@
 ---
 title: 'The tree-sitter packaging mess'
-pubDate: 2024-08-04
+pubDate: 2024-08-25
 draft: false
 summary: A trip on how not to do the packaging for your software ecosystem
 ---
