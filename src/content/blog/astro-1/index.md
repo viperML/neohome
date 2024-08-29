@@ -115,5 +115,21 @@ The [Astro webpage](https://astro.build) describes it as a "web framework for
 content-driven websites". You can find many explanations on the internet about
 how Astro works, but here is my take as a list of the key features:
 
-- Much like [Pandoc](https://pandoc.org), Astro can take input Markdown files
-and transform them into HTML.
+- Much like [Pandoc](https://pandoc.org), Astro takes Markdown files as input,
+and outputs some HTML.
+- You start from you plain HTML+CSS, statically served.
+- Astro code fences let you generate the HTML programmatically, for example:
+    ```astro
+    ---
+    // This is JavaScript
+    const text = "foo" + "bar";
+    ---
+
+    <!-- This a Component template (HTML+{JS}) -->
+    <p>{text}<p>
+    ```
+- A standard library that can handle content collections for you.
+
+Apart from these insights, this framework feels to me just like "HTML + JS
+components", which is exactly what I needed.
+
