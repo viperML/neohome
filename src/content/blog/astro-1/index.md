@@ -4,7 +4,7 @@ slug: astro-blog
 summary: |
   High level overview of a blog generator written in javascript,
   based on the idea of components.
-pubDate: 2024-07-15
+pubDate: 2024-08-29T14:16:33Z
 draft: true
 ---
 
@@ -112,5 +112,8 @@ decided to give it a try.
 ### Some words about Astro
 
 The [Astro webpage](https://astro.build) describes it as a "web framework for
-content-driven websites".
+content-driven websites". You can find many explanations on the internet about
+how Astro works, but here is my take as a list of the key features:
 
+- Much like [Pandoc](https://pandoc.org), Astro can take input Markdown files
+and transform them into HTML.
