@@ -39,6 +39,11 @@
         "toml"
         "yaml"
         "json"
+        "astro"
+        "html"
+        "javascript"
+        "typescript"
+        "css"
       ])
       inputs.tree-sitter.legacyPackages.${system}.grammars.all));
   in {

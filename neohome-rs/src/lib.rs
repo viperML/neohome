@@ -10,15 +10,19 @@ use tree_sitter_highlight::{Highlight, HighlightEvent};
 pub fn highlight(text: String, lang: String) -> Option<String> {
     let mut lang = DynTS::new(lang, STANDARD_CAPTURE_NAMES).ok()?;
 
-    let mut res: Vec<u8> = Vec::new();
+    let mut res = String::new();
 
-    res.extend(r#"<code class="tree-sitter-code">"#.as_bytes());
+    res.push_str(r#"<code class="tree-sitter-code">"#);
 
-    let bytes = text.as_bytes();
+    let text_bytes = text.as_bytes();
 
-    for event in lang.highlight(bytes) {
+    for event in lang.highlight(text_bytes) {
         match event.ok()? {
-            HighlightEvent::Source { start, end } => res.extend(&bytes[start..end]),
+            HighlightEvent::Source { start, end } => {
+                let t = std::str::from_utf8(&text_bytes[start..end]).ok()?;
+                let sanitized = html_escape::encode_text(t);
+                res.push_str(&sanitized);
+            }
             HighlightEvent::HighlightStart(Highlight(n)) => {
                 let capture = STANDARD_CAPTURE_NAMES[n];
                 let classes = capture
@@ -26,19 +30,18 @@ pub fn highlight(text: String, lang: String) -> Option<String> {
                     .map(|elem| format!("ts-{elem}"))
                     .collect::<Vec<_>>()
                     .join(" ");
-                let text = format!(r#"<span class="{}">"#, classes);
-                res.extend(text.as_bytes());
+
+                res.push_str(&format!(r#"<span class="{}">"#, classes));
             }
             HighlightEvent::HighlightEnd => {
-                let text = format!("</span>");
-                res.extend(text.as_bytes());
+                res.push_str("</span>");
             }
         };
     }
 
-    res.extend("</code>".as_bytes());
+    res.push_str("</code>");
 
-    let res = String::from_utf8(res).ok()?;
+    println!("{res:?}");
 
     Some(res)
 }

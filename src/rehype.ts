@@ -74,6 +74,7 @@ export function rehypeTreeSitter(): (tree: Root) => void {
                         const parsed = fromHtml(res, {
                             fragment: true,
                         }).children[0];
+                        console.log(parsed);
 
                         // @ts-ignore
                         node.children = [parsed];

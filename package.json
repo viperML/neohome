@@ -6,7 +6,7 @@
     "neohome-rs"
   ],
   "scripts": {
-    "dev": "make -C neohome-rs && astro dev",
+    "dev": "make -C neohome-rs TARGET=build:debug && astro dev",
     "build": "make -C neohome-rs && astro check && astro build"
   },
   "devDependencies": {
