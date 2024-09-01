@@ -41,7 +41,5 @@ pub fn highlight(text: String, lang: String) -> Option<String> {
 
     res.push_str("</code>");
 
-    println!("{res:?}");
-
     Some(res)
 }
