@@ -6,7 +6,7 @@ import { rehypeHeadingIds } from '@astrojs/markdown-remark';
 import { remarkAlert } from 'remark-github-blockquote-alert';
 import react from "@astrojs/react";
 import arraybuffer from "vite-plugin-arraybuffer";
-import rehypeShiki from '@shikijs/rehype'
+import mdx from '@astrojs/mdx';
 
 import sitemap from "@astrojs/sitemap";
 import { remarkCodeMeta } from './src/remark';
@@ -20,7 +20,8 @@ export default defineConfig({
       applyBaseStyles: false
     }),
     react(),
-    sitemap()
+    sitemap(),
+    mdx()
   ],
   devToolbar: {
     enabled: false
@@ -38,12 +39,6 @@ export default defineConfig({
       rehypeHeadingIds,
       rehypeTitles,
       rehypeCodeCopy,
-      // [rehypeShiki, {
-        //   themes: {
-      //     dark: "vesper",
-      //     light: 'github-light',
-      //   }
-      // }],
       rehypePreClass,
       rehypeTreeSitter,
     ],
