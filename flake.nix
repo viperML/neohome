@@ -110,6 +110,7 @@
           # nodePackages.wrangler
           nodePackages."@astrojs/language-server"
           nodePackages.typescript-language-server
+          vscode-langservers-extracted
 
           ltex-ls
 
