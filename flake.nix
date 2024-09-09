@@ -111,6 +111,7 @@
           nodePackages."@astrojs/language-server"
           nodePackages.typescript-language-server
           vscode-langservers-extracted
+          tailwindcss-language-server
 
           ltex-ls
 
