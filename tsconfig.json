@@ -9,5 +9,8 @@
     "types": [
       "vite-plugin-arraybuffer/types"
     ]
+  },
+  "mdx": {
+    "checkMdx": true
   }
 }
