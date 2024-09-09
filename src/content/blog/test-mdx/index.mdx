@@ -6,6 +6,9 @@ summary: Test summary
 slug: test-mdx
 ---
 
+import Tabs from "../../../components/Tabs.astro"
+import Tab from "../../../components/Tab.astro"
+
 ## Hello
 
 Foo bar
@@ -18,3 +21,10 @@ fn main() {
   napi_build::setup();
 }
 ```
+
+
+<Tabs>
+<Tab>
+  ## Hello
+</Tab>
+</Tabs>
