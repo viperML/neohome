@@ -162,7 +162,7 @@ more chances to run into an issue. And when dealing with issues of the Operating
 System itself, sometimes I don't have the time and willpower to deal with them.
 
 > Always and inevitably, everyone underestimates the number of stupid individuals in circulation.
-> --<cite>[Cipolla](https://en.wikipedia.org/wiki/Carlo_M._Cipolla#%22The_Basic_Laws_of_Human_Stupidity%22_(1976))</cite>
+> <cite>[Carlo M. Cipolla](https://en.wikipedia.org/wiki/Carlo_M._Cipolla#%22The_Basic_Laws_of_Human_Stupidity%22_(1976))</cite>
 
 ## The alternatives
 
