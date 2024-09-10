@@ -1,11 +1,11 @@
 ---
-title: I uninstalled home-manager
-pubDate: 2024-09-01T10:40:10Z
-summary: |
-    Summary of my complaints with Home Manager, and the alternatives
-    to fill in the holes.
+title: Dropping Home-Manager
+pubDate: 2024-09-10T11:13:21Z
 slug: no-home-manager
-draft: true
+# draft: true
+summary: |
+    Exploring the drawbacks of Home Manager and my journey to finding better 
+    ways to handle user-level configurations in NixOS.
 ---
 
 A couple of weeks ago, I completely removed Home Manager from my
