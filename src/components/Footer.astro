@@ -7,6 +7,7 @@ interface Props {
 }
 
 import icon from "./dark-theme-svgrepo-com.svg";
+import { IconFileRss, IconBrightness } from "@tabler/icons-react";
 
 const { class: className, file } = Astro.props;
 
@@ -52,6 +53,8 @@ const urlShort =
             return "";
         }
     })();
+
+const iconSize = 30;
 ---
 
 <footer class:list={[className]}>
@@ -61,15 +64,23 @@ const urlShort =
             >CC-BY-NC-SA 4.0</a
         >
     </p>
+
     <p id="footer-provenance">
         Built with <a href="https://astro.build">Astro</a> from <a
             class="footer-break"
             href={url}>{urlShort}</a
         >
     </p>
-    <button class="" id="themeToggle">
-        <Image src={icon} alt="Change theme" id="theme-icon" />
-    </button>
+
+    <div class="footer-buttons">
+        <a href="/feed.xml">
+            <IconFileRss height={iconSize} width={iconSize}/>
+        </a>
+
+        <button id="themeToggle">
+            <IconBrightness height={iconSize} width={iconSize}/>
+        </button>
+    </div>
 </footer>
 
 <style lang="less">
@@ -97,26 +108,44 @@ const urlShort =
         text-decoration: underline;
     }
 
-    button {
+
+    button img {
+        // justify-self: center;
+        // margin: 20px;
+        // width: 30px;
+        // filter: opacity(80%);
+
+        // :is(.dark &) {
+        //     filter: opacity(80%) invert(100%);
+        //     transform: scaleX(-1);
+        // }
+
+        // &:hover {
+        //     filter: opacity(60%);
+
+        //     :is(.dark &) {
+        //         filter: opacity(60%) invert(100%);
+        //     }
+        // }
+
+        // transition: opacity 100ms ease-out;
+    }
+
+    .footer-buttons {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
         justify-self: center;
-        margin: 20px;
-        width: 30px;
-        filter: opacity(80%);
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+    }
 
-        :is(.dark &) {
-            filter: opacity(80%) invert(100%);
-            transform: scaleX(-1);
-        }
-
+    svg, a {
         &:hover {
-            filter: opacity(60%);
-
-            :is(.dark &) {
-                filter: opacity(60%) invert(100%);
-            }
+            color: var(--text-color-active);
         }
 
-        transition: opacity 100ms ease-out;
+        transition: color 100ms ease-out;
     }
 
     @media (min-width: 768px) {
@@ -134,10 +163,11 @@ const urlShort =
             grid-row: 2;
         }
 
-        button {
-            margin: 0;
+        .footer-buttons {
             grid-row: 1 / span 2;
             grid-column: 2;
+            margin: 0;
+            gap: 1.5rem;
         }
     }
 </style>
