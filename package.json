@@ -41,6 +41,7 @@
     "remark": "^15.0.1",
     "remark-github-blockquote-alert": "^1.2.1",
     "remark-lesetid": "^1.2.0",
+    "remark-mark-highlight": "^0.1.1",
     "sanitize-html": "^2.13.0",
     "satori": "^0.10.14",
     "typescript": "^5.4.5",

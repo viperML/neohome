@@ -129,11 +129,11 @@ this action.
 
 ### The non-technical part
 
-In the end, one of the strong points of NixOS is reliability. And after having
-used Home Manager for years, I feel like I compromise this reliability. It is no
-secret. It is no secret that the people who need and contribute to Home Manager
-are of a younger and/or more inexperienced demography. 
-And let's be honest, they write shit nix.
+In the end, I use NixOS because I care about reliability. NixOS allows you to
+map configuration files written in functional language that is homogeneus to all
+the servives, and to "lower" the functional datastructures to a read-only
+storage. It is easy to escape the nix store, as all it takes is to write a
+program (that lives in the store) that has an effect **outside** the store.
 
 Having my dotfiles depend on many projects makes me anxious, as in some sense I
 am in the spotlight of a potential supply-chain attack. Not one made my

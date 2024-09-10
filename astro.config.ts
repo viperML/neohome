@@ -7,6 +7,7 @@ import { remarkAlert } from 'remark-github-blockquote-alert';
 import react from "@astrojs/react";
 import arraybuffer from "vite-plugin-arraybuffer";
 import mdx from '@astrojs/mdx';
+import { remarkMark } from 'remark-mark-highlight'
 
 import sitemap from "@astrojs/sitemap";
 import { remarkCodeMeta } from './src/remark';
@@ -29,8 +30,10 @@ export default defineConfig({
   output: 'static',
   site: "https://ayats.org",
   markdown: {
+    gfm: true,
     syntaxHighlight: false,
     remarkPlugins: [
+      remarkMark,
       remarkAlert,
       remarkLesetid,
       remarkCodeMeta
