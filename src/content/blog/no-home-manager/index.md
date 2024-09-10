@@ -110,14 +110,14 @@ package in the output of your `nix-env --list`, which gets reinstalled after
 each activation. I don't know what's that thing doing in there, and I don't want
 to see it.
 - File backups: for some reason, KDE modifies some files handled by Home Manager
--- which I don't really care for. So after activation, Home Manager has two
+-- I didn't want to configure these files, and I didn't care for them either. 
+So after activation, Home Manager has two
 behaviors that you can choose: aborting, or backing up the file in question.
 For the second option, Home Manager will create backups indefinitely, you can't
 limit them. I failed trying to push for a file-deleting solution, please read and make
 your own conclusions: [#4971](https://github.com/nix-community/home-manager/pull/4971).
-- The Home Manager CLI is a mess of bash. With all the "nice" (notice the
-sarcasm) error handling from bash applications. And I don't want to deal with it
-when it breaks.
+Myself from the future: as I was writing this, I discovered there is an
+undocumented `.force` option, which predates my PR. Too many mixed signals...
 - Option duplication: there are many things that are not only available through
 HM and NixOS. For example, you can configure your neovim wrapper through
 `programs.neovim` in both of either of them, but the options may have subtle
@@ -126,16 +126,140 @@ etc. And then you have the options related to nixpkgs, which must be configured
 for **both**, like allowing unfree packages. A consequence of this is that Home
 Manager tries to re-import nixpkgs, with all the performance implications of
 this action.
+- The Home Manager CLI is a mess of bash. With all the "nice" (notice the
+sarcasm) error handling from bash applications. And I don't want to deal with it
+when it breaks.
 
 ### The non-technical part
 
-In the end, I use NixOS because I care about reliability. NixOS allows you to
-map configuration files written in functional language that is homogeneus to all
-the servives, and to "lower" the functional datastructures to a read-only
+Ultimately, I use NixOS because I care about reliability. NixOS allows you to
+map configuration files written in functional language that is homogeneous to all
+the services, and to "lower" the functional data structures to a read-only
 storage. It is easy to escape the nix store, as all it takes is to write a
 program (that lives in the store) that has an effect **outside** the store.
 
-Having my dotfiles depend on many projects makes me anxious, as in some sense I
-am in the spotlight of a potential supply-chain attack. Not one made my
-malicious actors, but by [incompetent actors](https://en.wikipedia.org/wiki/Carlo_M._Cipolla#%22The_Basic_Laws_of_Human_Stupidity%22_(1976)).
+Using configuration files that live in a regular directory like `~/.config`,
+starts to break the guarantees that Nix brings. I'm certainly more confident
+that a regular program might overwrite the symlinks that Home-Manager placed at
+activation-time.
 
+On a personal note, I am also concerned about HM modules, that could be factored
+out. For example, is configuring GNOME declaratively through `dconf`, something
+that should be [deeply integrated](https://github.com/nix-community/home-manager/blob/master/modules/misc/dconf.nix) into HM.
+Couldn't this be factored out into an standalone project, and just having Nix as
+a *layer on top*? The same can be said for the [sops-nix HM module](https://github.com/Mic92/sops-nix/blob/master/modules/home-manager/sops.nix), or many others.
+
+And my final reflection: from time to time, we hear about the dangers of [supply
+chain attacks](https://www.cloudflare.com/learning/security/what-is-a-supply-chain-attack/) 
+in the context of software development. This is a broad term, in which a
+*malicious actor* operates in some part of your third-party devependency chain.
+But what if the actor is not malicious, but rather incompetent. On a first
+approach, the damage that an incompetent actor can deal are not as severe as
+what a targeted attack can deal, but still damage nonetheless. When using
+Home-Manager (or any Nix library, for the matter), I feel more vulnerable, just
+for the fact that more people involved in the supply chain means that there are
+more chances to run into an issue. And when dealing with issues of the Operating
+System itself, sometimes I don't have the time and willpower to deal with them.
+
+> Always and inevitably, everyone underestimates the number of stupid individuals in circulation.
+> --<cite>[Cipolla](https://en.wikipedia.org/wiki/Carlo_M._Cipolla#%22The_Basic_Laws_of_Human_Stupidity%22_(1976))</cite>
+
+## The alternatives
+
+Before ending this post, I want to add some of the alternatives to fill the
+whole that removing Home-Manager will leave in your dotfiles.
+
+### Configure less software
+
+This is the obvious approach, but I have to mention it. Since I moved to KDE
+Plasma, what I previously had to configure in half a dozen systemd units for my
+window manager, now it is done for me.
+
+I talk about all the little programs that are not part of a bare-bones window
+manager (or wayland compositor). A volume level indicator, tray icons for Wi-Fi
+and Bluetooth, a notification daemon, application launcher, a bar, and a long
+etcetera.
+
+My KDE setup is inconsistent between the 3 computers I use, I have to manually
+set ~5 keybinds. But it's OK. [I can live with the time I spent doing it](https://xkcd.com/1205/).
+
+
+### Wrapper-manager: my self-promotion
+
+While it is no secret that this blog is a psyop to make you use 
+[wrapper-manager](https://github.com/viperML/wrapper-manager), let me explain
+what I mean by wrappers.
+
+Let's say I want to use a wrapper to configure neovim. Instead of executing
+`nvim` directly, I can do the following:
+
+```
+1. Move nvim to .nvim-wrapped
+2. Create a shell script called nvim
+3. Fill the contents of nvim with:
+#!/usr/bin/env bash
+exec nvim -u /path/to/my/init.lua "$@"
+```
+
+Instead of using `~/.config/nvim/init.lua`, calling your "fake" nvim will select
+the proper `int.lua` from whichever path you want.
+
+The final step, is to do everything with Nix. Both bash and the original neovim
+can be grabbed from the `/nix/store`, and with flakes you can also intern your
+`init.lua`. What remains is a **self-contained** neovim configuration, that
+doesn't access your `~/.config`, thus not needing Home-Manager.
+
+For neovim specifically, you can do it today with the NixOS option `programs.neovim`
+or with [`neovim.override`](https://nixos.org/manual/nixpkgs/stable/#custom-configuration).
+
+If you want to do it manually, nixpkgs provides the function `wrapProgram` from
+the `pkgs.makeWrapper` package. It is usually combined with `pkgs.symlinkJoin`,
+to not have to rebuild the package from source, but instead create an extra
+"proxy" package. [Wrapping packages in the NixOS wiki](https://wiki.nixos.org/wiki/Nix_Cookbook#Wrapping_packages).
+
+```nix
+pkgs.symlinkJoin {
+  name = "neovim";
+  paths = [ pkgs.neovim ];
+  buildInputs = [ pkgs.makeWrapper ];
+  postBuild = ''
+    wrapProgram $out/bin/nvim \
+      --add-flags "-u" \
+      --add-flags "${./init.lua}"
+  '';
+}
+```
+
+Because I wanted to abstract away the creation of the wrappers, I created
+[wrapper-manager](https://github.com/viperML/wrapper-manager) for myself. I also
+deals with some nuances when dealing with `.desktop` files, for example.
+
+```nix
+wrappers.neovim = {
+  basePackage = pkgs.neovim;
+  flags = [
+    "-u"
+    ./init.lua
+  ];
+}
+```
+
+
+### Old-school stow and others
+
+Sometimes, it's impossible to use a wrapper. For example, configuring
+systemd-user units -- it can be done through a NixOS option, but it is shared
+along every user in the system. Maybe it is inconvenient, for example having to
+restart your window-manager for configuration changes. I want to propose to the
+Nix community, taking a more "bare-bones" approach to solving this issue.
+
+Perhaps it could be interesting to have a thin layer of Nix on top of [GNU
+stow](https://www.gnu.org/software/stow/)
+to manage symlinks? -- It would only do that. I also wanted to implement my own
+framework for "commands that run impurely" 
+called [activation-manager](github.com/viperML/activation-manager) 
+(but gave up in the process). The functionality would be implemented as a
+standard library on top of "commands running in some ordered graph".
+
+I think there is more research to be done about how to deal with "impure"
+user-level configuration.
