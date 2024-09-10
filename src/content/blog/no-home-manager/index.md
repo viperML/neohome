@@ -41,7 +41,7 @@ services to run, etc.
 }
 ```
 
-However, one of the limations of NixOS is that the option are mostly related to
+However, one of the limitations of NixOS is that the option are mostly related to
 system services. To fill this gap, Home Manager lets you configure user-level
 applications. As NixOS, it also uses the 
 [module system](https://nix.dev/tutorials/module-system/index.html), and some of
@@ -90,8 +90,8 @@ consider moving away from it. But in a whole, it starts to get serious. While
 these are the most important ones, or the first ones that come into my mind, it
 doesn't mean that I've run into a longer tail of lesser issues.
 
-- `mkOutOfStoreSymlink`: I hate it. I should not exist. But it exists just to
-"not break compatibility". For a bit context: in Nix we have the path type
+- `mkOutOfStoreSymlink`: I hate it. It should not exist. But it exists just to
+"not break compatibility". For a bit of context: in Nix we have the path type
 `/foo/bar` and the string type, which sometimes is used to represent paths `"/foo/bar"`.
 Usually, when NixOS modules accept a `lib.types.path`, you can either pass a
 path type or a string. Then they are used "as is".
@@ -146,7 +146,7 @@ activation-time.
 On a personal note, I am also concerned about HM modules, that could be factored
 out. For example, is configuring GNOME declaratively through `dconf`, something
 that should be [deeply integrated](https://github.com/nix-community/home-manager/blob/master/modules/misc/dconf.nix) into HM.
-Couldn't this be factored out into an standalone project, and just having Nix as
+Couldn't this be factored out into a standalone project, and just having Nix as
 a *layer on top*? The same can be said for the [sops-nix HM module](https://github.com/Mic92/sops-nix/blob/master/modules/home-manager/sops.nix), or many others.
 
 And my final reflection: from time to time, we hear about the dangers of [supply
@@ -201,7 +201,7 @@ Let's say I want to use a wrapper to configure neovim. Instead of executing
 exec nvim -u /path/to/my/init.lua "$@"
 ```
 
-Instead of using `~/.config/nvim/init.lua`, calling your "fake" nvim will select
+Instead of using `~/.config/nvim/init.lua`, calling your "fake" `nvim` will select
 the proper `int.lua` from whichever path you want.
 
 The final step, is to do everything with Nix. Both bash and the original neovim
@@ -231,7 +231,7 @@ pkgs.symlinkJoin {
 ```
 
 Because I wanted to abstract away the creation of the wrappers, I created
-[wrapper-manager](https://github.com/viperML/wrapper-manager) for myself. I also
+[wrapper-manager](https://github.com/viperML/wrapper-manager) for myself. It also
 deals with some nuances when dealing with `.desktop` files, for example.
 
 ```nix
