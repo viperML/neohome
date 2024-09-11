@@ -11,20 +11,6 @@ const { class: className } = Astro.props;
     </a>
 
     <ul class="flex gap-4">
-      {
-        (() => {
-          if (import.meta.env.DEV === true) {
-            return (
-              <li>
-                <a href="/test">Test Page</a>
-              </li>
-            );
-          }
-        })()
-      }
-      <!-- <li>
-        <a href="/experiments">Experiments</a>
-      </li> -->
       <li>
         <a href="/blog">Blog</a>
       </li>

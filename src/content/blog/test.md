@@ -1,6 +1,8 @@
 ---
-title: test page
-layout: ../layouts/Base.astro
+title: Test page
+pubDate: 2200-01-01T00:00:00Z
+summary: No summary
+draft: true
 ---
 
 # Title 1
@@ -37,7 +39,6 @@ Etiam a mauris at enim iaculis euismod. Mauris suscipit sapien elit, quis placer
     2. Indented item
 4. Fourth item
 
-![logo](../img/avatar-text.svg)
 
 ```bash
 export FOO=bar
