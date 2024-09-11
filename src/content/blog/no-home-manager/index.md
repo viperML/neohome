@@ -118,8 +118,8 @@ limit them. I failed trying to push for a file-deleting solution, please read an
 your own conclusions: [#4971](https://github.com/nix-community/home-manager/pull/4971).
 Myself from the future: as I was writing this, I discovered there is an
 undocumented `.force` option, which predates my PR. Too many mixed signals...
-- Option duplication: there are many things that are not only available through
-HM and NixOS. For example, you can configure your neovim wrapper through
+- Option duplication: many things can be configured with both HM and NixOS. For 
+example, you can configure your neovim wrapper through
 `programs.neovim` in both of either of them, but the options may have subtle
 differences. The same can be said for systemd units, packages added to PATH,
 etc. And then you have the options related to nixpkgs, which must be configured
@@ -257,7 +257,7 @@ Perhaps it could be interesting to have a thin layer of Nix on top of [GNU
 stow](https://www.gnu.org/software/stow/)
 to manage symlinks? -- It would only do that. I also wanted to implement my own
 framework for "commands that run impurely" 
-called [activation-manager](github.com/viperML/activation-manager) 
+called [activation-manager](https://github.com/viperML/activation-manager) 
 (but gave up in the process). The functionality would be implemented as a
 standard library on top of "commands running in some ordered graph".
 
