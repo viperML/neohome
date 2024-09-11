@@ -11,11 +11,7 @@ const blogEntries = (await getCollection("blog"))
         return b.data.pubDate.getTime() - a.data.pubDate.getTime();
     })
     .filter((elem) => {
-        if (elem.data.draft === true) {
-            return false;
-        } else {
-            return true;
-        }
+        return import.meta.env.DEV || !(elem.data.draft);
     });
 
 const full = Astro.props.full ?? true;
