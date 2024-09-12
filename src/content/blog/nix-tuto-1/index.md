@@ -192,6 +192,34 @@ To select an item from an attrset, you use a dot `.`:
 #=> 1
 ```
 
+To insert a key in an attribute set, with the same name and value, you can use
+the `inherit` keyword.
+
+```nix
+let
+  foo = "value";
+  bar = {
+    baz = "value";
+  };
+in
+  {
+    # these two are equivalent
+    foo = foo;
+    inherit foo;
+
+    # if you need a nested attrset
+    baz = bar.baz;
+    inherit (bar) baz;
+
+    # you can inherit multiple things
+    inherit foo bar;
+  }
+```
+
+> [!TIP]
+> `inherit` is not related to inheritance in OOP languages. Remember that it is
+> just a simple shorthand for `x = x`.
+
 ### Functions
 
 It won't come to a surprise, that functions are the most important type in Nix,
@@ -402,3 +430,126 @@ mkShell {
   ];
 }
 ```
+
+## Builtins
+
+In this section, we will cover some functions from `builtins`. This is the name
+of a variable that is provided by Nix itself. I will cover some of the most used
+ones. You can check the documentation for the rest in the 
+[Nix manual](https://nix.dev/manual/nix/2.18/language/builtins).
+
+### import
+
+`import` allows you to load a nix expression from another file. Remember that
+nix is an expression-based language, so a file always contains a single
+expressions that returns a single value.
+
+```nix
+# foo.nix
+let y = 2; in {
+  x = 1;
+  z = y + 2;
+}
+
+import ./foo.nix
+#=> { x = 1; z = 4; }
+```
+
+> [!IMPORTANT]
+> When you pass a **folder** to `import`, it will try to read the
+> `folder/default.nix` file inside it. `default.nix` is the only "special"
+> filename that we have in Nix.
+
+A common use case is to import a file, and then immedately after evaluate the
+function:
+
+```nix
+import ./foo.nix "myinput"
+```
+
+We then arrive at the layout of [nixpkgs](https://github.com/NixOS/nixpkgs). It
+contains a `default.nix` inside it, that returns a function. This function takes
+an attrset with the nixpkgs configuration, and then returns an attrset with all the packages.
+
+```nix
+<nixpkgs>
+#=> /nix/store/qpg5mwsind2hy35b9vpk6mx4jimnypw0-source
+
+import <nixpkgs>
+# «lambda»
+
+(import <nixpkgs>) {}
+# parenthesis are redundant
+#=> {
+#   hello = <drv>;
+#   python3 = <drv>;
+#   ....
+# }
+```
+
+> [!TIP]
+> I recommend loading nixpkgs in a `nix repl`, and exploring the resulting
+attrset. You can either use `pkgs = import <nixpkgs> {}`, or the repl command
+`:l <nixpkgs>`, which evaluates it with the empty attrset.
+
+
+
+### map
+
+`map f list` applies the function `f` to a `list`. When you think of a `for`
+loop in other languages, usually you can accomplish it with `map`.
+
+```nix
+builtins.map (x: "workspace-${builtins.toString x}") [ 1 2 3 ]
+#=> [
+#   "workspace-1"
+#   "workspace-2"
+#   "workspace-3"
+# ]
+```
+
+
+### filter
+
+`filter f list`, as map, applies f to each element of the list. But it removes
+elements for which the function returns `false`, and otherwise keeps them.
+
+```nix
+builtins.filter (x: builtins.stringLength x > 1) ["f" "bar"]
+#=> [ "bar" ]
+```
+
+### mapAttrs, filterAttrs
+
+These are the equivalent to `map` and `filter`, but can be applied to
+attrsets instead of lists. They take a *curried* functions, for the name and
+value. 
+
+```nix
+builtins.mapAttrs (name: value: "${name}:${value}") { foo = "bar"; }
+#=> { foo = "foo:bar"; }
+```
+
+
+### readFile, fromTOML, fromJSON
+
+Unlike `import`, which reads a file and loads its nix expression, `readFile`
+reads a file and loads them as a string. It can be useful to factor out a big
+string into a separate file.
+
+`fromTOML` and `fromJSON` try to convert a Nix string into a valid Nix value,
+usually an attrset or list of other "simple" values. You may see it in
+combination with `readFile`.
+
+```nix
+builtins.fromJSON (builtins.readFile ./package.json)
+#=> {
+#   name = "neohome";
+#   ...
+# }
+```
+
+## Nixpkgs' standard library
+
+Many other utility functions are implemented on top of `builtins`, and live in
+the nixpkgs repo.
