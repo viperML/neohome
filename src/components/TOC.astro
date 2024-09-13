@@ -13,11 +13,14 @@ const { headings } = Astro.props;
     <h2>Jump to</h2>
     </div>
 
-    <ul>
+    <ul id="toc">
     {
         headings.map((heading) => {
         return (
-            <li class=`depth-${heading.depth}`>
+            <li
+            class=`depth-${heading.depth}`
+            data-slug={heading.slug}
+            >
             <a href={`#${heading.slug}`}>{heading.text}</a>
             </li>
         );

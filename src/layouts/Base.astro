@@ -4,15 +4,13 @@ import "../styles/color.less";
 import "../styles/base.less";
 import "../styles/main.less";
 
-
 import "../styles/alert.less";
 import "../styles/code-copy.less";
 import "../styles/tree-sitter.less";
 
- // needed for global styles
+// needed for global styles
 import "../components/Button.astro";
-import "../components/Tabs.astro"
-
+import "../components/Tabs.astro";
 
 import SEO from "../components/SEO.astro";
 import type { Props as SeoProps } from "../components/SEO.astro";
@@ -20,7 +18,6 @@ import type { Props as SeoProps } from "../components/SEO.astro";
 export interface Props {
   seo?: SeoProps | undefined;
 }
-
 
 import { ViewTransitions } from "astro:transitions";
 ---
@@ -112,4 +109,6 @@ import { ViewTransitions } from "astro:transitions";
       });
     });
   </script>
+
+  <script src="../scripts/toc.ts"></script>
 </html>
