@@ -1,5 +1,5 @@
 ---
-title: "The Nix Lectures. Part 1: Language basics"
+title: "The Nix Lectures, part 1: Language basics"
 pubDate: 2024-09-11T07:32:26Z
 draft: true
 summary: FIXME
@@ -530,7 +530,6 @@ builtins.mapAttrs (name: value: "${name}:${value}") { foo = "bar"; }
 #=> { foo = "foo:bar"; }
 ```
 
-
 ### readFile, fromTOML, fromJSON
 
 Unlike `import`, which reads a file and loads its nix expression, `readFile`
@@ -549,7 +548,169 @@ builtins.fromJSON (builtins.readFile ./package.json)
 # }
 ```
 
+### foldl'
+
+Finally, I want to mention `foldl'`. It allows you to take a list, and generate
+a single value out of it. How the value is generated, depends on what *folding*
+function you pass to it. You also need to provide the *nul* element, from which
+the list is folded from.
+
+For example, you can implement the "sum of all numbers in a list", by folding
+the list, with the sum function and 0 as the nul element.
+
+```nix
+builtins.foldl' (left: right: left + right) 0 [ 1 2 3 4 ]
+#=> 10
+```
+
 ## Nixpkgs' standard library
 
-Many other utility functions are implemented on top of `builtins`, and live in
-the nixpkgs repo.
+Many other utility functions are implemented in nixpkgs. These are implemented
+on top of `builtins`, so they are not required to be part of Nix itself. Some of
+them can be rewritten easily -- for example the identity function `lib.id = x: x`, but
+in general you will be using them quite often.
+
+You can get `lib` from a `pkgs` instance, and it is also part of the argument of
+NixOS modules. We are writing an standalone nix file, so to get `lib` into scope
+we can use the following:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+  inherit (pkgs) lib;
+in
+  lib.id 3
+  #=> 3
+```
+
+We will cover some nice functions from `lib`, but as with `builtins`, I don't
+want you to memorize them -- I neither do. But instead, just keep in the back of
+your head that they exist.
+
+### traceVal
+
+Based on `builtins.trace`, it allows you to print a value into the console. All
+you need to do is wrap a value with `traceVal`, and make sure you evaluate it.
+
+This will be useful for "print-debugging" functions, so don't underestimate its
+value.
+
+
+```nix
+builtins.map (x: (lib.traceVal x) + 1) [ 2 3 4 ]
+#=> [
+# trace: 2
+# 3
+# trace: 3
+# 4
+# trace: 4
+# 5
+# ]
+```
+
+> [!TIP]
+> Remember that Nix is an expression-based language. `traceVal` doesn't behave
+> like a print statement, but rather it is a function that takes a value and
+> returns it, printing the value as an effect.
+
+### flatten
+
+`flatten list` takes a list with lists inside, and transforms it into a "flat"
+list.
+
+```nix
+lib.flatten [ [ 1 2 ] [ 3 4 ] ]
+#=> [
+#   1
+#   2
+#   3
+#   4
+# ]
+```
+
+> [!TIP]
+> `flatten` is very useful when used with `map`, as it allows `map` to "return
+> multiple values" in the mapping function:
+> ```nix
+> lib.flatten (builtins.map (x: [ "left-${x}" "right-${x}" ]) ["foo" "bar"])
+> #=> [
+> #   "left-foo"
+> #   "right-foo"
+> #   "left-bar"
+> #   "right-bar"
+> # ]
+> ```
+
+### listToAttrs, attrsToList
+
+More often than not, you need to pass a list to an API that takes an attrset, or
+viceversa. The conversion is not trivial, but you can use these funtions to do
+so.
+
+To convert an attrset to a list, there are multiple ways to do it:
+
+```nix
+lib.attrsToList { foo = "foovalue"; bar = "barvalue"; }
+#=> [
+#   {
+#     name = "bar";
+#     value = "barvalue";
+#   }
+#   {
+#     name = "foo";
+#     value = "foovalue";
+#   }
+# ]
+
+builtins.attrValues { foo = "foovalue"; bar = "barvalue"; }
+#=> [
+#   "barvalue"
+#   "foovalue"
+# ]
+
+builtins.attrNames { foo = "foovalue"; bar = "barvalue"; }
+#=> [
+#   "bar"
+#   "foo"
+# ]
+```
+
+For `listToAttrs`, you may need to do some conversion with `map` before feeding
+the result:
+
+```nix
+lib.listToAttrs (builtins.map (pkg: { name = pkg.name; value = pkg; }) [ pkgs.hello pkgs.coreutils ])
+#=> {
+#   "coreutils-9.5" = «derivation /nix/store/57hlz5fnvfgljivf7p18fmcl1yp6d29z-coreutils-9.5.drv»;
+#   "hello-2.12.1" = «derivation /nix/store/crmj28zg09517n5sskml9fmy2c6r3rsr-hello-2.12.1.drv»;
+# }
+```
+
+### concatStrings
+
+A common abstractionm pattern, is to factor out a big string, into a list of
+strings. As you know, you can then reduce a list to a single value with
+`builtins.foldl'`, but the standard library provides a family of functions that
+concatenate strings: `concatStrings`, `concatStringsSep`, etc.
+
+```nix
+lib.concatStringsSep "\n" [ "export A=B" "export B=C" ]
+#=> "export A=B\nexport B=C"
+```
+
+### makeSearchPath, makeBinPath, makeLibraryPath
+
+When dealing with packages, you will often deal with search paths. These are
+environment variables used in Linux, that follow the same pattern
+`elem:elem:elem`. For example, the `PATH` environment variable. You can create
+search paths with `concatStringsSep` and `map`, but the standard library
+provides some shorthands for this common task:
+
+```nix
+lib.makeBinPath [ "" "/usr" "/usr/local" ]
+#=> "/bin:/usr/bin:/usr/local/bin"
+
+lib.makeLibraryPath [ pkgs.hello pkgs.coreutils ]
+#=> "/nix/store/yb84nwgvixzi9sx9nxssq581pc0cc8p3-hello-2.12.1/lib:/nix/store/0kg70swgpg45ipcz3pr2siidq9fn6d77-coreutils-9.5/lib"
+```
+
