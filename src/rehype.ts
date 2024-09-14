@@ -3,6 +3,7 @@ import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
 import type { Element } from "hast";
 import type { Plugin } from "unified";
+import type { Estimation } from 'lesetid';
 
 import { fromHtml } from 'hast-util-from-html'
 
@@ -153,9 +154,33 @@ export function rehypeCodeCopy(): (tree: Root) => void {
     }
 }
 
+// Need to keep in sync with ZOD
+interface Frontmatter {
+    title: string,
+    pubDate: Date,
+    summary: string,
+    estimation?: Estimation;
+};
+
 
 export const rehypeH1: Plugin<[], Root> = () => {
     return (root, vfile) => {
-        console.log(vfile.data.astro?.frontmatter);
+        // @ts-ignore
+        const frontmatter: Frontmatter | null = vfile.data.astro?.frontmatter;
+        if (frontmatter === null) {
+            throw new Error("Couldn't get frontmatter");
+        }
+        console.log(frontmatter);
+
+        const title = u("element", {
+            tagName: "h1",
+            properties: {}
+        }, [
+            u("text", {
+                value: frontmatter.title,
+            })
+        ]);
+
+        root.children.unshift(title);
     }
 }
