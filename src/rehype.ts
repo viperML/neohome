@@ -4,6 +4,7 @@ import { visit } from "unist-util-visit";
 import type { Element } from "hast";
 import type { Plugin } from "unified";
 import type { Estimation } from 'lesetid';
+import type { InferEntrySchema } from "astro:content";
 
 import { fromHtml } from 'hast-util-from-html'
 
@@ -13,6 +14,8 @@ import IconCopyCheckFilled from "@tabler/icons/filled/copy-check.svg?raw";
 import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { highlight } = require("neohome-rs");
+
+import { formatDate } from "./date";
 
 function icon2node(raw: string): Element {
     return fromHtml(raw, {
@@ -154,36 +157,64 @@ export function rehypeCodeCopy(): (tree: Root) => void {
     }
 }
 
-// Need to keep in sync with ZOD
-interface Frontmatter {
-    title: string,
-    pubDate: Date,
-    summary: string,
-    estimation?: Estimation;
-};
-
-import type { InferEntrySchema } from "astro:content";
 
 export const rehypeH1: Plugin<[], Root> = () => {
     return (root, vfile) => {
         // @ts-ignore
-        const frontmatter: Frontmatter | null = vfile.data.astro?.frontmatter;
+        const frontmatter: InferEntrySchema<"blog"> | null = vfile.data.astro?.frontmatter;
         if (frontmatter === null) {
             throw new Error("Couldn't get frontmatter");
         }
         console.log(frontmatter);
 
-        const t: InferEntrySchema<"blog"> | null = null;
 
-        const title = u("element", {
+        root.children.unshift(
+            u("element", {
+                tagName: "div",
+                properties: {
+                    class: ["subtitle"]
+                },
+            }, [
+                u("element", {
+                    tagName: "p",
+                    properties: {}
+                }, [
+                    u("text", {
+                        value: formatDate(frontmatter.pubDate)
+                    }),
+                ]),
+
+                 u("element", {
+                    tagName: "p",
+                    properties: {}
+                }, [
+                    u("text", {
+                        // @ts-ignore
+                        value: "·"
+                    }),
+                ]),
+
+                u("element", {
+                    tagName: "p",
+                    properties: {}
+                }, [
+                    u("text", {
+                        // @ts-ignore
+                        value: frontmatter.estimation.text
+                    }),
+                ])
+            ])
+        );
+
+        root.children.unshift(u("element", {
             tagName: "h1",
             properties: {}
         }, [
             u("text", {
                 value: frontmatter.title,
-            })
-        ]);
+            }),
+        ]));
 
-        root.children.unshift(title);
+
     }
 }

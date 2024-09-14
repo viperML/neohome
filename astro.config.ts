@@ -11,7 +11,7 @@ import { remarkMark } from 'remark-mark-highlight'
 import rehypeSectionHeadings from "@maxmmyron/rehype-section-headings";
 
 import sitemap from "@astrojs/sitemap";
-import { remarkCodeMeta, remarkH1 } from './src/remark';
+import { remarkCodeMeta } from './src/remark';
 
 // https://astro.build/config
 export default defineConfig({
@@ -49,7 +49,7 @@ export default defineConfig({
       [
         rehypeSectionHeadings,
         {
-          sectionDataAttribute: "data-heading-id"
+          sectionDataAttribute: "data-heading-id",
         }
       ],
     ],

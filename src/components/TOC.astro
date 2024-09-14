@@ -42,6 +42,12 @@ const { headings } = Astro.props;
         border-left: 1px solid var(--elem-neutral);
         padding-left: 3.4rem;
         padding-right: 1rem;
+
+        color: var(--text-color-alt);
+
+        &:hover {
+            color: var(--text-color);
+        }
     }
 
     li.depth-1 {
@@ -56,6 +62,9 @@ const { headings } = Astro.props;
         padding-left: 2.6rem;
     }
 
+    li.active {
+        color: var(--text-color);
+    }
 
     ul > ul {
         margin-left: 10px;
@@ -97,14 +106,6 @@ const { headings } = Astro.props;
       border-bottom: 0;
 
       // position: relative;
-    }
-
-    a {
-      color: var(--text-color-alt);
-
-      &:hover {
-        color: var(--text-color);
-      }
     }
 </style>
 
