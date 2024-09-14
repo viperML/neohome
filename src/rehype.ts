@@ -162,6 +162,7 @@ interface Frontmatter {
     estimation?: Estimation;
 };
 
+import type { InferEntrySchema } from "astro:content";
 
 export const rehypeH1: Plugin<[], Root> = () => {
     return (root, vfile) => {
@@ -171,6 +172,8 @@ export const rehypeH1: Plugin<[], Root> = () => {
             throw new Error("Couldn't get frontmatter");
         }
         console.log(frontmatter);
+
+        const t: InferEntrySchema<"blog"> | null = null;
 
         const title = u("element", {
             tagName: "h1",
