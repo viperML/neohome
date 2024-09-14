@@ -2,6 +2,7 @@ import type { Root } from "hast";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
 import type { Element } from "hast";
+import type { Plugin } from "unified";
 
 import { fromHtml } from 'hast-util-from-html'
 
@@ -19,6 +20,7 @@ function icon2node(raw: string): Element {
 }
 
 
+// Adds more classes to pre blocks
 export function rehypePreClass(): (tree: Root) => void {
     return function (tree: Root) {
         visit(tree, "element", node => {
@@ -48,6 +50,7 @@ function getLanguage(classes: unknown | (string | number)[]): string | undefined
     return;
 }
 
+// Highlights code block with tree-sitter
 export function rehypeTreeSitter(): (tree: Root) => void {
     return function (tree: Root) {
         visit(tree, "element", node => {
@@ -87,6 +90,7 @@ export function rehypeTreeSitter(): (tree: Root) => void {
 }
 
 
+// Adds hrefs to titles
 export function rehypeTitles(): (tree: Root) => void {
     return function (tree: Root) {
         visit(tree, 'element', function (node) {
@@ -116,6 +120,7 @@ export function rehypeTitles(): (tree: Root) => void {
     }
 }
 
+// Adds a copy button to code blocks
 export function rehypeCodeCopy(): (tree: Root) => void {
     return function (tree: Root) {
         visit(tree, 'element', function (node, index, parent) {
@@ -145,5 +150,12 @@ export function rehypeCodeCopy(): (tree: Root) => void {
                 ]);
             }
         })
+    }
+}
+
+
+export const rehypeH1: Plugin<[], Root> = () => {
+    return (root, vfile) => {
+        console.log(vfile.data.astro?.frontmatter);
     }
 }

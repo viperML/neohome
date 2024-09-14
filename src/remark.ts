@@ -24,6 +24,10 @@ interface Meta {
     file?: string,
 }
 
+/**
+  Custom metadata for code blocks. Accepts the following fields:
+  - file: read the contents from this path into the code block
+ */
 export const remarkCodeMeta: Plugin<[], Root> = () => {
     return (root, vfile) => {
         visit(root, "code", node => {
