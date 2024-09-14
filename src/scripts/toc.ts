@@ -10,23 +10,7 @@ document.addEventListener("astro:page-load", () => {
 function doToc(toc: HTMLElement) {
     console.log(toc);
 
-    const observer = new IntersectionObserver((entries) => {
-        // console.log(entries);
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                console.log(entry.target.id)
-                // window.history.replaceState(null, "", `#${entry.target.id}`)
-            }
-        })
-    }, {
-        threshold: 0.6,
-    });
-
-    // const t = document.getElementById("nix-repl-and-nix-eval");
-    // if (t === null) {return;}
-
-    // observer.observe(t);
-
+    const titles = new Map();
 
     Array.from(toc.children).reverse().forEach(node => {
         if (!(node instanceof HTMLElement)) {
@@ -36,17 +20,27 @@ function doToc(toc: HTMLElement) {
         const slug = node.dataset.slug;
         if (slug === undefined) {return;}
 
-        console.log(node, slug)
 
-        const title = document.getElementById(slug);
-        if (title === null) {
-            return;
-        }
-
-        observer.observe(title);
+        titles.set(slug, false);
     })
-    // toc.children.forEach(node => {
-    //     console.log(node);
 
-    // })
+    console.log(titles);
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            const slug = entry.target.id;
+            titles.set(slug, entry.isIntersecting);
+
+            console.log(titles);
+        })
+    }, {
+        threshold: 0.6,
+    });
+
+    titles.forEach((_, slug) => {
+        const title = document.getElementById(slug);
+        console.log("observing", slug, title);
+        if (title === null) { return; }
+        observer.observe(title);
+    });
 }
