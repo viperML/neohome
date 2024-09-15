@@ -165,7 +165,6 @@ export const rehypeH1: Plugin<[], Root> = () => {
         if (frontmatter === null) {
             throw new Error("Couldn't get frontmatter");
         }
-        console.log(frontmatter);
 
 
         root.children.unshift(
