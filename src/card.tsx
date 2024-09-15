@@ -23,37 +23,41 @@ export async function mkPng(input: Generate): Promise<Buffer> {
       "display": "flex",
       "alignItems": "center",
       "justifyContent": "center",
+      // "background": "black",
       // "background": "linear-gradient(45deg, rgba(103,165,191,1) 0%, rgba(252,230,101,1) 100%)",
-      "background": "linear-gradient(43deg, rgba(130,113,177,1) 0%, rgba(193,116,115,1) 100%)",
-      "fontSize": "120px",
-      "fontWeight": "700",
+      "background": "linear-gradient(30deg, rgba(0,0,0,1) 0%, rgba(30,30,30,1) 100%)",
+      "fontSize": "80px",
+      "fontWeight": "500",
       "textAlign": "center" as const,
+      "color": "white",
     },
     "card": {
-      "backgroundColor": "rgb(239, 239, 239)",
-      "width": "1000px",
-      "height": "500px",
+      "backgroundColor": "black",
+      "width": `${WIDTH-50}px`,
+      "height": `${HEIGHT-50}px`,
       "borderRadius": "2rem",
       "boxShadow": "0px 10px 15px -3px rgba(0,0,0,0.3)",
       "display": "flex",
       "flexDirection": "column" as const,
+      "gap": "30px",
       "alignItems": "center",
       "justifyContent": "center",
-      "border": "1px solid rgb(62, 62, 62)",
+      "border": "10px solid rgb(62, 62, 62)",
     },
     "sub": {
-      "fontSize": "80px",
-      "fontWeight": "500",
-      "marginTop": "30px",
-      "maxWidth": "900px",
+      // "color": "white",
+      "fontSize": "90px",
+      "fontWeight": "700",
+      // "marginTop": "30px",
+      "maxWidth": `${WIDTH-150}`,
     }
   };
 
 
   const html = <div style={css.main}>
     <div style={css.card}>
-      <span>ayats.org</span>
       <span style={css.sub}>{input.title}</span>
+      <span>ayats.org</span>
     </div>
   </div>;
 
