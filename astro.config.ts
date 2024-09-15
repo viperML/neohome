@@ -10,7 +10,6 @@ import mdx from '@astrojs/mdx';
 import { remarkMark } from 'remark-mark-highlight'
 import rehypeSectionHeadings from "@maxmmyron/rehype-section-headings";
 
-import sitemap from "@astrojs/sitemap";
 import { remarkCodeMeta } from './src/remark';
 
 // https://astro.build/config
@@ -22,7 +21,6 @@ export default defineConfig({
       applyBaseStyles: false
     }),
     react(),
-    sitemap(),
     mdx()
   ],
   devToolbar: {
