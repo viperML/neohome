@@ -9,7 +9,15 @@ import { formatDate } from "../date";
 ---
 
 <li>
-    <a href={`/blog/${post.slug}`} class="post-container card card-hover">
+    <a
+        href={`/blog/${post.slug}`}
+        class:list={[
+            "post-container",
+            "card",
+            "card-hover",
+            post.data.draft ? "draft" : null,
+        ]}
+    >
         <div class="grid-span-1">
             <h3>
                 {post.data.title}
@@ -33,6 +41,10 @@ import { formatDate } from "../date";
         grid-template-columns: auto max-content;
         align-items: top;
         column-gap: 1rem;
+    }
+
+    .post-container.draft {
+        border-color: red;
     }
 
     p {

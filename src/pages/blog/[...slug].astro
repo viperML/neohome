@@ -35,7 +35,7 @@ import TOC from "../../components/TOC.astro";
     <TOC headings={headings} />
 
     <div id="content-wrapper" class="flex flex-col items-center">
-      <main class="main-container">
+      <main class:list={["main-container", (entry.data.draft ? "draft" : null)]}>
         <!-- <main> -->
           <Content />
         <!-- </main> -->
@@ -79,6 +79,11 @@ import TOC from "../../components/TOC.astro";
 
       max-width: 100%;
       overflow: auto; // ???
+    }
+
+    .main-container.draft {
+      border: 2px solid red;
+      box-sizing: border-box;
     }
 
   </style>
