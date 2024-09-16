@@ -47,7 +47,8 @@ export const remarkCodeMeta: Plugin<[], Root> = () => {
 
                 const res = fs.readFileSync(final, {encoding: "utf-8"});
 
-                node.value += "\n" + res.trim();
+                // node.value += "\n" + res.trim();
+                node.value = res.trim() + "\n" + node.value
             }
         });
     }

@@ -1,8 +1,10 @@
 ---
-title: "The Nix Lectures, part 1: Language basics"
+title: "The Nix lectures, part 1: Language basics"
 pubDate: 2024-09-11T07:32:26Z
 draft: true
-summary: FIXME
+summary: |
+  Covering the fundamentals such as the syntax of Nix as a expression-based
+  language, the types, and some functions from builtins and lib.
 slug: nix-tuto-1
 ---
 
@@ -60,7 +62,7 @@ blocks:
 
 Nix is a dynamically typed language, that is, you don't write the type of a
 value. Rather it is calculated at runtime. Nix is also a very simple language,
-and it has very few types. 
+and it has very few types.
 
 > [!NOTE]
 > As one of the key objectives of Nix is software reproducibility, it needs a
@@ -242,7 +244,7 @@ To apply a function, you use a single space:
 
 > [!IMPORTANT]
 > Functions take a **single** argument, and return a **single** value from its
-body. 
+body.
 
 While this might seem like a limitation, you can write functions that take
 multiple values in two ways. One way, is to take an attrset as an argument, which then you can decompose:
@@ -303,13 +305,24 @@ functions, is that Nix displays them as `lambda`:
 #=> 3
 ```
 
+> [!TIP]
+> Both functions and lists are aware of spaces: functions use space for
+> application, and lists are space-separated. Lists take precedence over
+> functions, so nbe careful when applying functions inside lists:
+> ```nix
+> [
+>   f 1    # two elements
+>   (f 1)  # the result of the function
+> ]
+> ```
+
 ## Compound expressions
 
 One of the key insights to understanding Nix's syntax, is that everything is an
 expression. Expressions can be nested into another. Unlike a regular language,
 there are no "statements" in Nix.
 
-An statement would imply multiple values. In contrast, in Nix we have a single 
+An statement would imply multiple values. In contrast, in Nix we have a single
 expression, that evaluates from the bottom.
 
 One way to visualize this, is by adding parenthesis for every expression:
@@ -350,7 +363,7 @@ as return values of functions or anything more or less complex:
 ```nix
 {
   config = if useCuda then "cuda" else "noCuda";
-  
+
   # using parenthesis to visualize the expressions
   config' = (if (useCuda) then ("cuda") else ("noCuda");
 }
@@ -435,14 +448,14 @@ mkShell {
 
 In this section, we will cover some functions from `builtins`. This is the name
 of a variable that is provided by Nix itself. I will cover some of the most used
-ones. You can check the documentation for the rest in the 
+ones. You can check the documentation for the rest in the
 [Nix manual](https://nix.dev/manual/nix/2.18/language/builtins).
 
 ### import
 
 `import` allows you to load a nix expression from another file. Remember that
-nix is an expression-based language, so a file always contains a single
-expressions that returns a single value.
+nix is an expression-based language, so a file always contains a single expression
+that returns a single value.
 
 ```nix
 # foo.nix
@@ -523,7 +536,7 @@ builtins.filter (x: builtins.stringLength x > 1) ["f" "bar"]
 
 These are the equivalent to `map` and `filter`, but can be applied to
 attrsets instead of lists. They take a *curried* functions, for the name and
-value. 
+value.
 
 ```nix
 builtins.mapAttrs (name: value: "${name}:${value}") { foo = "bar"; }
@@ -713,4 +726,113 @@ lib.makeBinPath [ "" "/usr" "/usr/local" ]
 lib.makeLibraryPath [ pkgs.hello pkgs.coreutils ]
 #=> "/nix/store/yb84nwgvixzi9sx9nxssq581pc0cc8p3-hello-2.12.1/lib:/nix/store/0kg70swgpg45ipcz3pr2siidq9fn6d77-coreutils-9.5/lib"
 ```
+
+## Advanced topics
+
+Finally, I want to mention some advanced topics that are part of the base
+language. If you are just getting started with Nix, you might not need to know
+about this. Or you might want to read ahead because of curiosity.
+
+### Merging attribute sets
+
+I decided to skip the merging operator `//` when talking about attrsets. It
+takes two attrsets, and inserts the keys from the right-hand side into the 
+left-hand side. Notice that this definition is very specific to what it does: **it
+does not try to merge any child attrsets**. Looking at an example:
+
+```nix
+{ a = "avalue"; b = { ba = "bavalue"; bc = "bcvalue"; }; } // { b = 2; c = "cvalue"; }
+#=> {
+#   a = "avalue";
+#   b = 2;
+#   c = "cvalue";
+# }
+```
+
+Notice that `c` was inserted, but also `b`, removing the nested attrset from the
+left. This can have negative consequences, as naively using `//` can lead to
+problems.
+
+Merging attrsets is not something that you will do commonly. A prefered approach
+would be to create a new attrset, and explicitly listing the key-value pairs
+with `inherit`.
+
+```nix
+let c = "avalue"; b = { ba = "bavalue"; }; in { b = { inherit c; inherit (b) ba; }; }
+#=> {
+#   b = {
+#     ba = "bavalue";
+#     c = "avalue";
+#   };
+# }
+```
+
+### Recursion
+
+You can achieve complex behavior by using the different mechanism for recursion
+in nix.
+
+One way is using `let-in`:
+
+```nix
+let
+  x = [ x ];
+in
+  x
+```
+
+Because `x` itself is in scope, you can create the list that contains itself
+(forever). Of course, this is an useless example, but there are other patterns
+that are best (or only) implemented with recursion.
+
+The nixpkgs' lib also offers `lib.fix`, which has a simple definition:
+
+```nix
+fix = 
+  f: 
+  let
+    x = f x;
+  in
+  x;
+```
+
+Fix takes a function, and applies the function using the **result** of the
+function as its argument. Trippy, eh? This allows us to write very compact
+self-referencing values:
+
+```nix
+lib.fix (self: { a = 1; b = self.a + 1; })
+#=> {
+#   a = 1;
+#   b = 2;
+# }
+```
+
+Nix also provides the `rec` keyword that can be prefixed to attsets, and
+provides a similar experience to `fix`, but with an implicit scope similar to
+let-in:
+
+```nix
+rec { a = 1; b = a + 1; }
+#=> {
+#   a = 1;
+#   b = 2;
+# }
+```
+
+I prefer to use `fix`, because it is more explicit about where things come --
+you have to mention your function argument `self`, but you can choose whichever
+you want.
+
+
+### Interpolating attrsets into strings
+
+
+## Finale
+
+I hope you got a broad idea about how Nix itself works. It is a very simple
+language at is core, and most of the abstractions are implemented in Nixpkgs.
+
+When looking at complex Nix, always remember to try to pull apart the basic
+expressions. After all, everything is mostly functions and attrsets/lists.
 

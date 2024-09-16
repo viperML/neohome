@@ -3,6 +3,9 @@ import Base from "../../layouts/Base.astro";
 import Centered from "../../components/Centered.astro";
 
 import { highlight } from "neohome-rs";
+
+const webringSite = "ayats";
+const webringURL = "https://nixwebr.ing"
 ---
 
 <Base
@@ -10,9 +13,30 @@ import { highlight } from "neohome-rs";
         title: "Experiments",
     }}
 >
-    <Centered>
-        <h2>Coming soon...</h2>
-    </Centered>
+    <Centered class:list={["test"]}>
+        <div class="test">
+            <h2>Nix Webring</h2>
 
-    {highlight("let x = 1", "javascript")}
+            <ul class="webring-control">
+                <li><a href=`${webringSite}/prev/${webringURL}`>&lt;&lt;</a></li>
+                <li><a href={webringSite}>Home Page</a></li>
+                <li><a href=`${webringSite}/random`>Random</a></li>
+                <li><a href=`${webringSite}/next/${webringURL}`>&gt;&gt;</a></li>
+            </ul>
+
+
+            {highlight("let x = 1", "javascript")}
+
+        </div>
+    </Centered>
 </Base>
+
+
+<style>
+    .test {
+        box-sizing: border-box;
+        padding: 10px;
+        border: 4px solid rgb(68, 68, 68);
+        border-radius: 10px;
+    }
+</style>
