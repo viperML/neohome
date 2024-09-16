@@ -8,13 +8,13 @@ import font_700 from "@fontsource/geist-sans/files/geist-sans-latin-700-normal.w
 
 interface Generate {
   title?: string | undefined,
+  withSite?: boolean | undefined
 }
 
 export const WIDTH = 1200;
 export const HEIGHT = 630;
 
 export async function mkPng(input: Generate): Promise<Buffer> {
-
   // https://staxmanade.com/CssToReact/
   const css = {
     "main": {
@@ -33,8 +33,8 @@ export async function mkPng(input: Generate): Promise<Buffer> {
     },
     "card": {
       "backgroundColor": "black",
-      "width": `${WIDTH-50}px`,
-      "height": `${HEIGHT-50}px`,
+      "width": `${WIDTH - 50}px`,
+      "height": `${HEIGHT - 50}px`,
       "borderRadius": "2rem",
       "boxShadow": "0px 10px 15px -3px rgba(0,0,0,0.3)",
       "display": "flex",
@@ -49,15 +49,18 @@ export async function mkPng(input: Generate): Promise<Buffer> {
       "fontSize": "90px",
       "fontWeight": "700",
       // "marginTop": "30px",
-      "maxWidth": `${WIDTH-150}`,
+      "maxWidth": `${WIDTH - 150}`,
     }
   };
 
+  const withSite = input.withSite ?? true;
 
   const html = <div style={css.main}>
     <div style={css.card}>
       <span style={css.sub}>{input.title}</span>
-      <span>ayats.org</span>
+      {
+        (() => withSite ? <span>ayats.org</span> : null)()
+      }
     </div>
   </div>;
 

@@ -1,4 +1,4 @@
-import { getCollection, getEntry } from "astro:content";
+import { getCollection } from "astro:content";
 import type { APIContext } from "astro";
 
 import { mkPng } from "../../../card";
@@ -6,15 +6,9 @@ import { mkPng } from "../../../card";
 
 
 export async function GET(context: APIContext): Promise<Response> {
-  const s: string | undefined = context.params.s;
-  if (s === undefined) {
-    throw new Error("file was undefined");
-  }
-
-  const post = await getEntry('blog', s);
-
   const r = new Response(await mkPng({
-    title: post?.data.title,
+    title: context.props.title,
+    withSite: (context.props.withSite === "false") ? false : true,
   }));
 
   r.headers.set("Content-Type", "image/png");
@@ -27,12 +21,29 @@ export async function getStaticPaths() {
   const allBlogPosts = Array.from(await getCollection("blog"));
 
   const og_blog = allBlogPosts.map(elem => ({
-    params: { s: elem.slug }
+    params: {
+      slug: elem.slug
+    },
+    props: {
+      title: elem.data.title,
+      withSite: "true",
+    }
   }));
 
-  return [
+  const res = [
     {
-      params: { s: "_base" }
+      params: { slug: "_base" }
+    },
+    {
+      params: {
+        slug: "404",
+      },
+      props: {
+        title: "404",
+        withSite: "false"
+      }
     }
   ].concat(og_blog);
+
+  return res;
 }
