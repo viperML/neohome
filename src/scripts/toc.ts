@@ -10,8 +10,6 @@ document.addEventListener("astro:page-load", () => {
 
 
 function doToc(toc: HTMLElement) {
-    console.log(toc);
-
     const titles = new Map();
 
     Array.from(toc.children).forEach(node => {
@@ -25,8 +23,6 @@ function doToc(toc: HTMLElement) {
 
         titles.set(slug, false);
     })
-
-    console.log(titles);
 
     let activeSlug: string | null = null;
 
@@ -54,9 +50,6 @@ function doToc(toc: HTMLElement) {
                 }
 
                 activeSlug = slug;
-
-                console.log(activeSlug);
-
 
                 break;
             }
@@ -86,7 +79,6 @@ function doToc(toc: HTMLElement) {
     titles.forEach((_, slug) => {
         const section = document.querySelectorAll(`[data-heading-id="${slug}"]`)[0];
         if (section === undefined) {return;}
-        console.log(slug, section);
 
         observer.observe(section);
     });
