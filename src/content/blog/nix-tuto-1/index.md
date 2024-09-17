@@ -824,8 +824,27 @@ I prefer to use `fix`, because it is more explicit about where things come --
 you have to mention your function argument `self`, but you can choose whichever
 you want.
 
+### builtins.toString and string interpolation
 
-### Interpolating attrsets into strings
+There are two ways to convert some value to an string: `builtins.toString` and
+using string interpolation. They follow different semantics. You could say that
+string interpolation is a subset of what you can do with `toString`.
+
+```nix
+builtins.toString true
+#=> "1"
+
+"${true}"
+#=> error: cannot coerce a Boolean to a string: true
+```
+
+> [!IMPORTANT]
+> However, the most important type that you *can* string interpolate are attrsets.
+> Attrsets will use its attribute `outPath` (a string) or `__toString` (a function).
+> ```nix
+> "${ { outPath = "/usr"; } }/bin"
+> #=> "/usr/bin"
+> ```
 
 
 ## Finale
