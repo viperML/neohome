@@ -11,10 +11,9 @@ slug: nix-tuto-1
 This is part 1 of a tutorial series that covers all of Nix. You can find the
 rest here:
 
-- Part 1: Language basics
-- Part 2: Derivations
-- Part 3: Module system
-- Part 4: Integration
+import NixTuto from "../../../components/NixTuto.astro";
+
+<NixTuto/>
 
 In this part of the tutorial I want to set the base upon we will build the rest
 of our knowledge of Nix. We will cover the syntax of the language itself, the
@@ -736,7 +735,7 @@ about this. Or you might want to read ahead because of curiosity.
 ### Merging attribute sets
 
 I decided to skip the merging operator `//` when talking about attrsets. It
-takes two attrsets, and inserts the keys from the right-hand side into the 
+takes two attrsets, and inserts the keys from the right-hand side into the
 left-hand side. Notice that this definition is very specific to what it does: **it
 does not try to merge any child attrsets**. Looking at an example:
 
@@ -788,8 +787,8 @@ that are best (or only) implemented with recursion.
 The nixpkgs' lib also offers `lib.fix`, which has a simple definition:
 
 ```nix
-fix = 
-  f: 
+fix =
+  f:
   let
     x = f x;
   in

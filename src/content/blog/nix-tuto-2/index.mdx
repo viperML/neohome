@@ -2,12 +2,18 @@
 title: "The Nix lectures, part 2: Derivations"
 pubDate: 2024-09-16T07:07:01Z
 draft: true
-summary: FIXME
+summary: |
+  From builtins.derivation to stdenv.mkDerivation, and the language-specific
+  builders. All you need to know to start packaging software with Nix.
 slug: nix-tuto-2
 ---
 
 This is part 2 of a tutorial series that covers all of Nix. We covered
 language basics in the first part, and in this post we will cover derivations.
+
+import NixTuto from "../../../components/NixTuto.astro";
+
+<NixTuto/>
 
 ## builtins.derivation
 
@@ -22,7 +28,7 @@ of `builtins.derivation`.
 > useful when you want to use a current Nix binary to evaluate some nixpkgs from
 > *many* years ago.
 
-`builtins.derivation` is a function that takes an attrset with some 
+`builtins.derivation` is a function that takes an attrset with some
 **known keys**, and the rest are set as environment variables. You can check the
 reference documentation in the [nix manual](https://nix.dev/manual/nix/stable/language/derivations).
 A simple invocation might look like this:
@@ -93,7 +99,7 @@ build system, Nix also implements a *sandbox* that is used during builds. This
 sandbox only allows access to:
 
 - `/bin/sh` -- to be able to bootstrap everything.
-- `/nix/store` -- deliberate use of other programs in the store 
+- `/nix/store` -- deliberate use of other programs in the store
   is not concerning because of the cryptographic hashes.
 - "Private" versions of `/proc`, `/dev`, etc.
 - Private PID, mount, etc. namespaces.
@@ -127,6 +133,36 @@ built-in to the language itself, with the `outputHash*` options:
 #          specified: sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
 #             got:    sha256-3FWguG761jOvjXDVGi2BkN+hLCUurMCBzeF4m0AEr4A=
 ```
+
+### Building derivations
+
+Nix is an expression-based language, and every nix file must return a single
+value. If it returns a derivation, instead of `nix eval`, you use `nix build` to
+tell the nix-daemon to build the derivation for you.
+
+`nix build` takes an "installable", which can follow the different types:
+
+- `-f [filename.nix] [attribute]`
+- `[flake.nix]#[flake output]`
+- `--expr "literal nix expression"`
+
+When using `-f`, instead of returning a derivation, you can return an attrset of
+derivations, which you select with the name:
+
+```nix
+# filename.nix
+{
+  foo = builtins.derivation { ... };
+  bar = builtins.derivation { ... };
+}
+
+# $ nix build -f ./filename.nix foo
+```
+
+Some of the flags you should know about are:
+
+- `-L` or `--print-build-logs` -- to make Nix print the build logs.
+- `--keep-failed` -- put the working directory somewhere after failing a build.
 
 
 ## stdenv
@@ -225,21 +261,72 @@ in
   pkgs.stdenv.mkDerivation {
     # ...
     patches = [
-      ./my.patch        
+      ./my.patch
     ];
 
-    postPatch = '' 
+    postPatch = ''
       # this runs after the standard patchPhase, which applies `patches`
     '';
 
-    buildPhase = '' 
+    buildPhase = ''
       # completely change the build phase
     '';
 
-    postBuild = '' 
+    postBuild = ''
       # this won't run
       # if you want, you can add `runHook preBuild` and `runHook postBuild`
       # to your custom buildPhase
     '';
   }
 ```
+
+Many phases also have some configuration. For example, you can control
+`unpackPhase` by setting the env variable `dontUnpack`. Refer to the manual for
+specifics of each phase.
+
+The default behavior of the stdenv for `buildPhase` and `installPhase` is `make` +
+`make install`. If you have a simple C program, then you don't need anything
+else. But you probably don't, so let's keep dissecting stdenv.
+
+
+### Dependencies
+
+The different types of dependencies can be a complex topic. It gets messy when
+handling cross-compilation, because you must not mix the different architecures
+(e.g. using an x86_64 GCC to build an ARM64 binary).
+
+In Nix, you will use 2 kind of dependencies:
+
+- `nativeBuildInputs` -- packages that are needed on the **build** machine.
+  - For example: GCC, make, pkg-config, etc (*usually* programs).
+- `buildInputs` -- packages that are needed on the machine that **runs** the
+package.
+  - For example: libc, QT, zlib, etc (*usually* libraries).
+
+By default, Nix doesn't check that the dependencies do respect this difference,
+unless you use `strictDeps = true;`
+
+### Hooks
+
+One of the difference of `nativeBuildInputs`, is that they may contain some bash
+code that is sourced by the bash builder. The hook will only be executed if the
+package is in `nativeBuildInputs`.
+
+Hooks augment the capabilities of `mkDerivation`, depending on the package.
+Usually, they are executed for the program to be able to function properly. This
+is best shown by using the example of the hook of `pkg-config`.
+
+`pkg-config` is a program that allows use to find the path to libraries. This is
+essential in Nix, because there is no global library path. However, how do we
+transmit to `pkg-config`, that the packages in `buildInputs` are available? The
+hook is what "glues" everything together. For `pkg-config`, its hook will export
+`PKG_CONFIG_PATH`, which is used by the CLI:
+
+```nix file: "pkg-config.nix"
+
+# $ nix build -f ./pkg-config.nix -L
+# with-pkg-config> PKG_CONFIG_PATH:/nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/lib/pkgconfig
+# with-pkg-config> zlib zlib - zlib compression library
+```
+
+### Compiler wrappers
