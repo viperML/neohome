@@ -323,10 +323,49 @@ hook is what "glues" everything together. For `pkg-config`, its hook will export
 `PKG_CONFIG_PATH`, which is used by the CLI:
 
 ```nix file: "pkg-config.nix"
+```
 
-# $ nix build -f ./pkg-config.nix -L
-# with-pkg-config> PKG_CONFIG_PATH:/nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/lib/pkgconfig
-# with-pkg-config> zlib zlib - zlib compression library
+```console
+$ nix build -f ./pkg-config.nix -L
+with-pkg-config> PKG_CONFIG_PATH:/nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/lib/pkgconfig
+with-pkg-config> zlib zlib - zlib compression library
 ```
 
 ### Compiler wrappers
+
+Apart from manually passing the include flags from `pkg-config`, in Nix we also
+use the C/C++ compiler wrappers. In general, a wrapper is a "fake" application
+that calls the real one, passing some extra arguments.
+
+For Nix, gcc (or clang in macOS) is a bash script. It sets some flags, and then
+calls the real gcc.
+
+```console
+$ file $(which gcc)
+/nix/store/...-gcc-wrapper-13.2.0/bin/gcc: a /nix/store/...-bash-5.2p26/bin/bash script, ASCII text executable
+
+$ tail -n6 $(which gcc)
+else
+    exec /nix/store/14c6s4xzhy14i2b05s00rjns2j93gzz4-gcc-13.2.0/bin/gcc \
+       ${extraBefore+"${extraBefore[@]}"} \
+       ${params+"${params[@]}"} \
+       ${extraAfter+"${extraAfter[@]}"}
+fi
+```
+
+The stdenv sets up some flags like `NIX_CFLAGS_COMPILE` or `NIX_LDFLAGS` derived
+from `buildInputs`. This makes a "fake global search path", that are passed to
+the wrapped gcc. So, if you use `-lz`, gcc will find the library normally,
+because the wrapper knows where to find the libraries -- instead of in  `/usr`.
+
+> [!TIP]
+> `-isystem` is used for headers, taking precedence over `-I`
+
+```nix file: "cflags.nix"
+```
+
+```console
+$ nix build -f ./cflags.nix -L
+cflags> NIX_CFLAGS_COMPILE= -frandom-seed=4sm1s48afi -isystem /nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/include -isystem /nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/include
+cflags> NIX_LDFLAGS=-rpath /nix/store/4sm1s48afihxh46mdv71rcwva52w47hm-cflags/lib  -L/nix/store/rqs1zrcncqz3966khjndg1183cpdnqxs-zlib-1.3.1/lib -L/nix/store/rqs1zrcncqz3966khjndg1183cpdnqxs-zlib-1.3.1/lib
+```

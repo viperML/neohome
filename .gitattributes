@@ -1,1 +1,3 @@
 public/rss/*.xsl linguist-vendored
+*.md linguist-detectable
+*.mdx linguist-detectable
