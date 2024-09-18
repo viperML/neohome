@@ -369,3 +369,258 @@ $ nix build -f ./cflags.nix -L
 cflags> NIX_CFLAGS_COMPILE= -frandom-seed=4sm1s48afi -isystem /nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/include -isystem /nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/include
 cflags> NIX_LDFLAGS=-rpath /nix/store/4sm1s48afihxh46mdv71rcwva52w47hm-cflags/lib  -L/nix/store/rqs1zrcncqz3966khjndg1183cpdnqxs-zlib-1.3.1/lib -L/nix/store/rqs1zrcncqz3966khjndg1183cpdnqxs-zlib-1.3.1/lib
 ```
+
+
+## Modifying derivations
+
+A very common task in Nix is taking a package, and modifying some of its values.
+Usually, you want to upgrade some package to a newer version, or pin it to an
+older one. There are multiple ways to do it, which will be explained in the
+following sections.
+
+### overrideAttrs
+
+When you use `mkDerivation`, the resulting derivation will contain an extra
+attribute named `.overrideAttrs`. This is a function that takes a function as an
+argument `.overrideAttrs fn`. The function argument, takes the old
+`mkDerivation` arguments, and can output **some** of the new arguments. I
+believe it is best understood with an example:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  pkgs.hello.overrideAttrs (old: {
+    pname = "goodbye";
+  })
+#=> «derivation /nix/store/0b00bv1hjv7v1dlnzgrv21caz4h7ihii-goodbye-2.12.1.drv»
+```
+
+Of course, it is possible to chain multiple `.overrideAttrs`, but it would be
+silly: `((pkgs.hello.overrideAttrs fn1).overrideAttrs fn2).overrideAttrs fn3`.
+
+A common task would be to generate a new package that changes the version to an
+updated one, or using a different fork of the project.
+
++ Change the `src` to a different one
++ Optionally change `version` or `pname`. Note that these are only useful to
+humans, Nix doesn't use them.
++ If the build process changed, adapt the package by tweaking the different
+phases.
++ Optionally, change ony other attributes, like `patches` or `buildInputs`
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  pkgs.hello.overrideAttrs (old: {
+    # using the old attributes
+    pname = old.pname + "-mod";
+
+    # changing to a different version/fork
+    src = pkgs.fetchFromGitHub { ... };
+
+    # adjusting your dependencies
+    buildInputs = old.buildInputs ++ [ pkgs.zlib ];
+
+    postInstall = ''
+      # run extra code after installation, etc
+    '';
+  })
+```
+
+### override and callPackage pattern
+
+Overriding a package can be very nuanced. In the previous example, it can be
+hard to control which dependencies are used.
+
+Let's imagine that `pkgs.hello` depended on `pkgs.zlib`. How could we change
+which `pkgs.zlib` is used, only with `.overrideAttrs`? You could imagine doing
+something like:
+
+```nix
+# we don't do this
+buildInputs = (builtins.filter (drv: (lib.getName drv) != "zlib")) ++ [ newZlib
+];
+```
+
+This can be impossible, if we are "consuming" `zlib` in a "non-structured"
+manner, for example doing string interpolation.
+
+The solution that nixpkgs proposes is the `callPackage` pattern.
+`pkgs.callPackage file args` takes a function f, and calls it with `pkgs // args`
+-- this is, with your custom modifications in args.
+
+
+```nix
+# package.nix
+{
+  stdenv,
+  zlib,
+}: stdenv.mkDerivation {
+  name = "foo";
+  buildPhase = ''
+    echo ${zlib} > $out
+  '';
+  # ...
+}
+
+# default.nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  # calls package.nix with pkgs.stdenv and pkgs.zlib automatically
+  pkgs.callPackage ./package.nix {}
+```
+
+What `callPackage` lets us do, is to pass our custom `zlib` via its arguments,
+or rather with `override`:
+
+```nix
+# default.nix
+let
+  pkgs = import <nixpkgs> {};
+  myZlib = pkgs.zlib.overrideAttrs ...; # custom zlib
+
+  myPkg = pkgs.callPackage ./package.nix {
+    zlib = myZlib;
+  };
+  # or with override
+  myPkg2 = myPkg.override {
+    zlib = ...;
+  };
+in
+  # ...
+```
+
+> [!IMPORTANT]
+> In summary:
+> - `.overrideAttrs` can be used to change the arguments of `mkDerivation`
+> - `.override` can be used to inject different dependencies when used with
+>   `callPackage` -- ideally you always use `callPackage`.
+
+
+## Package collections
+
+In the previous sections we have learn:
+
+- The basics of derivations
+- Using `mkDerivation` as an abstraction
+- Modifying packages with `.overrideAttrs`
+- Using `callPackage` and `.override` for dependency injection
+
+The next step, is learning how to handle a collection of different packages, and
+threading the dependencies between them. We will start with a simple example:
+we have 3 packages that depend on each other:
+
+- `myLib`
+- `simpleCLI`, that depends on `myLib`
+- `complexCLI`, that depends on `myLib` and `simpleCLI`
+
+We will use `pkgs.callPackage` which passes `pkgs` to the arguments. But,
+because these 3 new packages are not in nixpkgs, we will need to pass the
+explicitely:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+
+  myLib = pkgs.callPackage ./package-mylib {};
+  simpleCLI = pkgs.callPackage ./package-simplecli {
+    inherit myLib;
+  };
+  complexCLI = pkgs.callPackage ./package-complexcli {
+    inherit myLib simpleCLI;
+  };
+in
+  # ...
+```
+
+This manual "threading" of dependencies is fine for 1 or 2 packages, but it will
+become annoying quickly. To solve this, there are two different solutions.
+
+### callPackageWith
+
+As you know, `pkgs.callPackage file args` will call the `file` with `(pkgs //
+args)`. `callPackageWith` is simply a way to define what we want to call the
+packages with, as the name implies.
+
+First, you define your own custom `callPackage`:
+
+```nix
+myCallPackage = pkgs.callPackageWith (pkgs // mypkgs);
+```
+
+And then, simply use it to define your package set. It may look like an
+infinite-recursion or self-referencing problem, but Nix can deal with it no
+problem. All your dependencies will be threaded automatically with your custom
+`callPackage`.
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+  myCallPackage = pkgs.callPackageWith (pkgs // mypkgs);
+
+  mypkgs = {
+    myLib = myCallPackage ./package-mylib {};
+    simpleCLI = myCallPackage ./package-simplecli {}; # myLib passed automatically
+    complexCLI = myCallPackage ./package-complexcli {}; # " and simpleCLI passed too
+  };
+```
+
+
+### overlays
+
+Overlays is one of the "buzzwords" that you may have heard from Nix. But if you
+have reached here, then you have all the knowledge to understand what overlays
+are used for.
+
+Similarly to the `callPackageWith` pattern described before, overlays allow to
+inject our package collection into `pkgs` itself. Instead of using a custom
+`callPackage` that threads our custom packages, we are "modifying" `pkgs`
+itself.
+
+Overlays are loaded when importing nixpkgs. An overlay is a function that takes
+2 arguments:
+
+> [!TIP]
+> Function arguments are named by the user. You may see other names used for
+> overlays.
+
+```nix
+final: prev: {
+  myLib = final.callPackage ./package-mylb.nix {};
+
+  # myLib passed automatically from final
+  # because it's on final.myLib
+  simpleCLI = final.callPackage ./package-simplecli {};
+  complexCLI = final.callPackage ./package-complexcli {}; # " and simpleCLI passed too
+
+  # you can also modify pkgs from nixpkgs
+  # this will be final.zlib, so modify zlib from prev
+  zlib = prev.zlib.overrideAttrs ....;
+}
+```
+
+Both `prev` and `final` are like `pkgs` -- that is, a huge attrset containing
+all the packages. `prev` is `pkgs` before applying your overlay. `final` is
+`pkgs` after applying all overlays, including the one you are writing.
+
+It should not come as a surprise, that in Nix we can use the result of a
+function, as the argument to itself. It's possible due to lazy evaluation, but
+you don't need to thing too hard about it.
+
+When should you grab something from `prev` and when from `final`? The rule of
+thumb is the following:
+
+- Take from `prev` what you want to modify, e.g. `pkg = prev.pkg.overrideAttrs
+...`
+- Take from `final` otherwise. As it will account for every modification from
+every package. We use `final.callPackage` to thread the modifications of our
+overlay.
+
+
+## Trivial builders
+
+
+## Language frameworks
