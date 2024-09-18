@@ -17,9 +17,9 @@ import NixTuto from "../../../components/NixTuto.astro";
 
 ## builtins.derivation
 
-This is the primitive that Nix uses to define derivations. You will probably
-**never** use it, as we rely on higher-level abstractions that are built on top
-of `builtins.derivation`.
+This is the primitive that Nix uses to define derivations. Packages are
+derivations. But a derivation is something that is built into `/nix/store`. So
+simpler things, that are not packages, can be derivations.
 
 > [!NOTE]
 > Remember that the design of the Nix language, it is a very simple language.
@@ -36,6 +36,11 @@ A simple invocation might look like this:
 ```nix file: "derivation.nix"
 #=> «derivation /nix/store/n34150nf03sh04j8mjzm8sawdqx9sgqi-sample.drv»
 ```
+
+
+> [!IMPORTANT]
+> - A derivation runs the `builder` with some `args`.
+> - The environment variable $out is where the package results must be placed.
 
 Derivations can be built in the repl with `:b`, or with the command `nix build
 -f derivation.nix`.
@@ -225,6 +230,15 @@ directory. We can use anything that makes sense where a path does, such as
 another derivation. Note that you don't need to manually force the string
 interpolation `src = "${myPkg}";`, this is done for you in the `mkDerivation`
 implementation.
+
+> [!IMPORTANT]
+> `mkDerivation` has a number of implicit packages that are always available. It
+> includes:
+> - GCC
+> - Bash
+> - Basic Linux utilities (cp, mv, rm, etc) and others like grep, tar, make,
+>   etc.
+> - You can check the full list [here](https://nixos.org/manual/nixpkgs/stable/#sec-tools-of-stdenv)
 
 
 #### Phases
@@ -620,7 +634,114 @@ every package. We use `final.callPackage` to thread the modifications of our
 overlay.
 
 
-## Trivial builders
+## Trivial builders and writers
+
+There are higher-level abstractions built on top of `stdenv.mkDerivation`, that
+can be very useful. To begin with, the [trivial builders](https://nixos.org/manual/nixpkgs/stable/#chap-trivial-builders)
+implement very basic tasks:
+
+- `runCommand`, for when all you need is to run a command:
+  ```nix
+  pkgs.runCommand "name" {} ''
+    echo "hello" > $out
+  ''
+  ```
+- `writeText`, that puts a string into $out
+  ```nix
+  pkgs.writeText "name" "hello"
+  ```
+- Etc. Please take a look at the nixpkgs manual if you are curious about the
+rest.
+
+We also find in nixpkgs the "format" writers and "script" writers. The format
+writers take a Nix value, and transforms it into the target format, placing it
+in a new file:
+
+```nix
+(pkgs.formats.yaml {}).generate "config.yaml" { foo.bar = "baz"; }
+# «derivation /nix/store/yplv61sf4vqkmrza8m31b1808wz090fw-config.yaml.drv»
+```
+
+```console
+$ nix build --impure --expr '((import <nixpkgs> {}).pkgs.formats.yaml {}).generate "config.yaml" { foo.bar = "baz"; }'
+
+$ cat result
+foo:
+  bar: baz
+```
+
+Nixpkgs also provides writers for scripting languages. The most simple one is
+`writeShellScriptBin`, which can be used to quickly create a new usable package.
+It is similar to `writeText`, but also placing the file in `$out/bin` and making
+it executable:
+
+```console
+$ nix build --impure --expr '(import <nixpkgs> {}).writeShellScriptBin "test" "echo test"'
+
+$ cat result/bin/test
+#!/nix/store/izpf49b74i15pcr9708s3xdwyqs4jxwl-bash-5.2p32/bin/bash
+echo test
+```
 
 
-## Language frameworks
+
+## Language and frameworks
+
+Nixpkgs contains many abstractions built on top of `mkDerivation` for the
+specifics of each language. In fact, you will be using `mkDerivation` only for
+C/C++ projects, the trivial builders for simple files, and the language-specific
+builders for the rest.
+
+In previous sections we have been exploring Nix together. But for the language
+builders, it is best to consult the nixpkgs documentation.
+
+<p style="text-align: center">
+  <a
+    href="https://nixos.org/manual/nixpkgs/stable/#chap-language-support"
+  >Nixpkgs manual: Languages and frameworks</a>
+</p>
+
+In general, instead of using `stdenv.mkDerivation`, you will use a different
+function. This function, will accept some extra attributes, that mean something
+to the builder.
+
+Some other languages, like python, have an scope of packages. For example, to
+acess the different python libraries, you use `pkgs.python3.pkgs.<name>`. If
+that is the case, then it will also define a custom `callPackage`:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+
+  myPythonPkg = pkgs.python3.pkgs.callPackage ./myPythonPkg.nix {};
+in
+  # ...
+
+# myPythonPkg.nix
+{
+  python3,
+  buildPythonPackage,
+  requests, # <- now this refers to pkgs.python3.pkgs.requests
+}:
+buildPythonPackage {
+  # ...
+}
+```
+
+## Finale
+
+I hope that this lesson was useful, and you learned how derivations and packages
+work in Nix. If you have any question or thing to improve, feel free to open an
+issue or pull request to the repo of this blog -- link in the footer.
+
+In summary, we learned that:
+
+- `builtins.derivations` is the primitive to create a derivation.
+- Derivations are attrsets
+- You can string interpolate a derivation `"${pkgs.hello}/bin/hello"`
+- Nixpkgs defines higher level abstractions with `stdenv` and `mkDerivation`
+- `mkDerivation` has the concepts of phases, build/run time dependencies and
+  compiler wrappers.
+- You can modify existing derivations with `.overrideAttrs` and `.override`
+- You can define package collections with `callPackageWith` and overlays
+- Language-specific abstractions are built on top of `mkDerivation`
