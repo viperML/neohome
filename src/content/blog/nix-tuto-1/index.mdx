@@ -1,6 +1,6 @@
 ---
-title: "The Nix lectures, part 1: Language basics"
-pubDate: 2024-09-11T07:32:26Z
+title: "The Nix lectures, part 1: Introduction and language basics"
+pubDate: 2024-09-19T06:54:51Z
 draft: true
 summary: |
   Covering the fundamentals such as the syntax of Nix as a expression-based
@@ -8,36 +8,179 @@ summary: |
 slug: nix-tuto-1
 ---
 
-This is part 1 of a tutorial series that covers all of Nix. You can find the
+import { Image } from 'astro:assets';
+
+This is part 1 of a tutorial series that covers all about Nix. You can find the
 rest here:
 
 import NixTuto from "../../../components/NixTuto.astro";
 
 <NixTuto/>
 
-In this part of the tutorial I want to set the base upon we will build the rest
-of our knowledge of Nix. We will cover the syntax of the language itself, the
-types of variables, how functions and recursion works and some built-in
-functions.
+In this tutorial series, I want to give a broad view of Nix and NixOS, covering
+every aspect. I want to cover the topics in the *just enough* level of detail.
+This means, some topics will have a more detailed explanation, while some
+details will be hand-waved -- this is not a hacker's handbook.
+
+The source code of my blog is open source software at
+[viperML/neohome](https://github.com/viperML/neohome). You are invited to
+contribute to it, improving the wording of the text, fixing the technical
+details, or whatever you want.
+
+
+## What is Nix and NixOS?
+
+<Image
+  src="https://raw.githubusercontent.com/NixOS/nixos-artwork/master/logo/nixos-text-below.svg"
+  alt="NixOS logo"
+  width="200px"
+  height="200px"
+  style="background-color: white; padding: 1rem"
+/>
+
+Nix can be defined as a purely functional package manager, that enables
+reproducible and declarative builds and deployments. That is quite to unpack:
+
+- *Package manager*: the role of Nix is similar to the ones of apt and dnf in
+other Linux distributions. It is the software that organizes the rest of your
+software, and the dependencies between them. Nix can also handle packages from
+the language-specific ecosystems, like Python or NPM. It also runs on macOS.
+- *Purely functional*: Nix is also a functional programming language. We define
+packages in this language, and use the command line to "instantiate" the
+functional data structures that represent packages, into the disk. People
+describe the Nix the language as "JSON with functions" or "Haskell without
+types".
+- *Reproducible*: in math, function produce the same values given the same
+inputs. *f(x) = x²* doesn't depend on the time of the day. Similarly, we call
+*pure function* in programming to functions that only depend on their inputs.
+Nix applies this approach to software packaging, by having a tight sandbox to
+build the packages in, and a purely functional language to describe the
+instructions.
+- *Declarative*: instead of running multiple commands, we define files that
+collect all the details. This way, nothing is lost on countless lines of our
+shell history.
+
+Some of the key features of the package manager are:
+
+- It can run on top of any Linux distribution, like Debian or Arch.
+- MacOS is also supported, as well as ARM64 targets for Linux and Mac.
+- Packages are stored independently of the system in `/nix/store`
+- Packages are addressed by a cryptographic hash of their inputs and build
+procedure. Multiple packages of the same name can coexist in the same system, if
+they refer to different binaries:
+  ```console
+  $ find /nix/store -maxdepth 1 | grep "fish-3.7.1\$"
+  /nix/store/qkjx3hgnpdvyg3m7973dh4hr1jxbqphw-fish-3.7.1
+  /nix/store/5c27daphi2jn4aj714pf8jvdqn087989-fish-3.7.1
+  /nix/store/9g2wgp6wgl8z2x3ikqab0x8dlbqj3b63-fish-3.7.1
+  ```
+- There is no global library path for packages built with Nix. Each package
+referes to their inputs explicitely:
+  ```console
+  $ ldd /nix/store/qkjx3hgnpdvyg3m7973dh4hr1jxbqphw-fish-3.7.1/bin/fish
+          linux-vdso.so.1 (0x00007fd3a1f1c000)
+          libncursesw.so.6 => /nix/store/z7nr6aqlzv51pk5ar8bgzg2alfqvi8fd-ncurses-6.4.20221231/lib/libncursesw.so.6 (0x00007fd3a1ea0000)
+          libdl.so.2 => /nix/store/3dyw8dzj9ab4m8hv5dpyx7zii8d0w6fi-glibc-2.39-52/lib/libdl.so.2 (0x00007fd3a1e9b000)
+          libpcre2-32.so.0 => /nix/store/9acpvpxwa33gcf5cnjs9136b38k5m62m-pcre2-10.44/lib/libpcre2-32.so.0 (0x00007fd3a1e0f000)
+          libstdc++.so.6 => /nix/store/22nxhmsfcv2q2rpkmfvzwg2w5z1l231z-gcc-13.3.0-lib/lib/libstdc++.so.6 (0x00007fd3a1a00000)
+          libm.so.6 => /nix/store/3dyw8dzj9ab4m8hv5dpyx7zii8d0w6fi-glibc-2.39-52/lib/libm.so.6 (0x00007fd3a1d27000)
+          libgcc_s.so.1 => /nix/store/22nxhmsfcv2q2rpkmfvzwg2w5z1l231z-gcc-13.3.0-lib/lib/libgcc_s.so.1 (0x00007fd3a1d02000)
+          libc.so.6 => /nix/store/3dyw8dzj9ab4m8hv5dpyx7zii8d0w6fi-glibc-2.39-52/lib/libc.so.6 (0x00007fd3a1809000)
+  ```
+
+### A bit of history
+
+Nix starts as a research project in the Netherlands in 2003. Eelco Dolstra publishes
+his PhD thesis [The Purely Functional Software Deployment
+Model](https://edolstra.github.io/pubs/phd-thesis.pdf), that covers the
+deficiencies of the existing packaging solutions and presents the very first
+version of Nix. Soon after, a complete Linux distribution based on Nix was born:
+NixOS.
+
+Since then, NixOS has had bi-yearly releases, and the repository holding the
+package definition, nixpkgs, has grown to be the biggest repository ever.
+
+<Image
+  src="https://repology.org/graph/map_repo_size_fresh.svg"
+  alt="Number of packages in repositories, repology.org"
+  width="600px"
+  height="600px"
+/>
+
+We also find in the landscape, Guix and Spack, which follow the original ideas
+of Eelco, but adding their own twist to it.
+
+- [Guix](https://guix.gnu.org) use the Scheme language, which is of the Lisp
+family. Guix System also uses its own init system, called *Shepherd*.
+- [Spack](https://spack.io) uses Python, and focuses on unprivileged and highly
+configurable installations at compute centers.
+
+<div
+  style="display:flex"
+>
+  <Image
+    src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Guix_logo.svg/1200px-Guix_logo.svg.png"
+    alt="Guix Logo"
+    width="150px"
+    height="150px"
+    style="background-color: white; padding: 1rem; margin:none"
+  />
+  <Image
+    src="https://cdn.jsdelivr.net/gh/spack/spack@develop/share/spack/logo/spack-logo-text.svg"
+    alt="Spack logo"
+    width="150px"
+    height="150px"
+    style="background-color: white; padding: 1rem"
+  />
+</div>
+
+### Key concepts
+
+- Nix refers to Nix the program and Nix the language.
+- We use Nix the program to evaluate code written in Nix.
+- A derivation is a type of value, that can produce an output in the
+`/nix/store`.
+- Packages can be 1:1 derivations, but derivations are very cheap to create.
+- Knowking the Nix language is fundamental to understanding how to use the Nix
+command line, because they operate in Nix expressions.
+- [Nixpkgs](https://github.com/NixOS/nixpkgs) is the repository that contains
+the collection of all Nix packages. It is distributed independently of Nix, the
+program.
+
+### More resources
+
+I invite you to look a the different resources to learn Nix, either the
+reference manuals or other guides and tutorials:
+
+- [nix.dev](https://nix.dev): official guides and tutorials
+- [Nix manual](https://nix.dev/manual/nix/stable): documentation of
+the language and the CLI.
+- [Nixpkgs manual](https://nixos.org/manual/nixpkgs/stable): documentation of
+the abstractions used in nixpkgs.
+- [NixOS manual](https://nixos.org/manual/nixos/stable): documentation and usage
+  of the operation system, and of the module system.
+- [NixOS Discourse](https://discourse.nixos.org): community forum
+where you can ask anything related to Nix.
 
 ## Nix repl and nix eval
 
-To begin with, we will set-up an environment where we can evaluate Nix code, and
-print the result. We have 2 options for this:
+We begin our journey by taking a tour over the Nix language. To get a nice grasp
+about Nix as a whole, it is important to know about the language, instead of
+mindlessly running commands in our terminal -- we will do that in the last
+episode.
+
+We can either write Nix code in a file ending with an extension `.nix`, or use
+`nix repl` to evaluate expressions in a "command line"-like experience:
 
 - `nix repl`: to type your expressions in the **command-line**.
 - `nix eval`: to type your expressions in a **file**.
 
-I recommend you use `nix eval`, as it will be more convenient to edit Nix in
-your text editor.
+You are free to use whichever. I would recommend putting the expressions in a
+nix file and using your code editor. It will be easier to edit your code when it
+spans multiple lines, and you will be able to back-up your progress.
 
-So, open in your favorite text editor any filename ending in `.nix` -- Nix
-doesn't have any special "filenames" [^1].
-
-[^1]: There is only one filename that Nix itself cares about: `default.nix`.
-    When you call `import` on a folder `/foo` containing a `/foo/default.nix`,
-`import` will try to open the `default.nix` in the folder. You can still address
-any other `/foo/bar.nix` normally, or explicitly type `/foo/default.nix`.
+So, open in your favorite text editor any filename ending in `.nix`. Note that
+Nix doesn't have any project structure, or any special filenames.
 
 ```nix
 # tuto.nix
@@ -59,18 +202,21 @@ blocks:
 
 ## Types
 
-Nix is a dynamically typed language, that is, you don't write the type of a
-value. Rather it is calculated at runtime. Nix is also a very simple language,
+Nix is a dynamically typed language, which means that you don't write the type of a
+value. Instead, it is calculated at runtime. Nix is also a very simple language,
 and it has very few types.
 
 > [!NOTE]
-> As one of the key objectives of Nix is software reproducibility, it needs a
+> One of the objectives of Nix is software reproducibility, so it needs a
 > very simple language to use a base. You wouldn't want to add new features
 > every year, making it impossible to use old Nix code.
 
 
-I like to have a mental model of types in Nix, by dividing them in 2 categories:
-primitive types and compound types. And then we have functions.
+I like to have a mental model of types in Nix, where we find the categories:
+
+- Primitive types
+- Compound types: attribute sets and lists
+- Functions
 
 ### Primitive types
 
@@ -105,31 +251,44 @@ Strings can be concatenated with `+`.
 
 #### Booleans
 
-We have `true` and `false`. You will use them for `if`'s.
+We have `true` and `false`. You will use them for `if ...`.
 
 #### Null
 
-Apart from the booleans, there is also `null`. You may see it in NixOS modules,
-so signify the lack of some configuration option.
+Apart from the booleans, we also have `null`. You may see it in NixOS modules,
+to signify the lack of some configuration.
 
-Note that you can't use `null` instead of `false` inside an `if`, unlike Python.
+`null` and `false` are different. You can't use `null` in `if ...`.
 
 
 #### Numbers
 
 Mostly used for demonstration purposes, you probably won't
 see any number in the wild. Nix has `int` and `float` types, which coerce
-automatically.
+automagically.
 
 ```nix
 1 + 2 * 2 / 1.1
 #=> 4.63636
 ```
 
+#### Paths
+
+Nix also has a built-in type for paths. There are occasions that you will want a
+path instead of a string containing a path, which are mostly relevant to flakes.
+
+But, for an introduction, you can use either strings or paths indifferently.
+
+```nix
+/usr/bin/env
+#=> /usr/bin/env
+```
+
+
 ### Compound types
 
-These types are made of any of the other values. Lists are a collection of
-unnamed values, while attribute sets provides them with names.
+These types are made of any of the other values. While lists collect **unnamed**
+values, attribute sets collects **named** values.
 
 #### Lists
 
@@ -193,38 +352,28 @@ To select an item from an attrset, you use a dot `.`:
 #=> 1
 ```
 
-To insert a key in an attribute set, with the same name and value, you can use
-the `inherit` keyword.
+The keyword `inherit x` is a shorthand for `x = x`.
+
 
 ```nix
 let
   foo = "value";
-  bar = {
-    baz = "value";
-  };
 in
   {
     # these two are equivalent
     foo = foo;
     inherit foo;
-
-    # if you need a nested attrset
-    baz = bar.baz;
-    inherit (bar) baz;
-
-    # you can inherit multiple things
-    inherit foo bar;
   }
 ```
 
 > [!TIP]
-> `inherit` is not related to inheritance in OOP languages. Remember that it is
-> just a simple shorthand for `x = x`.
+> `inherit` is not related to inheritance in OOP languages. It is just a very
+> simple syntax shorthand.
 
 ### Functions
 
-It won't come to a surprise, that functions are the most important type in Nix,
-being a functional language. Functions are defined with the following syntax:
+It won't come as a surprise, that functions are the most important type in Nix,
+which is a functional language. Functions are defined with the following syntax:
 
 ```nix
 argument: body
@@ -257,38 +406,41 @@ the input. Don't confuse this syntax with how you declare an attrset, this is
 just for functions:
 
 ```nix
+x: x.foo + x.bar
+# equivalent to
 { foo, bar }: foo + bar
 ```
 
-The other option for accepting multiple arguments, is returning another
-function:
+To accept multiple argument, it is also possible to use *functions that return
+functions*. In the following example, the outer function return another
+function. So you can apply it *twice* to get the final value:
 
 ```nix
 foo: (bar: foo + bar)
 ```
 
 You can call this function with `1`, and then call the returned function again
-with `2`. This is called "currying", and is possible because we can return a
-function from a function:
+with `2`. 
 
-```
-# pseudo-code
+```nix
+# ~pseudo-code~
+
 f = foo: (bar: foo + bar)
 
-# If foo=1, f 1
-#=> (bar: 1 + bar)
+# substituting foo=1
+(bar: 1 + bar)
 
-# If bar=2
-#=> 1 + 2
+# substituting bar=2
+1 + 2
 
-3
+#=> 3
 
 # Which is the same as:
-# f 1 2
+f 1 2
 #=> 3
 ```
 
-One way to know if you are dealing with functions or partially-applied
+One way to know if you are dealing with functions or *partially-applied*
 functions, is that Nix displays them as `lambda`:
 
 ```nix
@@ -304,14 +456,14 @@ functions, is that Nix displays them as `lambda`:
 #=> 3
 ```
 
-> [!TIP]
+> [!WARNING]
 > Both functions and lists are aware of spaces: functions use space for
 > application, and lists are space-separated. Lists take precedence over
-> functions, so nbe careful when applying functions inside lists:
+> functions. Be careful when applying functions inside lists:
 > ```nix
 > [
->   f 1    # two elements
->   (f 1)  # the result of the function
+>   f 1    # two elements, f and 1
+>   (f 1)  # the result of applying f 1
 > ]
 > ```
 
@@ -319,7 +471,7 @@ functions, is that Nix displays them as `lambda`:
 
 One of the key insights to understanding Nix's syntax, is that everything is an
 expression. Expressions can be nested into another. Unlike a regular language,
-there are no "statements" in Nix.
+there are no "statements" in Nix. Statements run one after the other.
 
 An statement would imply multiple values. In contrast, in Nix we have a single
 expression, that evaluates from the bottom.
@@ -338,8 +490,8 @@ One way to visualize this, is by adding parenthesis for every expression:
 [ 1 ] ++ [ { foo = (expr); } ]
 ```
 
-In the folling sections, we will some syntax that can be compound with regular
-expressions.
+In the following sections, we will look at some of the special syntax that nix
+has, that prefixes expressions.
 
 ### if-then-else
 
@@ -354,7 +506,7 @@ If it evaluates to `false`, then `expr-false` is used. Otherwise, if you pass
 any other type, a runtime error is raised.
 
 > [!IMPORTANT]
-> The if expression, is an expression itself
+> `if-then-else` is an expression, you can handle like any regular value.
 
 This means, you can use it as any other expression, for example as attrset keys,
 as return values of functions or anything more or less complex:
@@ -420,7 +572,7 @@ in the scope of the target expression. The syntax is the following.
 with (expr-with); (expr)
 ```
 
-Note that the first expr must return an attribute set. We can use `with` to
+Note that the first expr must evaluate to an attribute set. We can use `with` to
 factor out code in the following way:
 
 ```nix
@@ -448,13 +600,13 @@ mkShell {
 In this section, we will cover some functions from `builtins`. This is the name
 of a variable that is provided by Nix itself. I will cover some of the most used
 ones. You can check the documentation for the rest in the
-[Nix manual](https://nix.dev/manual/nix/2.18/language/builtins).
+[Nix manual](https://nix.dev/manual/nix/stable/language/builtins).
 
 ### import
 
 `import` allows you to load a nix expression from another file. Remember that
 nix is an expression-based language, so a file always contains a single expression
-that returns a single value.
+that evaluates to a single value.
 
 ```nix
 # foo.nix
@@ -472,18 +624,19 @@ import ./foo.nix
 > `folder/default.nix` file inside it. `default.nix` is the only "special"
 > filename that we have in Nix.
 
-A common use case is to import a file, and then immedately after evaluate the
-function:
+A common use case is to import a file, and then immediately after evaluate the
+function that it evaluates to:
 
 ```nix
-import ./foo.nix "myinput"
+(import ./foo.nix) "myinput"
 ```
 
-We then arrive at the layout of [nixpkgs](https://github.com/NixOS/nixpkgs). It
-contains a `default.nix` inside it, that returns a function. This function takes
-an attrset with the nixpkgs configuration, and then returns an attrset with all the packages.
+This is how the nixpkgs repo has its `default.nix` set-up. It takes an attrset,
+that is used to configure nixpkgs:
 
 ```nix
+# <nixpkgs> is the "global" nixpkgs installation
+# it returns a path
 <nixpkgs>
 #=> /nix/store/qpg5mwsind2hy35b9vpk6mx4jimnypw0-source
 
@@ -491,12 +644,14 @@ import <nixpkgs>
 # «lambda»
 
 (import <nixpkgs>) {}
-# parenthesis are redundant
 #=> {
 #   hello = <drv>;
 #   python3 = <drv>;
 #   ....
 # }
+
+# you can omit the parenthesis
+import <nixpkgs> {}
 ```
 
 > [!TIP]
@@ -508,8 +663,8 @@ attrset. You can either use `pkgs = import <nixpkgs> {}`, or the repl command
 
 ### map
 
-`map f list` applies the function `f` to a `list`. When you think of a `for`
-loop in other languages, usually you can accomplish it with `map`.
+`map f list` applies the function `f` to each element of a `list`. When you think of a `for`
+loop in other languages, you can mostly translate it to `map`.
 
 ```nix
 builtins.map (x: "workspace-${builtins.toString x}") [ 1 2 3 ]
@@ -524,7 +679,8 @@ builtins.map (x: "workspace-${builtins.toString x}") [ 1 2 3 ]
 ### filter
 
 `filter f list`, as map, applies f to each element of the list. But it removes
-elements for which the function returns `false`, and otherwise keeps them.
+elements for which the function returns `false`, and keeps the element if `f`
+returns `true`.
 
 ```nix
 builtins.filter (x: builtins.stringLength x > 1) ["f" "bar"]
@@ -596,7 +752,7 @@ in
 ```
 
 We will cover some nice functions from `lib`, but as with `builtins`, I don't
-want you to memorize them -- I neither do. But instead, just keep in the back of
+want you to memorize them. Instead, just keep in the back of
 your head that they exist.
 
 ### traceVal
@@ -688,7 +844,7 @@ builtins.attrNames { foo = "foovalue"; bar = "barvalue"; }
 ```
 
 For `listToAttrs`, you may need to do some conversion with `map` before feeding
-the result:
+the result. This is because, `listToAttrs` expects a list with attrs inside:
 
 ```nix
 lib.listToAttrs (builtins.map (pkg: { name = pkg.name; value = pkg; }) [ pkgs.hello pkgs.coreutils ])
@@ -769,22 +925,22 @@ let c = "avalue"; b = { ba = "bavalue"; }; in { b = { inherit c; inherit (b) ba;
 ### Recursion
 
 You can achieve complex behavior by using the different mechanism for recursion
-in nix.
-
-One way is using `let-in`:
+in Nix. One way is using `let-in`, which has a scope in which you can refer to
+the item itself:
 
 ```nix
 let
   x = [ x ];
 in
   x
+#=> [[[[ ... ]]]]
 ```
 
 Because `x` itself is in scope, you can create the list that contains itself
-(forever). Of course, this is an useless example, but there are other patterns
+(forever). Of course, this is a useless example, but there are other patterns
 that are best (or only) implemented with recursion.
 
-The nixpkgs' lib also offers `lib.fix`, which has a simple definition:
+The nixpkgs lib also offers `lib.fix`, which has a simple definition:
 
 ```nix
 fix =
@@ -848,9 +1004,19 @@ builtins.toString true
 
 ## Finale
 
-I hope you got a broad idea about how Nix itself works. It is a very simple
-language at is core, and most of the abstractions are implemented in Nixpkgs.
+I hope you got a broad idea about how Nix itself works. In this lesson we
+learnt:
 
-When looking at complex Nix, always remember to try to pull apart the basic
-expressions. After all, everything is mostly functions and attrsets/lists.
+- What Nix is, and that we need to learn the Nix language to give us
+superpowers.
+- The basic types of the Nix language, such as strings and booleans
+- The compound types: lists and attrsets
+- Functions and how to apply them
+- The most useful functions from `builtins` and `pkgs.lib`
 
+Continue in the next episode of this series, where we start building packages,
+with `builtins.derivation`:
+
+<a href="/blog/nix-tuto-2" style="text-align: center; margin: 2rem">
+  The Nix lectures, part 2: Derivations
+</a>
