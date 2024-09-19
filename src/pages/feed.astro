@@ -1,0 +1,33 @@
+---
+export const partial = true;
+import { getCollection } from 'astro:content';
+const posts = await getCollection('blog');
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>ayats.org</title>
+    <description>Welcome to my personal blog.</description>
+    <Fragment set:html={ `<link>${ Astro.url.origin }</link>` }/>
+  </channel>
+  { posts.map(async (post) => {
+    const url = new URL(`blog/${post.slug}`, Astro.url.origin).toString();
+    const { Content } = await post.render();
+    return (
+      <item>
+        <title>{post.data.title}</title>
+        <Fragment set:html={ `<link>${ url }</link>` }/>
+        <guid>{ url }</guid>
+        <description>{ post.data.description }</description>
+        <pubDate>{ post.data.pubDate }</pubDate>
+          <Fragment is:raw>
+            <content:encoded><![CDATA[
+          </Fragment>
+          <Content/>
+          <Fragment is:raw>
+            ]]></content:encoded>
+          </Fragment>
+      </item>
+    )
+  }) }
+</rss>
