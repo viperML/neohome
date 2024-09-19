@@ -12,6 +12,7 @@ in
       "${pkgs.curl}/bin/curl -H 'User-Agent: nix' https://httpbin.org/user-agent > $out"
     ];
 
+    # fixed-output-derivation by using output* options
     outputHashMode = "flat";
     outputHashAlgo = "sha256";
     outputHash = "";

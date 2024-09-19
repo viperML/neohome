@@ -8,28 +8,32 @@ summary: |
 slug: nix-tuto-2
 ---
 
-This is part 2 of a tutorial series that covers all of Nix. We covered
+This is part 2 of a tutorial series that covers all about Nix. We covered
 language basics in the first part, and in this post we will cover derivations.
 
 import NixTuto from "../../../components/NixTuto.astro";
 
 <NixTuto/>
 
+In chapter 1, we gave a high-level overview of the Nix project. In short,
+packages are defined in Nix, a purely functional programming language. We use
+the `nix` program to evaluate expressions.
+
+We covered the very basic types of the Nix language, such as strings or attrsets.
+A derivation is yet another type, that can also be **built**.
+
+
 ## builtins.derivation
 
-This is the primitive that Nix uses to define derivations. Packages are
-derivations. But a derivation is something that is built into `/nix/store`. So
-simpler things, that are not packages, can be derivations.
-
-> [!NOTE]
-> Remember that the design of the Nix language, it is a very simple language.
-> Having a small API surface means that you don't really have to update the API
-> as time passes, but rather the abstractions that are built on top. This is
-> useful when you want to use a current Nix binary to evaluate some nixpkgs from
-> *many* years ago.
+Derivations are the privimite that Nix uses to define packages. "Package" is
+a loosely defined term, but a derivation is simply the result of calling
+`builtins.derivation`. Because derivations are very cheap to create, in Nix we
+tend to use a derivation for anything -- like configuration files. Would you
+call a `config.yaml` a package? Probably not, but it can be built as a
+derivation.
 
 `builtins.derivation` is a function that takes an attrset with some
-**known keys**, and the rest are set as environment variables. You can check the
+known keys, and the rest are set as environment variables. You can check the
 reference documentation in the [nix manual](https://nix.dev/manual/nix/stable/language/derivations).
 A simple invocation might look like this:
 
@@ -38,14 +42,14 @@ A simple invocation might look like this:
 ```
 
 
-> [!IMPORTANT]
-> - A derivation runs the `builder` with some `args`.
-> - The environment variable $out is where the package results must be placed.
+A derivation runs the `builder` with some `args`. The environment variable
+`$out` is where the package results must be placed.
+Instead of installing to `/usr/bin`, you install to `$out/bin`, etc.
 
 Derivations can be built in the repl with `:b`, or with the command `nix build
--f derivation.nix`.
+-f my-derivation.nix`.
 
-Nix will tell use that the return type is a "derivation". However, from chapter
+Nix will tell use that the return type is a *derivation*. However, from chapter
 1, I didn't mention that this type exists. What is happening here is that
 derivations are implemented as **attrsets** with a special field called `type`.
 
@@ -56,13 +60,11 @@ derivations are implemented as **attrsets** with a special field called `type`.
 
 
 
-> [!IMPORTANT]
-> **Derivations are attrsets**. We can access fields from derivations, like
-> `pkgs.hello.overrideAttrs`. And we can also do **string interpolation**
-> because they have an `outPath` field.
-
-Remember, that we can interpolate an attrset if it has an `outPath` field
-(string) or a `__toString` field (function).
+Derivations are attrsets, which means we can:
++ Access fields from derivations, like
+  `pkgs.hello.overrideAttrs`.
++ Do string interpolation
+  because they have an `outPath` field.
 
 ```nix
 pkgs.hello
@@ -76,8 +78,8 @@ pkgs.hello.outPath
 ```
 
 > [!IMPORTANT]
-> One one of the key features of Nix is that it has a notion of a *context* for
-> a value.
+> One one of the key features of Nix is that it has a notion of a **context** for
+> a value. This is Nix's way of automatically tracking dependencies.
 >
 > In the previous example, the string has a context because we string
 > interpolated a derivation into it. The context of the strings means that it
@@ -95,40 +97,31 @@ these 2 derivations will be built:
 ```
 
 This example shows that string interpolation can be used to refer to other
-derivation programmatically, and that Nix tracks the references automatically.
+derivation programmatically, because Nix tracks the context through different
+values. Dependencies are handled automatically for you.
 
 ### Fixed-output derivations
 
 To be useful, we need Nix to download source code from the internet. As any sane
 build system, Nix also implements a *sandbox* that is used during builds. This
-sandbox only allows access to:
+sandbox exposes:
 
-- `/bin/sh` -- to be able to bootstrap everything.
-- `/nix/store` -- deliberate use of other programs in the store
-  is not concerning because of the cryptographic hashes.
+- `/nix/store`
 - "Private" versions of `/proc`, `/dev`, etc.
-- Private PID, mount, etc. namespaces.
-- **No internet access**
+- Private PID, mount namespaces.
+- `/bin/sh` -- many scripts rely on it existing.
+- ❗ No internet access
 
 So, how do we handle downloading the source tarballs of projects? In the Nix
 "purity" model, we find the concept of a fixed-output derivation, or FOD for
 short.
 
-A FOD disables the internet sandbox. However, the user must provide a hash of
+A fixed-output-derivation disables the internet sandbox, such that we can do any
+http connection normally.
+However, the user must provide a hash of
 the resulting output. If another user tries to build the same FOD, and the hash
 is correct, it means the network connection produced the same resulting
 derivation.
-
-However, if the resulting derivation doesn't match the provided hash, Nix will
-error out. With this system, we allow some "impurity", at the expense of having
-to know what the output is. In contrast, for a regular derivation, we don't know
-ahead of time the output hash. But we assume, that for the same inputs, the
-derivation will produce the same outputs, thanks to the build sandbox. This is
-why Nix uses an "input-addressed" model.
-
-99% of the time, you will be using the fetchers from nixpkgs, with
-`pkgs.fetchFromGitHub`, etc. But just for the reader to know, that this is
-built-in to the language itself, with the `outputHash*` options:
 
 ```nix file: "fixed-output.nix"
 
@@ -139,20 +132,29 @@ built-in to the language itself, with the `outputHash*` options:
 #             got:    sha256-3FWguG761jOvjXDVGi2BkN+hLCUurMCBzeF4m0AEr4A=
 ```
 
+However, if the resulting derivation doesn't match the provided hash, Nix will
+error out. With this system, we allow some "impurity", at the expense of having
+to know what the output is.
+
+In contrast, for a regular derivation, we don't know
+ahead of time the output hash. But we assume, that for the same inputs, the
+derivation will produce the same outputs. This model is called
+"input-addressed".
+
 ### Building derivations
 
 Nix is an expression-based language, and every nix file must return a single
 value. If it returns a derivation, instead of `nix eval`, you use `nix build` to
 tell the nix-daemon to build the derivation for you.
 
-`nix build` takes an "installable", which can follow the different types:
+`nix build` takes an "installable" as an argument, which can be:
 
 - `-f [filename.nix] [attribute]`
 - `[flake.nix]#[flake output]`
 - `--expr "literal nix expression"`
 
 When using `-f`, instead of returning a derivation, you can return an attrset of
-derivations, which you select with the name:
+derivations, which you select with the attribute name:
 
 ```nix
 # filename.nix
@@ -167,20 +169,28 @@ derivations, which you select with the name:
 Some of the flags you should know about are:
 
 - `-L` or `--print-build-logs` -- to make Nix print the build logs.
-- `--keep-failed` -- put the working directory somewhere after failing a build.
+- `--keep-failed` -- keep the build directory, if the derivation fails to build.
 
 
 ## stdenv
 
-The standard environment (stdenv for short) is a collection of packages and
-build utilities provided by the [nixpkgs](https://github.com/NixOS/nixpkgs)
-repository. You can find reference documentation about the stdenv in the
-[nixpkgs manual](https://nixos.org/manual/nixpkgs/stable/#part-stdenv).
+While `builtins.derivation` is the low-level primitive, 99% of your time will be
+spent using the higher-level abstractions from nixpkgs.
+
+The standard environment (stdenv for short) is a collection of build utilities
+that makes `builtins.derivation` nicer to use. You can find stdenv in
+[nixpkgs](https://github.com/NixOS/nixpkgs), the package collection of Nix. Note
+that Nix the program and nixpkgs are "distributed" separately.
 
 We can access the stdenv from a `pkgs` instance. Pkgs is **by convention** the
-result of calling `import /path/to/nixpkgs {}` (importing nixpkgs and evaluating
-with some configuration). Pkgs is a huge attrset that contains all of the
-packages, as package name - package value pairs. One of the keys is stdenv.
+result of calling `import /path/to/nixpkgs {}`: importing nixpkgs and evaluating
+with some configuration.
+
+- nixpkgs -> the package repository, a path
+- pkgs -> result of `import /path/to/nixpkgs {}`, an attribute set
+
+Pkgs is a huge attrset that contains all of the
+packages, as name-value pairs. One of those is `pkgs.stdenv`:
 
 
 ```nix
@@ -192,9 +202,6 @@ in
 #=> «derivation /nix/store/sbxnap725qcfsjgp21vjd1h6qpgi6gwj-stdenv-linux.drv»
 ```
 
-In this section, I don't want to cover stdenv thoughtfully, but rather give you
-the topics you will need for a "non-hacker" use. Please refer to the nixpkgs
-manual if you want an alternative explanation on these topics.
 
 
 ### mkDerivation basics
@@ -208,13 +215,13 @@ the environment variables to build your package.
 > `mkDerivation` doesn't check if the name of the arguments are correct. It will
 > silently ignore typos.
 
-An `mkDerivation` call will contain the following:
+A `mkDerivation` call will contain the following:
 
 - `name` or `pname` + `version` of the package. The latter is preferred.
 - `src` can be another derivation or a local path.
 - Dependencies: packages that our package depends on, at run-time or build-time.
-- Phases: pieces of **bash** code.
-- Any other environment variable that is used by the builder
+- Phases: pieces of bash code.
+- Any other environment variable that is used by the build scripts.
 
 `mkDerivation` heavily relies on bash code, and environment variables. As all
 the attributes of the argument will be mapped into environment variables, we use
@@ -227,13 +234,11 @@ which is very convenient -- `pname` stands for *package name*.
 As mentioned, `src` will be mapped into the environment variable `$src`. The
 bash builder has a phase that takes `$src` and tries to unpack it into the work
 directory. We can use anything that makes sense where a path does, such as
-another derivation. Note that you don't need to manually force the string
-interpolation `src = "${myPkg}";`, this is done for you in the `mkDerivation`
-implementation.
+another derivation.
 
 > [!IMPORTANT]
-> `mkDerivation` has a number of implicit packages that are always available. It
-> includes:
+> `mkDerivation` has a number of implicit packages that are always available in
+> PATH. It includes:
 > - GCC
 > - Bash
 > - Basic Linux utilities (cp, mv, rm, etc) and others like grep, tar, make,
@@ -241,11 +246,12 @@ implementation.
 > - You can check the full list [here](https://nixos.org/manual/nixpkgs/stable/#sec-tools-of-stdenv)
 
 
-#### Phases
+### Phases
 
-The `mkDerivation` builder reads different phases, that are either the default
-ones, or exported as environment variables, by setting them as attributes to the
-call.
+`mkDerivation` is implemented as a bash script. It has different "phases" that
+you can expect from a build system: build, test, install, etc. You can modify
+the behaviour of the phases with environment variables, or you can choose to
+override them entirely.
 
 The phases are documented in the [nixpkgs manual](https://nixos.org/manual/nixpkgs/stable/#sec-stdenv-phases)
 and are the following:
@@ -260,13 +266,13 @@ and are the following:
 - `installCheckPhase` runs tests that check if the package is installed properly
 - `distPhase` -- I have never seen this one in use
 
-> [!IMPORTANT]
-> All the phases are implemented in bash. And **not POSIX sh** for the matter, it
-> is explicitly bash (if you use the bash extensions).
+> [!TIP]
+> All the phases are implemented in bash. **Not POSIX sh** for the matter, it
+> is explicitly bash -- if you want to use bash extensions.
 
 You can choose to overwrite the default phases. The default implementation of
-the phases also run **hooks before and after**, to not have to completely modify
-the phase.
+the phases also run **hooks before and after**, to not have to completely
+modify a phase.
 
 ```nix
 let
@@ -287,15 +293,17 @@ in
     '';
 
     postBuild = ''
-      # this won't run
-      # if you want, you can add `runHook preBuild` and `runHook postBuild`
-      # to your custom buildPhase
+      # this won't run, because we replace buildPhase
+      # you can run this by calling `runHook postBuild` (and `runHook preBuild`)
+      # in your custom buildPhase
     '';
   }
 ```
 
 Many phases also have some configuration. For example, you can control
-`unpackPhase` by setting the env variable `dontUnpack`. Refer to the manual for
+`unpackPhase` by setting the env variable `dontUnpack = true`, or skipping the checks
+with `doCheck = false`.
+Refer to the manual for
 specifics of each phase.
 
 The default behavior of the stdenv for `buildPhase` and `installPhase` is `make` +
@@ -318,20 +326,21 @@ package.
   - For example: libc, QT, zlib, etc (*usually* libraries).
 
 By default, Nix doesn't check that the dependencies do respect this difference,
-unless you use `strictDeps = true;`
+unless you use `strictDeps = true`. However, hooks only run for packages in
+`nativeBuildInputs`.
 
 ### Hooks
 
 One of the difference of `nativeBuildInputs`, is that they may contain some bash
-code that is sourced by the bash builder. The hook will only be executed if the
-package is in `nativeBuildInputs`.
+code that is sourced by the bash builder. Having a package with a hook in
+`buildInputs` won't trigger its stdenv hook.
 
 Hooks augment the capabilities of `mkDerivation`, depending on the package.
 Usually, they are executed for the program to be able to function properly. This
 is best shown by using the example of the hook of `pkg-config`.
 
-`pkg-config` is a program that allows use to find the path to libraries. This is
-essential in Nix, because there is no global library path. However, how do we
+`pkg-config` is a program that allows us to find the path to libraries. This is
+very nice in Nix, because there is no global library path. However, how do we
 transmit to `pkg-config`, that the packages in `buildInputs` are available? The
 hook is what "glues" everything together. For `pkg-config`, its hook will export
 `PKG_CONFIG_PATH`, which is used by the CLI:
@@ -345,13 +354,14 @@ with-pkg-config> PKG_CONFIG_PATH:/nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zli
 with-pkg-config> zlib zlib - zlib compression library
 ```
 
+
 ### Compiler wrappers
 
 Apart from manually passing the include flags from `pkg-config`, in Nix we also
 use the C/C++ compiler wrappers. In general, a wrapper is a "fake" application
 that calls the real one, passing some extra arguments.
 
-For Nix, gcc (or clang in macOS) is a bash script. It sets some flags, and then
+In nixpkgs, gcc (or clang in macOS) is a bash script. It sets some flags, and then
 calls the real gcc.
 
 ```console
@@ -372,17 +382,19 @@ from `buildInputs`. This makes a "fake global search path", that are passed to
 the wrapped gcc. So, if you use `-lz`, gcc will find the library normally,
 because the wrapper knows where to find the libraries -- instead of in  `/usr`.
 
-> [!TIP]
-> `-isystem` is used for headers, taking precedence over `-I`
 
 ```nix file: "cflags.nix"
 ```
+
 
 ```console
 $ nix build -f ./cflags.nix -L
 cflags> NIX_CFLAGS_COMPILE= -frandom-seed=4sm1s48afi -isystem /nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/include -isystem /nix/store/0w4q8asq9sn56dl0sxp1m8gk4vy2ygs8-zlib-1.3.1-dev/include
 cflags> NIX_LDFLAGS=-rpath /nix/store/4sm1s48afihxh46mdv71rcwva52w47hm-cflags/lib  -L/nix/store/rqs1zrcncqz3966khjndg1183cpdnqxs-zlib-1.3.1/lib -L/nix/store/rqs1zrcncqz3966khjndg1183cpdnqxs-zlib-1.3.1/lib
 ```
+
+> [!TIP]
+> `-isystem` is used for headers, taking precedence over `-I`
 
 
 ## Modifying derivations
@@ -395,10 +407,10 @@ following sections.
 ### overrideAttrs
 
 When you use `mkDerivation`, the resulting derivation will contain an extra
-attribute named `.overrideAttrs`. This is a function that takes a function as an
-argument `.overrideAttrs fn`. The function argument, takes the old
-`mkDerivation` arguments, and can output **some** of the new arguments. I
-believe it is best understood with an example:
+attribute named `.overrideAttrs`. This is a function, to which you can pass a
+function such as `oldAttrs: newAttrs`. This means that we change the attributes
+of the `mkDerivation` call, and optionally use the older ones if we need to. For
+example, we can use `.overrideAttrs` to change the name of the `hello` package:
 
 ```nix
 let
@@ -409,9 +421,6 @@ in
   })
 #=> «derivation /nix/store/0b00bv1hjv7v1dlnzgrv21caz4h7ihii-goodbye-2.12.1.drv»
 ```
-
-Of course, it is possible to chain multiple `.overrideAttrs`, but it would be
-silly: `((pkgs.hello.overrideAttrs fn1).overrideAttrs fn2).overrideAttrs fn3`.
 
 A common task would be to generate a new package that changes the version to an
 updated one, or using a different fork of the project.
@@ -453,21 +462,28 @@ which `pkgs.zlib` is used, only with `.overrideAttrs`? You could imagine doing
 something like:
 
 ```nix
-# we don't do this
-buildInputs = (builtins.filter (drv: (lib.getName drv) != "zlib")) ++ [ newZlib
-];
+.overrideAttrs (old: {
+  # we don't do this
+  buildInputs =
+    (builtins.filter (drv: (lib.getName drv) != "zlib") old.buildInputs)
+    ++
+    [ newZlib ];
+})
 ```
 
-This can be impossible, if we are "consuming" `zlib` in a "non-structured"
-manner, for example doing string interpolation.
+That thing "works", but for more nuanced cases it may be impossible. It is the
+case if instead of using `buildInputs`, we do some string interpolation, or any
+"non-structured" use of the dependencies.
 
 The solution that nixpkgs proposes is the `callPackage` pattern.
-`pkgs.callPackage file args` takes a function f, and calls it with `pkgs // args`
--- this is, with your custom modifications in args.
+`pkgs.callPackage file args` takes a path to a `file` which must contain a
+function, and calls the function with `pkgs // args` -- a merged `pkgs` with our
+own modifications.
 
 
 ```nix
 # package.nix
+# function that returns a derivation
 {
   stdenv,
   zlib,
@@ -487,21 +503,28 @@ in
   pkgs.callPackage ./package.nix {}
 ```
 
-What `callPackage` lets us do, is to pass our custom `zlib` via its arguments,
-or rather with `override`:
+After using `callPackage`, our derivation will have an extra attribute called
+`.override`. We can use `.override`, to go "back in time" and call the original
+file with different arguments. This is very powerful, because we can replace the
+dependencies of a package with a simple `.override`, and every usage in the file
+will follow the new package. 
+
+In the following example, we create a custom `zlib`, and we use `callPackage`
+and `.override` to pass it to a package:
+
 
 ```nix
 # default.nix
 let
   pkgs = import <nixpkgs> {};
-  myZlib = pkgs.zlib.overrideAttrs ...; # custom zlib
 
   myPkg = pkgs.callPackage ./package.nix {
-    zlib = myZlib;
+    zlib = pkgs.zlib.overrideAttrs ...;
   };
-  # or with override
-  myPkg2 = myPkg.override {
-    zlib = ...;
+
+  # we can override pkgs from nixpkgs too
+  myHello = pkgs.hello.override {
+    stdenv = ...;
   };
 in
   # ...
@@ -509,19 +532,19 @@ in
 
 > [!IMPORTANT]
 > In summary:
-> - `.overrideAttrs` can be used to change the arguments of `mkDerivation`
+> - `.overrideAttrs` can be used to change the arguments of `mkDerivation`.
 > - `.override` can be used to inject different dependencies when used with
->   `callPackage` -- ideally you always use `callPackage`.
+>   `callPackage`.
 
 
 ## Package collections
 
 In the previous sections we have learn:
 
-- The basics of derivations
-- Using `mkDerivation` as an abstraction
-- Modifying packages with `.overrideAttrs`
-- Using `callPackage` and `.override` for dependency injection
+- The basics of derivations.
+- Using `mkDerivation` as an abstraction.
+- Modifying packages with `.overrideAttrs`.
+- Using `callPackage` and `.override` for dependency injection.
 
 The next step, is learning how to handle a collection of different packages, and
 threading the dependencies between them. We will start with a simple example:
@@ -539,11 +562,11 @@ explicitely:
 let
   pkgs = import <nixpkgs> {};
 
-  myLib = pkgs.callPackage ./package-mylib {};
-  simpleCLI = pkgs.callPackage ./package-simplecli {
+  myLib = pkgs.callPackage ./package-mylib.nix {};
+  simpleCLI = pkgs.callPackage ./package-simplecli.nix {
     inherit myLib;
   };
-  complexCLI = pkgs.callPackage ./package-complexcli {
+  complexCLI = pkgs.callPackage ./package-complexcli.nix {
     inherit myLib simpleCLI;
   };
 in
@@ -551,7 +574,8 @@ in
 ```
 
 This manual "threading" of dependencies is fine for 1 or 2 packages, but it will
-become annoying quickly. To solve this, there are two different solutions.
+become annoying quickly. To solve this, there are two different solutions:
+`callPackageWith` and overlays.
 
 ### callPackageWith
 
@@ -576,11 +600,30 @@ let
   myCallPackage = pkgs.callPackageWith (pkgs // mypkgs);
 
   mypkgs = {
-    myLib = myCallPackage ./package-mylib {};
-    simpleCLI = myCallPackage ./package-simplecli {}; # myLib passed automatically
-    complexCLI = myCallPackage ./package-complexcli {}; # " and simpleCLI passed too
+    myLib = myCallPackage ./package-mylib.nix {};
+    simpleCLI = myCallPackage ./package-simplecli.nix {}; # myLib passed automatically
+    complexCLI = myCallPackage ./package-complexcli.nix {}; # " and simpleCLI passed too
   };
+in
+  # ...
 ```
+
+> [!TIP]
+> Remember that when using `callPackage`, the file must be a function that
+> returns a derivation:
+>  ```nix
+>  {
+>    stdenv,
+>    myLib,
+>    simpleCLI,
+>  }:
+>  stdenv.mkDerivation {
+>    name = "mypackage";
+>    nativeBuildInputs = [ simpleCLI ];
+>    buildInputs = [ myLib ];
+>    # ...
+>  }
+>  ```
 
 
 ### overlays
@@ -594,21 +637,22 @@ inject our package collection into `pkgs` itself. Instead of using a custom
 `callPackage` that threads our custom packages, we are "modifying" `pkgs`
 itself.
 
-Overlays are loaded when importing nixpkgs. An overlay is a function that takes
-2 arguments:
+Overlays are loaded when importing nixpkgs as configuration. We load a list of
+overlays, and an overlay is a function that takes two arguments: the package set
+previous to the overlay, and the final package set.
 
 > [!TIP]
 > Function arguments are named by the user. You may see other names used for
-> overlays.
+> overlay arguments.
 
 ```nix
 final: prev: {
-  myLib = final.callPackage ./package-mylb.nix {};
+  myLib = final.callPackage ./package-mylib.nix {};
 
   # myLib passed automatically from final
   # because it's on final.myLib
-  simpleCLI = final.callPackage ./package-simplecli {};
-  complexCLI = final.callPackage ./package-complexcli {}; # " and simpleCLI passed too
+  simpleCLI = final.callPackage ./package-simplecli.nix {};
+  complexCLI = final.callPackage ./package-complexcli.nix {};
 
   # you can also modify pkgs from nixpkgs
   # this will be final.zlib, so modify zlib from prev
@@ -620,9 +664,9 @@ Both `prev` and `final` are like `pkgs` -- that is, a huge attrset containing
 all the packages. `prev` is `pkgs` before applying your overlay. `final` is
 `pkgs` after applying all overlays, including the one you are writing.
 
-It should not come as a surprise, that in Nix we can use the result of a
-function, as the argument to itself. It's possible due to lazy evaluation, but
-you don't need to thing too hard about it.
+There is one weird thing here: the result of applying the overlay is an input to
+the overlay itself. This is possible because Nix is a lazy language, but you can
+also run into *infinite recursion* problems.
 
 When should you grab something from `prev` and when from `final`? The rule of
 thumb is the following:
@@ -633,6 +677,24 @@ thumb is the following:
 every package. We use `final.callPackage` to thread the modifications of our
 overlay.
 
+To load an overlay, you must pass it as configuration when importing nixpkgs:
+
+```nix
+let
+  pkgs = import <nixpkgs> {
+    overlays = [
+      (final: prev: {
+        myLib = final.callPackage ./package-mylib.nix {};
+      })
+    ];
+  };
+in
+  pkgs.myLib
+```
+
+> [!TIP]
+> Overlays are a useful method to inject new packages into `pkgs` and modifying
+> the existing ones, specially in the context of NixOS.
 
 ## Trivial builders and writers
 
@@ -640,7 +702,7 @@ There are higher-level abstractions built on top of `stdenv.mkDerivation`, that
 can be very useful. To begin with, the [trivial builders](https://nixos.org/manual/nixpkgs/stable/#chap-trivial-builders)
 implement very basic tasks:
 
-- `runCommand`, for when all you need is to run a command:
+- `runCommand`, when all you need is some bash script to write to `$out`
   ```nix
   pkgs.runCommand "name" {} ''
     echo "hello" > $out
@@ -650,12 +712,10 @@ implement very basic tasks:
   ```nix
   pkgs.writeText "name" "hello"
   ```
-- Etc. Please take a look at the nixpkgs manual if you are curious about the
-rest.
 
-We also find in nixpkgs the "format" writers and "script" writers. The format
+We also find in nixpkgs the *format* writers and *script* writers. The format
 writers take a Nix value, and transforms it into the target format, placing it
-in a new file:
+in a new file. This is useful to transform nix code into YAML, TOML, etc.
 
 ```nix
 (pkgs.formats.yaml {}).generate "config.yaml" { foo.bar = "baz"; }
@@ -663,24 +723,22 @@ in a new file:
 ```
 
 ```console
-$ nix build --impure --expr '((import <nixpkgs> {}).pkgs.formats.yaml {}).generate "config.yaml" { foo.bar = "baz"; }'
+$ nix build -f ./some-yaml.nix
 
 $ cat result
 foo:
   bar: baz
 ```
 
-Nixpkgs also provides writers for scripting languages. The most simple one is
-`writeShellScriptBin`, which can be used to quickly create a new usable package.
-It is similar to `writeText`, but also placing the file in `$out/bin` and making
-it executable:
+The script writers can be used to quickly create scripts or utilities for our
+terminal usage:
 
-```console
-$ nix build --impure --expr '(import <nixpkgs> {}).writeShellScriptBin "test" "echo test"'
-
-$ cat result/bin/test
-#!/nix/store/izpf49b74i15pcr9708s3xdwyqs4jxwl-bash-5.2p32/bin/bash
-echo test
+```nix
+with import <nixpkgs> {};
+  writeShellScriptBin "hello" ''
+    res=$(${jq}/bin/jq .something /some/path)
+    echo $res
+  ''
 ```
 
 
@@ -692,22 +750,31 @@ specifics of each language. In fact, you will be using `mkDerivation` only for
 C/C++ projects, the trivial builders for simple files, and the language-specific
 builders for the rest.
 
+- To build Python packages, use `buildPythonPackage`
+- To build Go, use `buildGoModule`
+- To build Rust packages, use `buildRustPackage`
+- etc.
+
 In previous sections we have been exploring Nix together. But for the language
 builders, it is best to consult the nixpkgs documentation.
 
-<p style="text-align: center">
+<p style="text-align: center; padding: 1rem">
   <a
     href="https://nixos.org/manual/nixpkgs/stable/#chap-language-support"
   >Nixpkgs manual: Languages and frameworks</a>
 </p>
 
 In general, instead of using `stdenv.mkDerivation`, you will use a different
-function. This function, will accept some extra attributes, that mean something
-to the builder.
+function. The arguments will be still similar to `mkDerivation`, but you will
+need to configure "extra" stuff. For example, for Rust packages you have to
+point `buildRustPackage` to a hash or path of the `Cargo.lock`,
+the Python builder will properly wrap the resulting binaries, etc.
 
-Some other languages, like python, have an scope of packages. For example, to
-acess the different python libraries, you use `pkgs.python3.pkgs.<name>`. If
-that is the case, then it will also define a custom `callPackage`:
+Python and other languages also have a huge collection of packaged dependencies
+from PyPi. These are located in their own custom scope in nixpkgs, for Python
+that is `pkgs.python3.pkgs.<name>`. Because of this, you also need to use
+`pkgs.python3.pkgs.callPackage` to be able to access the packages from this
+scope:
 
 ```nix
 let
