@@ -1,9 +1,11 @@
-import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { getCollection } from 'astro:content';
 import sanitizeHtml from 'sanitize-html';
 
-import { experimental_AstroContainer as AstroContainer } from "astro/container";
+// import { experimental_AstroContainer as AstroContainer } from "astro/container";
+// import { getContainerRenderer as getMDXRenderer } from "@astrojs/mdx";
+// import { loadRenderers } from "astro:container";
+import { getCollection } from "astro:content";
+import rss from '@astrojs/rss';
 
 async function amap<A, B>(arr: A[], fun: (arg0: A) => B) {
   return await Promise.all(arr.map(async v => await fun(v)))
@@ -30,12 +32,15 @@ export async function GET(context: APIContext): Promise<Response> {
     stylesheet: '/rss/pretty-feed-v3.xsl',
     trailingSlash: false,
     items: (await amap(blog, async (post) => {
-      const container = await AstroContainer.create();
-      const render = await post.render();
-      container.renderToString(render.Content);
+      // https://blog.damato.design/posts/astro-rss-mdx
+      // No idea about this
+      // const renderers = await loadRenderers([getMDXRenderer()]);
+      // const container = await AstroContainer.create({ renderers });
+      // const render = await post.render();
+      // container.renderToString(render.Content);
       return {
         link: `/blog/${post.slug}`,
-        content: sanitizeHtml(await container.renderToString(render.Content)),
+        // content: sanitizeHtml(await container.renderToString(render.Content)),
         ...post.data,
       };
     })),

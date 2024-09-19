@@ -17,11 +17,11 @@ export default defineConfig({
   // your configuration options here...
   // https://docs.astro.build/en/reference/configuration-reference/
   integrations: [
+    mdx(),
     tailwind({
       applyBaseStyles: false
     }),
-    react(),
-    mdx()
+    react()
   ],
   devToolbar: {
     enabled: false
@@ -53,7 +53,7 @@ export default defineConfig({
     ],
   },
   build: {
-    format: "file"
+    format: "file",
   },
   vite: {
     assetsInclude: [
@@ -64,7 +64,7 @@ export default defineConfig({
     ],
     ssr: {
       external: ["neohome-rs"]
-    }
+    },
   },
   trailingSlash: "never",
 });

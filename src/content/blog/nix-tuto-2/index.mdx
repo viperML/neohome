@@ -507,7 +507,7 @@ After using `callPackage`, our derivation will have an extra attribute called
 `.override`. We can use `.override`, to go "back in time" and call the original
 file with different arguments. This is very powerful, because we can replace the
 dependencies of a package with a simple `.override`, and every usage in the file
-will follow the new package. 
+will follow the new package.
 
 In the following example, we create a custom `zlib`, and we use `callPackage`
 and `.override` to pass it to a package:
