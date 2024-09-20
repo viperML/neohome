@@ -66,5 +66,5 @@ export default defineConfig({
       external: ["neohome-rs"]
     },
   },
-  trailingSlash: "never",
+  trailingSlash: "never"
 });
