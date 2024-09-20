@@ -2,16 +2,19 @@
 // FIXME: https://github.com/ddamato/astro-mdx-rss
 export const partial = true;
 import { getCollection } from 'astro:content';
-const posts = await getCollection('blog');
+const posts = (await getCollection('blog')).filter(
+  post => !(post.data.draft === true)
+);
 ---
-<?xml version="1.0" encoding="UTF-8"?>
+<Fragment is:raw><?xml version="1.0" encoding="UTF-8"?></Fragment>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>ayats.org</title>
     <description>Welcome to my personal blog.</description>
     <Fragment set:html={ `<link>${ Astro.url.origin }</link>` }/>
   </channel>
-  { posts.map(async (post) => {
+  { posts
+  .map(async (post) => {
     const url = new URL(`blog/${post.slug}`, Astro.url.origin).toString();
     const { Content } = await post.render();
     return (
