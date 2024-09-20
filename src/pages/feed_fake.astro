@@ -5,8 +5,10 @@ import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog')).filter(
   post => !(post.data.draft === true)
 );
+
+const header = '<?xml version="1.0" encoding="UTF-8"?>'
 ---
-<Fragment is:raw><?xml version="1.0" encoding="UTF-8"?></Fragment>
+<Fragment set:html={header} />
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>ayats.org</title>
