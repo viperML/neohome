@@ -795,6 +795,116 @@ buildPythonPackage {
 }
 ```
 
+## Shells
+
+Building packages into the `/nix/store` is OK, but what about the actual
+development? You don't want to run `nix build` for each build iteration, and
+your editor and tooling must know about your project dependencies.
+
+Enter `nix develop`. It accepts the same arguments as `nix build`, and we can
+test it by passing it a nix file that returns a derivation:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  pkgs.hello
+#=> «derivation /nix/store/crmj28zg09517n5sskml9fmy2c6r3rsr-hello-2.12.1.drv»
+```
+
+```console
+$ nix develop -f ./dev.nix
+
+$ gcc --version
+gcc (GCC) 13.3.0
+```
+
+Nix just started a new subshell, and exported all the environment variables used
+for building `pkg.hello`. This is the last piece, that allows us to use Nix to
+develop and package software. Within the shell, we will have access to gcc, all
+our dependencies. The wrapper flags such as `NIX_CFLAGS_COMPILE` all the hook
+from `pkg-config`, `cmake` and other are also executed.
+
+Using `nix develop` allows us to define all our dependencies in a Nix file, that
+can be shared along all the contributors of the project. This is a very
+important feature of Nix, as it replaces the workflow of running `apt install`
+commands that **modify** your system, or having to deal with containers.
+
+If you don't want to write a package definition with `mkDerivation` right away,
+you can instead use `pkgs.mkShell`. It is a quick to use alternative, that only
+adds some dependencies into the environment. It is derivation, meaning you can
+use `nix develop -f shell.nix`:
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  pkgs.mkShell {
+    packages = [
+      pkgs.pkg-config
+      pkgs.zlib
+      pkgs.python3
+    ];
+
+    env = {
+      FOO = "BAR";
+    };
+  }
+#=> «derivation /nix/store/dhf2c5g274zy58pdb15cdmwrzs69sqin-nix-shell.drv»
+```
+
+```console
+$ nix develop -f ./dev.nix
+
+$ pkg-config --list-all
+python            Python - Build a C extension for Python
+zlib              zlib - zlib compression library
+python3           Python - Build a C extension for Python
+python3-embed     Python - Embed Python into an application
+python-3.12-embed Python - Embed Python into an application
+python-3.12       Python - Build a C extension for Python
+
+$ python3 --version
+Python 3.12.5
+
+$ printenv FOO
+BAR
+```
+
+`mkShell` is documented in the [nixpkgs
+manual](https://nixos.org/manual/nixpkgs/stable/#sec-pkgs-mkShell), and you will
+commonly use the following options:
+
+- `packages` list of dependencies. Hooks are run as needed.
+- `env`: attrset of environment variables to export
+
+> [!CAUTION]
+> You might see some `mkShell`'s in the wild that use `buildInputs`. As you
+> know, **hooks are not run** for `buildInputs`, which will lead to wrong
+> behaviour. Always use `packages`, which internally maps into
+> `nativeBuildInputs`.
+
+
+I have another post that covers the language-specific details for `mkShell`, if
+you want to continue reading: [Development workflow with Nix shells](/blog/nix-workflow).
+
+## Notes on the Nix V2 vs V3 CLI
+
+At the time of this writing, the last version of Nix is 2.24. There is an
+ongoing development process to rewrite the command line interface, to make it
+friendlier and add more features. This is called the Nix V3 CLI, gated behind
+the experimental feature `nix-command`.
+
+For the sake of writing a future-proof guide, I chose to show the V3 commands,
+but here is an small rosetta table:
+
+| Function | V2 CLI | V3 CLI |
+| --- | --- | --- |
+| Evaluate an expression | `nix-instantiate --eval` | `nix eval` |
+| Build a derivation | `nix-build ./file.nix -A myAttr` | `nix build -f ./file.nix myAttr` |
+| Development shell | `nix-shell ./file.nix -A myAttr` | `nix develop -f ./file.nix myAttr` |
+
+
 ## Finale
 
 I hope that this lesson was useful, and you learned how derivations and packages
@@ -812,5 +922,8 @@ In summary, we learned that:
 - You can modify existing derivations with `.overrideAttrs` and `.override`
 - You can define package collections with `callPackageWith` and overlays
 - Language-specific abstractions are built on top of `mkDerivation`
+- `mkShell` and `nix develop` can be used to get a development environment for a
+  derivation.
+
 
 In part 3 of the tutorial, we will be exploring NixOS and the module system.
