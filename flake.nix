@@ -115,8 +115,10 @@
 
           ltex-ls
 
+          python3.pkgs.libxml2.bin
           (python3.withPackages (pp: [
             pp.pyyaml
+            pp.libxml2
           ]))
         ];
         env.RUST_SRC_PATH = "${rustPlatform.rustLibSrc}";
