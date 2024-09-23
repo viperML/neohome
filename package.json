@@ -13,7 +13,6 @@
     "@astrojs/check": "^0.7.0",
     "@astrojs/mdx": "^3.1.5",
     "@astrojs/react": "^3.6.0",
-    "@astrojs/rss": "^4.0.6",
     "@astrojs/tailwind": "^5.1.0",
     "@eslint/js": "^9.6.0",
     "@fontsource/geist-sans": "^5.0.3",
