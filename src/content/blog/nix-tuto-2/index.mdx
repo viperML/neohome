@@ -741,6 +741,97 @@ with import <nixpkgs> {};
   ''
 ```
 
+## Fetchers
+
+Fetching the source code of an application is one essential step for a build
+system like Nix. As with packages, the fetched content will be placed in
+`/nix/store`, but we have 2 ways of doing so:
+
+- **Eval-time** fetchers: `builtins.fetch{*}`. Used for downloading Nix code
+that we can evaluate.
+- **Build-time** fetchers: `pkgs.fetch{*}`. Only used at build-time for other
+derivations. They produce derivations.
+
+We will use eval-time fetcher when we use Nix code from them. Nix is able to
+download the eval-time fetchers as it evaluates the code, but it can only do so
+in a sequence. Usually, we only need to fetch nixpkgs at eval-time:
+
+```nix
+let
+  # pinning nixpkgs to a remote tarball
+  # we use a builtins fetcher because it runs at evaluation-time
+  myNixpkgs = builtins.fetchTarball "https://github.com/NixOS/nixpkgs/archive/06278c77b5d162e62df170fec307e83f1812d94b.tar.gz";
+  pkgs = import myNixkgs {};
+in
+  # ...
+```
+
+Build-time fetchers produce regular *fixed-output* derivations. They use regular
+programs like `curl` or `git clone` under the hood. As FOD's, you have to
+provide the output hash. The fetchers are [documented in
+nixpkgs](https://nixos.org/manual/nixpkgs/stable/#chap-pkgs-fetchers).
+
+```nix
+let
+  pkgs = import <nixpkgs> {};
+in
+  pkgs.fetchFromGitHub {
+    owner = "viperML";
+    repo = "neohome";
+    rev = "<rev>";
+    hash = "<hash>";
+  }
+```
+
+Remember to:
+
+- Use an eval-time fetcher to fetch nixpkgs, or any nix code you want to
+evaluate.
+- Use the build-time fetchers from pkgs for the rest.
+
+> [!CAUTION]
+> Some fetchers are named the same for their `builtins` and `pkgs` counterparts.
+> `fetchurl` is defined in the global scope as `builtins.fetchurl`. If you
+> forget to bring `fetchurl` in a `callPackage` definition, it will use the
+> eval-time one.
+> ```nix
+> {
+>   stdenv,
+> }:
+> stdenv.mkDerivation {
+>   # Bad: this is builtins.fetchurl, it's defined in the global scope
+>   src = fetchurl { /* ... */ };
+> }
+>
+> {
+>   stdenv,
+>   fetchurl,
+> }:
+> stdenv.mkDerivation {
+>   # Good: this is pkgs.fetchurl, the proper build-time fetcher
+>   src = fetchurl { /* ... */ };
+> }
+> ```
+
+### Eval-time purity
+
+I also want to add this technical topic about eval-time purity: the eval-time
+fetchers don't require an output hash, as FOD's do. You can call
+`builtins.fetchTarball` directly, without providing the output hash.
+
+Originally, this behaviour was intended to be for convenience. However, one of
+the features that *flakes* have is that they disallow eval-time fetchers
+that don't provide an output hash.
+
+```nix
+builtins.fetchurl {
+  url = "https://github.com/NixOS/nixpkgs/archive/nixos-14.12.tar.gz";
+  # OK without flakes
+
+  # if using flakes, passing the sha256 is required
+  # sha256 = "...";
+}
+```
 
 
 ## Language and frameworks
