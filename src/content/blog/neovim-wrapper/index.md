@@ -1,8 +1,9 @@
 ---
 title: Neovim wrapper from scratch
-pubDate: 2024-09-25T09:38:41Z
-summary: TODO
-draft: true
+pubDate: 2024-09-26T13:31:24Z
+summary: A DIY approach to managing Neovim with Nix. Without complicated
+frameworks that introduce more complexity.
+draft: false
 ---
 
 What if told you, that you can have a portable Neovim configuration, that runs
@@ -32,12 +33,13 @@ There are already multiple abstractions that wrap Neovim:
 
 In face of so many alternatives, my answer: I don't think they are good. The
 fundamental issue with all of them is that you completely miss how the plugins
-are handled. Which is a big deal, because it's not something hard to understand.
+are handled. Which is a big deal, because it's not something fundamentally hard.
 I believe that by writing the wrapper by yourself, you will be more confident in
-the abstractions that hold your Neovim configuration.
+the abstractions that hold up your Neovim configuration.
 
 So, instead of proposing yet another Neovim wrapper: this is *Neovim wrapper from
-scratch* (NWFS if you wish), the guide to write it by yourself.
+scratch* (NWFS if you wish), a guide yo writing your own Neovim wrapper with
+Nix.
 
 > [!TIP]
 > This guide assumes some knowledge of Nix and Neovim.
@@ -207,4 +209,147 @@ configuration. This is nice, because it will make our configuration more
 
 ## Finale
 
+That's it! Creating a wrapper for Neovim is not a difficult task, and I think
+this Do-It-Yourself approach is simpler to maintain that relying on some Nix
+framwork. Now that your neovim configuration is self-contained with Nix, these
+are some things that you can do:
 
+- Use it directly on a foreign machine with `nix run github:user/repo#neovim`
+- Try other people's config -- mine is `nix run github:viperML/dotfiles#neovim`
+- Investigate `nix bundle` or `nix copy` to bring it to machines that don't use
+  Nix.
+
+## Optionals
+
+Before leaving, I want to mention some optional topics that you might want to do
+too.
+
+### Configuration as a plugin
+
+Instead of having a huge `init.lua`, you could make your own configuration a
+plugin itself. The structure of a plugin is the following:
+
+```
+<plugin>
+├── plugin
+│   └── init.lua
+└── lua
+    └── <lua module>
+        ├── something.lua
+        └── init.lua
+```
+
+At first, we create a directory for the plugin, and move our `init.lua` into
+`<plugin>/plugin/init.lua`. Then, we can factor out configuration into its own
+Lua module. For example, if we name our Lua module something like `myconfig`,
+then within our `plugin/init.lua` we can `require("myconfig")` and
+`require("myconfig.something")`. This can be helpful to split a large
+configuration into different units.
+
+When we create our own plugin, we will use `-u NORC` instead of passing our
+`init.lua`, and also add it to our package-creating derivation:
+
+```nix
+packpath = runCommandLocal "packpath" {} ''
+  mkdir -p $out/pack/${packageName}/{start,opt}
+
+  ln -vsfT ${./myplugin} $out/pack/${packageName}/start/myplugin
+
+  ${
+    lib.concatMapStringsSep
+    "\n"
+    (plugin: "ln -vsfT ${plugin} $out/pack/${packageName}/start/${lib.getName plugin}")
+    startPlugins
+  }
+'';
+```
+
+### Lazy loading with lz.n
+
+One of the things that people dislike about the Nix wrappers is that they don't
+use [lazy.nvim](https://github.com/folke/lazy.nvim). That package manager is
+capable of setting hooks automatically, so that plugins are loaded at specic
+events. For example, you can configure *telescope* to only load when you
+actually run the command `:Telescope`.
+
+This is possible to do manually. If lazy.nvim does it, there must be a way, in
+the end. But the lazyer of abstraction is the useful part.
+
+So, instead, you can use [lz.n](https://github.com/nvim-neorocks/lz.n), a plugin
+that can take care of "lazy loading" (quite of an overloaded term). You must
+place it as a `start` plugin, while plugins that you want to be lazy-loadable
+must be `opt` plugins. `lz.n` doesn't install plugins itself, but rather provide
+an inteface for lazy-loading. After adding the plugins to your wrapper, refer to
+upstream documentation for configuration.
+
+### Plugins not in nixpkgs
+
+As you may have noticed, we bring plugins from `pkgs.vimPlugins.<>`. These are
+plugins that are pre-packaged in nixpkgs. This is convenient, but you might want
+to bring plugins that are not packaged, or use some specific commit or version
+for some plugin.
+
+As you know, a Neovim plugin is simply a cloned repository. You can use
+`pkgs.fetchFromGitHub` and pass it directly to our `plugins` list. There is also
+`pkgs.vimUtils.buildVimPlugin`, which also sets a plugin's name, so that when we
+use `lib.getName plugin` in our build script, it gets linked with the proper
+name.
+
+```nix
+plugins = [
+  (vimUtils.buildVimPlugin {
+    name = "telescope.nvim"
+    src = fetchFromGitHub {
+      owner = "nvim-telescope";
+      repo = "telescope.nvim";
+      rev = "cb3f98d935842836cc115e8c9e4b38c1380fbb6b";
+      hash = ""; # fill with correct hash
+    };
+  })
+  vimPlugins.etc
+  # ...
+];
+```
+
+Another option to using plugins outside of `pkgs.vimPlugins` is [nvfetcher](https://github.com/berberman/nvfetcher),
+a little program that can generate all the `fetchFromGitHub` for you from a
+simple TOML specification. I do it for 
+[my Neovim wrapper](https://github.com/viperML/dotfiles/blob/e253b13d89ea56493d85aa7290fda55dcb81a4e1/modules/wrapper-manager/neovim/default.nix#L32)
+, and while passing
+around the results from nvfetcher is not trivial, it is definitively doable.
+
+### Extra Lua packages
+
+Nixpkgs hosts Lua packages that are mirrored from luarocsk, that you might want
+to load into your Neovim configuration. To be able to load them, there are 2
+options:
+
+- Changing the `LUA_PATH` and `LUA_CPATH` environment variables.
+- Changing the `package.path` and `package.cpath` Lua globals.
+
+While both work, I don't like using environment variables. They "leak" into
+child processes, which might be undesired -- for example, you are editing a Lua
+configuration, so you don't want the `LUA_PATH` that is specific to Neovim to
+leak into the suprocess of the language server, or something else.
+
+One way to modify the `package` global, while having access to the packages from
+Nix, is to write a plugin in-place with `pkgs.runCommand`:
+
+```nix
+luaEnv = neovim-unwrapped.lua.withPackages (luaPackages: [
+  luaPackages.luassert
+  luaPackages.lua-cjson
+]);
+
+inherit (neovim-unwrapped.lua.pkgs.luaLib) genLuaPathAbsStr genLuaCPathAbsStr;
+
+plugins = [
+  (pkgs.runCommandLocal "init-plugin" {} '' 
+    mkdir -pv $out/plugin
+    tee $out/plugin/init.lua <<EOF
+    package.path = "${genLuaPathAbsStr luaEnv};" .. package.path
+    package.cpath = "${genLuaCPathAbsStr luaEnv};" .. package.cpath
+    EOF
+  '')
+];
+```

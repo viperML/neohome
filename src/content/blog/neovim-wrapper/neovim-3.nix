@@ -20,7 +20,7 @@
     ${
       lib.concatMapStringsSep
       "\n"
-      (plugin: "ln -vsfT ${plugin} $out/pack/${packageName}/start/${plugin.pname}")
+      (plugin: "ln -vsfT ${plugin} $out/pack/${packageName}/start/${lib.getName plugin}")
       startPlugins
     }
   '';
