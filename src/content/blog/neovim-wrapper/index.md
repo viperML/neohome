@@ -1,8 +1,9 @@
 ---
 title: Neovim wrapper from scratch
 pubDate: 2024-09-26T13:31:24Z
-summary: A DIY approach to managing Neovim with Nix. Without complicated
-frameworks that introduce more complexity.
+summary: |
+    A DIY approach to managing Neovim with Nix. Without complicated
+    frameworks that introduce more complexity.
 draft: false
 ---
 
