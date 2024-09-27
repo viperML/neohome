@@ -208,6 +208,31 @@ configuration. This is nice, because it will make our configuration more
 > exec -a "$0" "/nix/store/jvqc319jklmnqfbfw6c058fr262dlr2w-neovim-custom/bin/.nvim-wrapped"  -u /nix/store/ri095naj7cpgqahq50arfq0nn2j9kmsr-init.lua --cmd 'set packpath^=/nix/store/ji9z2g9m2gg5isp213v45vig1x8q0x3c-packpath | set runtimepath^=/nix/store/ji9z2g9m2gg5isp213v45vig1x8q0x3c-packpath' "$@"
 > ```
 
+## tree-sitter and dependencies
+
+The plugins from nixpkgs, `pkgs.vimPlugins`, have an extra field called
+`dependencies` to mark other plugins that they depend on. Namely, the
+tree-sitter plugin uses this to pull the grammars as dependencies.
+
+Speaking of tree-sitter, there are multiple components to it:
+
+- `nvim-treesitter`, the Lua plugin itself
+- Grammars, that usually are installed with `:TSInstall`
+
+The grammars are packaged in Nix, which will be a better option since we won't
+need to run `:TSInstall`, which requires a C compiler on the target machine (and
+sometimes nodjes, [it's a mess](/blog/tree-sitter-packaging)). To bring the
+grammar as dependencies, there are 2 interfaces for that, which are [documented
+in the nixpkgs manual](https://nixos.org/manual/nixpkgs/stable/#vim-plugin-specificities):
+
+- `pkgs.vimPlugins.nvim-tresitter.withAllGrammars` -- recommended, grammars are
+  very cheap in terms of size.
+- `pkgs.vimPlugins.nvim-treesitter.withPlugins`
+
+To collect our list of dependencies, we can do some recursive function calls
+with `builtins.foldl'`, and filter the results with `lib.unique`.
+
+
 ## Finale
 
 That's it! Creating a wrapper for Neovim is not a difficult task, and I think
@@ -354,3 +379,11 @@ plugins = [
   '')
 ];
 ```
+
+### Remote plugins
+
+[Remote plugins](https://neovim.io/doc/user/remote_plugin.html) are plugins that
+are not written in Lua or Vimscript, but rather in any other language, and are
+executed as subprocesses of Neovim. Personally I have never encountered one of
+these, as there is always a Lua-written alternative. The wrapper doesn't take
+remote plugins into account.

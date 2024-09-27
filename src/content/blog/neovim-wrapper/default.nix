@@ -1,1 +1,1 @@
-(import <nixpkgs> {}).callPackage ./neovim-4.nix {}
+(import <nixpkgs> {}).callPackage ./neovim-5.nix {}
