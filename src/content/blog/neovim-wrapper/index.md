@@ -1,5 +1,5 @@
 ---
-title: Neovim wrapper from scratch
+title: Neovim wrapper with Nix from scratch
 pubDate: 2024-09-26T13:31:24Z
 summary: |
     A DIY approach to managing Neovim with Nix. Without complicated
@@ -221,7 +221,7 @@ Speaking of tree-sitter, there are multiple components to it:
 
 The grammars are packaged in Nix, which will be a better option since we won't
 need to run `:TSInstall`, which requires a C compiler on the target machine (and
-sometimes nodjes, [it's a mess](/blog/tree-sitter-packaging)). To bring the
+sometimes nodejs, [it's a mess](/blog/tree-sitter-packaging)). To bring the
 grammar as dependencies, there are 2 interfaces for that, which are [documented
 in the nixpkgs manual](https://nixos.org/manual/nixpkgs/stable/#vim-plugin-specificities):
 
@@ -232,12 +232,14 @@ in the nixpkgs manual](https://nixos.org/manual/nixpkgs/stable/#vim-plugin-speci
 To collect our list of dependencies, we can do some recursive function calls
 with `builtins.foldl'`, and filter the results with `lib.unique`.
 
+```nix file: "neovim-5.nix"
+```
 
 ## Finale
 
 That's it! Creating a wrapper for Neovim is not a difficult task, and I think
 this Do-It-Yourself approach is simpler to maintain that relying on some Nix
-framwork. Now that your neovim configuration is self-contained with Nix, these
+framework. Now that your neovim configuration is self-contained with Nix, these
 are some things that you can do:
 
 - Use it directly on a foreign machine with `nix run github:user/repo#neovim`
@@ -299,13 +301,13 @@ events. For example, you can configure *telescope* to only load when you
 actually run the command `:Telescope`.
 
 This is possible to do manually. If lazy.nvim does it, there must be a way, in
-the end. But the lazyer of abstraction is the useful part.
+the end. But the convenience of abstraction is the useful part.
 
 So, instead, you can use [lz.n](https://github.com/nvim-neorocks/lz.n), a plugin
 that can take care of "lazy loading" (quite of an overloaded term). You must
 place it as a `start` plugin, while plugins that you want to be lazy-loadable
 must be `opt` plugins. `lz.n` doesn't install plugins itself, but rather provide
-an inteface for lazy-loading. After adding the plugins to your wrapper, refer to
+an interface for lazy-loading. After adding the plugins to your wrapper, refer to
 upstream documentation for configuration.
 
 ### Plugins not in nixpkgs
